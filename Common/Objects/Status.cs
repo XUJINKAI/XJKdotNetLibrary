@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XJKdotNetLibrary
+namespace XJK
 {
     public class Status
     {

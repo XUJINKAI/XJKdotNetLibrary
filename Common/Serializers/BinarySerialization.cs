@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace XJKdotNetLibrary.Serializers
+namespace XJK.Serializers
 {
     public static class BinarySerialization
     {

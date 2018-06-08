@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace XJKdotNetLibrary.SysX
+namespace XJK.SysX
 {
     internal static class NativeMethods
     {

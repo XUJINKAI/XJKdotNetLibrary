@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Web;
 
-namespace XJKdotNetLibrary
+namespace XJK
 {
     public static class DictionaryStringStringExtension
     {

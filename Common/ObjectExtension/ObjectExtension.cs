@@ -1,4 +1,4 @@
-﻿namespace XJKdotNetLibrary
+﻿namespace XJK
 {
     public static class ObjectExtension
     {

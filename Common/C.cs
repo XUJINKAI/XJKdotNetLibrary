@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace XJKdotNetLibrary
+namespace XJK
 {
     public static class C
     {

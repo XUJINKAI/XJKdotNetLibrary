@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Xml.Serialization;
-using XJKdotNetLibrary.SysX;
+using XJK.SysX;
 
-namespace XJKdotNetLibrary.Serializers
+namespace XJK.Serializers
 {
     public static class XmlSerialization
     {

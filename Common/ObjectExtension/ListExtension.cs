@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace XJKdotNetLibrary
+namespace XJK
 {
     public static class ListExtension
     {

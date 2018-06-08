@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
-using XJKdotNetLibrary.MethodWrapper;
-using XJKdotNetLibrary.ObjectExtension;
+using XJK.MethodWrapper;
+using XJK.ObjectExtension;
 
-namespace XJKdotNetLibrary.CommunicationModel
+namespace XJK.CommunicationModel
 {
     public abstract class AppServiceCommBase : RpcCommBase
     {

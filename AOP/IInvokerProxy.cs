@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Threading.Tasks;
 
-namespace XJKdotNetLibrary.MethodWrapper
+namespace XJK.MethodWrapper
 {
     public interface IInvokerProxy
     {

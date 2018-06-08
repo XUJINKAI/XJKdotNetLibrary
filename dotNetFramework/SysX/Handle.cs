@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using static XJKdotNetLibrary.SysX.NativeMethods;
+using static XJK.SysX.NativeMethods;
 
-namespace XJKdotNetLibrary.SysX
+namespace XJK.SysX
 {
     public static class Handle
     {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using XJKdotNetLibrary.MethodWrapper;
+using XJK.MethodWrapper;
 
-namespace XJKdotNetLibrary.ObjectExtension
+namespace XJK.ObjectExtension
 {
     public static class ExpressionExtension
     {

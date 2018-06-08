@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
-using XJKdotNetLibrary.MethodWrapper;
+using XJK.MethodWrapper;
 
-namespace XJKdotNetLibrary.CommunicationModel
+namespace XJK.CommunicationModel
 {
     public abstract class RpcCommBase : IInvokerProxy
     {

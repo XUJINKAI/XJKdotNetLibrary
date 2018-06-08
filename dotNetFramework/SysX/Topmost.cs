@@ -1,7 +1,7 @@
 ﻿using System;
-using static XJKdotNetLibrary.SysX.NativeMethods;
+using static XJK.SysX.NativeMethods;
 
-namespace XJKdotNetLibrary.SysX
+namespace XJK.SysX
 {
     public static class Topmost
     {

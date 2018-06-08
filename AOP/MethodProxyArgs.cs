@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace XJKdotNetLibrary.MethodWrapper
+namespace XJK.MethodWrapper
 {
     public class InvokeEventArgsBase : EventArgs
     {

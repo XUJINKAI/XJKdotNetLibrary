@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace XJKdotNetLibrary
+namespace XJK
 {
     /// <summary>
     /// provide ItemsPropertyChanged event to notify item property change

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace XJKdotNetLibrary
+namespace XJK
 {
     public static class Helper
     {
