@@ -7,7 +7,7 @@
     <ProjectGuid>{BFABDD52-F228-490D-A7CF-C019DF252D5B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XJKdotNetLibrary.SysX</RootNamespace>
+    <RootNamespace>XJK.SysX</RootNamespace>
     <AssemblyName>XJKdotNetLibrary.SysX</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -68,6 +68,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -76,8 +78,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cmd.cs" />
+    <Compile Include="Device\Monitor.cs" />
+    <Compile Include="Device\Mouse.cs" />
+    <Compile Include="Device\OS.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reg.cs" />
     <Compile Include="Topmost.cs" />
     <Compile Include="Handle.cs" />
   </ItemGroup>

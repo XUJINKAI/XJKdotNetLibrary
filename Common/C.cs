@@ -7,9 +7,7 @@ namespace XJK
 {
     public static class C
     {
-        public static readonly Encoding Encoding = Encoding.UTF8;
-
-        public const string LF = "\r\n";
+        public static readonly string LF = Environment.NewLine;
         public const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
     }
 }

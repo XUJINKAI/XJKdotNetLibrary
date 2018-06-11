@@ -1,4 +1,10 @@
-﻿namespace XJK
+﻿using System;
+using System.Collections;
+using System.IO;
+using System.Reflection;
+using System.Text;
+
+namespace XJK
 {
     public static class ObjectExtension
     {

@@ -14,5 +14,10 @@ namespace XJK
                 yield return bigList.GetRange(i, Math.Min(nSize, bigList.Count - i));
             }
         }
+
+        public static string Join<T>(this IEnumerable<T> list, Func<T, string> func, string sep = ",")
+        {
+            return string.Join(sep, list.Select(func));
+        }
     }
 }

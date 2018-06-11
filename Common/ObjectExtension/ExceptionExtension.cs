@@ -1,26 +1,58 @@
 ﻿using System;
+using System.Text;
+using XJK.Serializers;
 
 namespace XJK
 {
     public static class ExceptionExtension
     {
-        public static string ToStringLong(this Exception e)
+        public static string GetFullMessage(this Exception ex)
         {
-            string msg = $"{e.Message}{C.LF}{e.StackTrace}";
-            if (e.InnerException != null)
-            {
-                return ToStringLong(e.InnerException) + "\r\n--- InnerException ---\r\n" + msg;
-            }
-            return msg;
+            return GetMessage(ex, true, true, true);
         }
 
-        public static string ToStringShort(this Exception e)
+        public static string GetMessage(this Exception ex, bool DumpData = true, bool StackTrace = false, bool OuterException = false)
         {
-            if (e.InnerException != null)
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<Exception>");
+            BuildMessageFunc(true, sb, ex, DumpData, StackTrace, OuterException);
+            return sb.ToString();
+        }
+
+        private static void BuildMessageFunc(bool IsOuterCall, StringBuilder sb, Exception ex, bool DumpData, bool StackTrace, bool OuterException)
+        {
+            if (ex.InnerException != null)
             {
-                return ToStringShort(e.InnerException);
+                BuildMessageFunc(false, sb, ex.InnerException, DumpData, StackTrace, OuterException);
             }
-            return $"{e.Message}{C.LF}{e.StackTrace}";
+            if(OuterException || ex.InnerException == null)
+            {
+                sb.Append("Message: ");
+                sb.AppendLine(ex.Message);
+                if (DumpData && ex.Data.Count > 0)
+                {
+                    sb.AppendLine("Data:");
+                    string[] dump = ex.Data.Dump().Split(new string[] { C.LF }, StringSplitOptions.RemoveEmptyEntries);
+                    bool firstline = true;
+                    foreach (var line in dump)
+                    {
+                        if (!firstline)
+                        {
+                            sb.AppendLine(line);
+                        }
+                        firstline = false;
+                    }
+                }
+                if (StackTrace)
+                {
+                    sb.AppendLine("StackTrace:");
+                    sb.AppendLine(ex.StackTrace);
+                }
+                if (!IsOuterCall)
+                {
+                    sb.AppendLine("--- InnerException Above ---");
+                }
+            }
         }
     }
 }

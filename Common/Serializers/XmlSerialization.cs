@@ -17,47 +17,13 @@ namespace XJK.Serializers
             }
         }
 
-        public static T FromXmlText<T>(string xml, bool FailCreateNew = false) where T : new()
+        public static T FromXmlText<T>(string xml) where T : new()
         {
-            try
+            var serializer = new XmlSerializer(typeof(T));
+            using (StringReader reader = new StringReader(xml))
             {
-                var serializer = new XmlSerializer(typeof(T));
-                using (StringReader reader = new StringReader(xml))
-                {
-                    T obj = (T)serializer.Deserialize(reader);
-                    return obj;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (FailCreateNew)
-                {
-                    Log.Info("Parse XML Error, return new()");
-                    return new T();
-                }
-                Log.Error("Parse XML Error", ex);
-                throw ex;
-            }
-        }
-
-        public static void WriteXmlFile<T>(T o, string path) where T : new()
-        {
-            FS.WriteAllText(path, o.ToXmlText());
-        }
-
-        public static T ReadXmlFile<T>(string path, bool FailCreateNew = false) where T : new()
-        {
-            try
-            {
-                return FromXmlText<T>(FS.ReadAllText(path), FailCreateNew);
-            }
-            catch (Exception ex)
-            {
-                if (FailCreateNew)
-                {
-                    return new T();
-                }
-                throw ex;
+                T obj = (T)serializer.Deserialize(reader);
+                return obj;
             }
         }
     }
