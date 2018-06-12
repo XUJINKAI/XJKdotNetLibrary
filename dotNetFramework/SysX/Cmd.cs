@@ -1,73 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using XJK;
+using static XJK.SysX.CommandLineHelper;
 
-namespace OneQuick.SysX
+namespace XJK.SysX
 {
-    static class Cmd
+    public static class Cmd
     {
-        [DllImport("shell32.dll", SetLastError = true)]
-        static extern IntPtr CommandLineToArgvW(
-            [MarshalAs(UnmanagedType.LPWStr)] string lpCmdLine, out int pNumArgs);
-
-        public static string[] CommandLineToArgs(string commandLine)
+        public static string GetRunVerbs(string filename)
         {
-            var argv = CommandLineToArgvW(commandLine, out int argc);
-            if (argv == IntPtr.Zero)
-                throw new System.ComponentModel.Win32Exception();
-            try
-            {
-                var args = new string[argc];
-                for (var i = 0; i < args.Length; i++)
-                {
-                    var p = Marshal.ReadIntPtr(argv, i * IntPtr.Size);
-                    args[i] = Marshal.PtrToStringUni(p);
-                }
-
-                return args;
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(argv);
-            }
-        }
-        
-        public static void RunSmart(string CommandWithArgs, bool ShowWindow = true)
-        {
-            if (IsUrl(CommandWithArgs))
-            {
-                OpenLink(CommandWithArgs);
-            }
-            else
-            {
-                var args = CommandLineToArgs(CommandWithArgs);
-                string command = args[0];
-                string arg = CommandWithArgs.Substring(Math.Min(command.Length + 1, CommandWithArgs.Length));
-                Run(command, arg, ShowWindow);
-            }
-        }
-        public static void Run(string Command, string Args, bool ShowWindow = true)
-        {
-            if (ShowWindow)
-            {
-                System.Diagnostics.Process.Start(Command, Args);
-            }
-            else
-            {
-                System.Diagnostics.Process process = new System.Diagnostics.Process
-                {
-                    StartInfo = new System.Diagnostics.ProcessStartInfo
-                    {
-                        WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden,
-                        FileName = Command,
-                        Arguments = Args
-                    }
-                };
-                process.Start();
-            }
+            return (new ProcessStartInfo(filename)).Verbs.Join(", ");
         }
 
         public static bool IsUrl(string str)
@@ -75,33 +24,73 @@ namespace OneQuick.SysX
             string t = str.ToLower();
             return t.StartsWith("http://") || t.StartsWith("https://");
         }
-
-        public static void OpenLink(string url)
-        {
-            if (IsUrl(url))
-            {
-                Run(url, "", true);
-            }
-            else
-            {
-                throw new Exception("Not URL.");
-            }
-        }
-
+        
         public static void Explorer(string path)
         {
-            if (global::System.IO.File.Exists(path))
+            if (File.Exists(path))
             {
-                Run("explorer", "/select, " + path);
+                RunAsInvoker("explorer", "/select, " + path);
             }
-            else if (global::System.IO.Directory.Exists(path))
+            else if (Directory.Exists(path))
             {
-                Run("explorer", path);
+                RunAsInvoker("explorer", path);
             }
             else
             {
                 RunSmart("explorer");
             }
         }
+
+        public static void RunSmart(string CommandWithArgs)
+        {
+            if (IsUrl(CommandWithArgs))
+            {
+                RunAsInvoker(CommandWithArgs, "");
+            }
+            else
+            {
+                var args = CommandLineToArgs(CommandWithArgs);
+                string command = args[0];
+                string arg = CommandWithArgs.Substring(Math.Min(command.Length + 1, CommandWithArgs.Length));
+                bool showWindow = command.ToLower().Equals("cmd") && arg.IsNullOrEmpty();
+                if(showWindow) RunAsInvoker(command, arg);
+                else ProcessInfoChain.New(command, arg).Window(WindowType.Hide).Start();
+            }
+        }
+
+        #region Process Run
+
+        public static void RunAsInvoker(string Command, string Args)
+        {
+             ProcessInfoChain.New(Command, Args).Start();
+        }
+
+        public static void RunAsAdmin(string Command, string Args)
+        {
+             ProcessInfoChain.New(Command, Args).RunAs(RunType.Admin).Start();
+        }
+
+        public static void RunAsLimitedPrivilege(string Command, string Args)
+        {
+             ProcessInfoChain.New(Command, Args).RunAs(RunType.Limited).Start();
+        }
+        
+        public static void RunWithCmdStart(string Command, string Args)
+        {
+             ProcessInfoChain.New(Command, Args).RunAs(RunType.CmdStart).Window(WindowType.NoWin).Start();
+        }
+
+        public static async Task<string> RunCmdResultAsync(string command, string args)
+        {
+            var t = new TaskCompletionSource<string>();
+            ProcessInfoChain.New(command, args).Window(WindowType.NoWin).RedirectOutput(result =>
+            {
+                t.SetResult(result);
+            }).Start();
+            return await t.Task;
+        }
+
+        #endregion
+
     }
 }

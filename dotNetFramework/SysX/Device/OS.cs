@@ -1,8 +1,7 @@
 ﻿using System;
 using Microsoft.Win32;
-using static XJK.SysX.NativeMethods;
 
-namespace OneQuick.SysX.Device
+namespace XJK.SysX.Device
 {
     public static class OS
     {

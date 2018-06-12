@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using XJK;
+using XJK.SysX;
 
 namespace Test
 {
@@ -25,6 +26,7 @@ namespace Test
         public MainWindow()
         {
             InitializeComponent();
+            Title += $", Admin({XJK.SysX.Current.IsAdministrator()})";
             Log.ListenSystemDiagnosticsLog();
             Log.TextListener += Log_TextListener;
         }
@@ -47,18 +49,24 @@ namespace Test
             LogBox.Text = "";
         }
 
-        public void TestDumpObject(object sender = null, RoutedEventArgs e = null)
-        {
-            DumpObject.Test();
-        }
-
         private void LogBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Enter)
+            if (e.Key == Key.Enter)
             {
                 LogBox.SelectedText = C.LF;
                 e.Handled = true;
             }
         }
+
+        public void TestDumpObject(object sender = null, RoutedEventArgs e = null)
+        {
+            DumpObject.Test();
+        }
+        
+        private void Test(object sender, RoutedEventArgs e)
+        {
+
+        }
+
     }
 }

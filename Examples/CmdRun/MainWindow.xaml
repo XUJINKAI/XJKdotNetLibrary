@@ -1,0 +1,59 @@
+﻿<Window x:Class="CmdRun.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CmdRun"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Margin="0,20,0,5">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Resources>
+                        <Style TargetType="Button">
+                            <Style.Setters>
+                                <Setter Property="Width" Value="100"/>
+                                <Setter Property="Margin" Value="0,0,5,0"/>
+                            </Style.Setters>
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button Content="RunAsInvoker" Click="RunAsInvoker"></Button>
+                    <Button Content="RunAsAdmin" Click="RunAsAdmin"></Button>
+                    <Button Content="RunAsLimited" Click="RunAsLimitedPrevilege"></Button>
+                    <Button Content="cmd /c start" Click="RunWithCmdStart"></Button>
+                    <Button Content="Cmd Result" Click="RunCmdResult"></Button>
+                    <Button Content="Dump Info" Click="DumpFile"></Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton Content="Invoker"></RadioButton>
+                    <RadioButton Content="Admin"></RadioButton>
+                    <RadioButton Content="Limited"></RadioButton>
+                    <RadioButton Content="CmdStart"></RadioButton>
+                    <RadioButton Content="CmdStartAdmin"></RadioButton>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton Content="Show"></RadioButton>
+                    <RadioButton Content="Hide"></RadioButton>
+                    <RadioButton Content="NoWin"></RadioButton>
+                    <RadioButton Content="NoWinHide"></RadioButton>
+                </StackPanel>
+                <TextBox x:Name="CommandBox"></TextBox>
+                <DockPanel>
+                    <Button x:Name="ParseArgs" Content="Parse" Click="ParseArgsBox" Width="80"></Button>
+                    <TextBox x:Name="ArgsBox"></TextBox>
+                </DockPanel>
+                <CheckBox x:Name="ShowWindowCheckBox" Content="ShowWindow"></CheckBox>
+                <TextBox x:Name="IsAdminTextBox" IsReadOnly="True"></TextBox>
+                <TextBox x:Name="CurrentExePath" IsReadOnly="True"></TextBox>
+            </StackPanel>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+                <TextBox x:Name="LogBox" FontFamily="Consolas"></TextBox>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Window>

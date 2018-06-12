@@ -10,48 +10,32 @@ namespace XJK.Network
 {
     public class GoogleAnalyticsApi
     {
-        public readonly Status CanAddItem = new Status(true);
-        public Dictionary<string, string> EachHitDict { get; set; } = new Dictionary<string, string>();
-        public Dictionary<string, string> OnceDict { get; set; } = new Dictionary<string, string>();
-
-
-        private static bool Debug_Mock => G.GaMock;
-        private static bool Debug_OutputDetailFile => G.ReleaseCheck || G.DEBUG;
-        public static readonly string LogFile = Path.Combine(G.AppDataFolder, "GA.log");
-        private static void DebugLog(string s)
-        {
-            if (Debug_OutputDetailFile)
-            {
-                try
-                {
-                    File.AppendAllText(LogFile, DateTime.Now.ToString("[HH:mm:ss] ") + s + "\r\n---\r\n");
-                }
-                catch { }
-            }
-        }
-
-        public int Count => Cache.Count;
-        public readonly string TrackId;
-        public readonly string ClientId;
-
-        public const int MaxCacheCount = 20;
         public const string GAURL = "http://www.google-analytics.com/collect";
         public const string GABATCHURL = "http://www.google-analytics.com/batch";
+        public const int MaxCacheCount = 20;
+
+        public static event Action<string> DetailListener;
+
+        public readonly string TrackId;
+        public readonly string ClientId;
+        public Dictionary<string, string> EachHitDict { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> OnceDict { get; set; } = new Dictionary<string, string>();
+        private string OnceDictTag = null;
 
         private readonly Dictionary<string, Dictionary<string, string>> Cache = new Dictionary<string, Dictionary<string, string>>();
         private readonly List<List<Dictionary<string, string>>> BadCache = new List<List<Dictionary<string, string>>>();
-        
-        private string OnceDictTag = null;
-        private readonly Timer Timer;
 
-        public AnalyticsApi(string tid, string cid)
+        private readonly Timer Timer;
+        public double LazySendInterval = 20 * 1000;
+        public readonly Status CanAddItem = new Status(true);
+
+        public GoogleAnalyticsApi(string tid, string cid)
         {
-            if (Debug_OutputDetailFile && File.Exists(LogFile)) try { File.WriteAllText(LogFile, ""); } catch { }
             TrackId = tid;
             ClientId = cid;
             Timer = new Timer
             {
-                Interval = G.AnalyticsLazySendInterval,
+                Interval = LazySendInterval,
                 AutoReset = false,
             };
             Timer.Elapsed += Timer_Elapsed;
@@ -64,7 +48,7 @@ namespace XJK.Network
         
         public Dictionary<string, string> Get(string tag)
         {
-            if (String.IsNullOrEmpty(tag)) return null;
+            if (tag.IsNullOrEmpty()) return null;
             if (Cache.ContainsKey(tag)) return Cache[tag];
             return null;
         }
@@ -76,9 +60,9 @@ namespace XJK.Network
             {
                 Timer.Start();
             }
-            if (String.IsNullOrEmpty(tag))
+            if (tag.IsNullOrEmpty())
             {
-                tag = FS.RandomString(8);
+                tag = Helper.RandomString(8);
             }
             else
             {
@@ -100,10 +84,7 @@ namespace XJK.Network
                 OnceDictTag = tag;
             }
             Cache.Add(tag, data);
-            if (Debug_OutputDetailFile)
-            {
-                DebugLog($"Add [{tag}] {Cache.Count}\n" + FS.DictToString(data, true));
-            }
+            DetailListener?.Invoke($"Add [{tag}] {Cache.Count}{data.ToFormatTableString()}{C.LF}");
             //if (Cache.Count >= MaxCacheCount) Send();
             return tag;
         }
@@ -116,11 +97,7 @@ namespace XJK.Network
                 OnceDictTag = null;
             }
             var result = Cache.Remove(tag);
-            if (Debug_OutputDetailFile)
-            {
-                DebugLog($"Remove [{tag}] {Cache.Count}");
-            }
-            Trace.se
+            DetailListener?.Invoke($"Remove [{tag}] {Cache.Count}{C.LF}");
             return result;
         }
 
@@ -138,12 +115,8 @@ namespace XJK.Network
                         BadCache.RemoveAt(i);
                     }
                 }
-                if (Debug_OutputDetailFile)
-                {
-                    DebugLog("=========================================================");
-                    DebugLog($"TryBadCache remain {BadCacheCountFormat()}");
-                    Notify.PopNewToast($"TryBadCache remain {BadCacheCountFormat()}");
-                }
+                DetailListener?.Invoke($"{'='.Dup(60)}{C.LF}TryBadCache remain {BadCacheCountFormat()}");
+                Log.Debug($"TryBadCache remain {BadCacheCountFormat()}");
             }
         }
 
@@ -168,27 +141,18 @@ namespace XJK.Network
             Timer.Stop();
             var list = Cache.Values.ToList();
             Cache.Clear();
-            foreach (var x in FS.SplitList(list, MaxCacheCount))
+            foreach (var x in list.Split(MaxCacheCount))
             {
                 var result = await _Send(x);
                 if (result)
                 {
-                    if (Debug_OutputDetailFile)
-                    {
-                        DebugLog("=========================================================");
-                        DebugLog($"Send {x.Count}, remain bad cache {BadCacheCountFormat()}");
-                        Notify.PopNewToast($"Analytics Send {x.Count}, remain {BadCacheCountFormat()}");
-                    }
+                    DetailListener?.Invoke($"{'='.Dup(60)}{C.LF}Send {x.Count}, remain bad cache {BadCacheCountFormat()}");
                 }
                 else
                 {
                     BadCache.Add(x);
-                    if (Debug_OutputDetailFile)
-                    {
-                        DebugLog("=========================================================");
-                        DebugLog($"Not send, Add {x.Count}, bad cache {BadCacheCountFormat()}");
-                        Notify.PopNewToast($"Analytics Send {x.Count}, remain {BadCacheCountFormat()}");
-                    }
+                    DetailListener?.Invoke($"{'='.Dup(60)}{C.LF}Not send, Add {x.Count}, bad cache {BadCacheCountFormat()}");
+                    Log.Debug($"Analytics Send {x.Count}, remain {BadCacheCountFormat()}");
                 }
             }
         }
@@ -204,16 +168,10 @@ namespace XJK.Network
         {
             try
             {
-                //if (OutputDetailFormat)
-                //{
-                //    Log.Info($"CollectGoogleAnalyticsAsync" + (Debug_Mock ? " Mock" : "") + "\n" + Helper.DictToString(dict, true));
-                //}
-                if (G.DEBUG && Debug_Mock)
-                {
-                    return true;
-                }
-                string postStr = FS.DictToString(dict);
-                return await NetLegacy.PostAsync(GAURL, postStr, false);
+                DetailListener?.Invoke($"CollectGoogleAnalyticsAsync{C.LF}{dict.ToFormatTableString()}");
+                string postStr = dict.ToUrlEncodeString();
+                var result = await NetLegacy.PostAsync(GAURL, postStr);
+                return result != null;
             }
             catch (Exception e)
             {
@@ -226,22 +184,16 @@ namespace XJK.Network
         {
             try
             {
-                //if (OutputDetailFormat)
-                //{
-                //    Log.Info($"BatchCollectGoogleAnalyticsAsync" + (Debug_Mock ? " Mock" : "")
-                //        + batchData.Aggregate("", (sum, next) => $"{sum}\n---\n{Helper.DictToString(next, true)}"));
-                //}
-                if (G.DEBUG && Debug_Mock)
-                {
-                    return true;
-                }
+
+                DetailListener?.Invoke($"BatchCollectGoogleAnalyticsAsync{C.LF}{batchData.Join(o => o.ToFormatTableString(), C.LF)}");
                 string batchStr = "";
                 foreach (var dict in batchData)
                 {
-                    batchStr += "\n" + FS.DictToString(dict);
+                    batchStr += "\n" + dict.ToUrlEncodeString();
                 }
                 if (batchStr.Length > 1) batchStr = batchStr.Substring(1);
-                return await NetLegacy.PostAsync(GABATCHURL, batchStr, false);
+                var result = await NetLegacy.PostAsync(GABATCHURL, batchStr);
+                return result != null;
             }
             catch (Exception e)
             {

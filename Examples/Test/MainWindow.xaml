@@ -13,6 +13,7 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
             <Button Content="DumpObject" Click="TestDumpObject"></Button>
+            <Button Content="Test" Click="Test"></Button>
             <Button Content="break" Click="Break"></Button>
             <Button Content="clear" Click="Clear"></Button>
         </StackPanel>

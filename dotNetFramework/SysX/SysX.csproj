@@ -79,15 +79,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cmd.cs" />
+    <Compile Include="CommandLineHelper.cs" />
+    <Compile Include="Current.cs" />
     <Compile Include="Device\Monitor.cs" />
     <Compile Include="Device\Mouse.cs" />
     <Compile Include="Device\OS.cs" />
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="ProcessInfoChain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reg.cs" />
     <Compile Include="Topmost.cs" />
     <Compile Include="Handle.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.csproj">
+      <Project>{c64271f6-b253-428e-a728-80ffa970ec1b}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

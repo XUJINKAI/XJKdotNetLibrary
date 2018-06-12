@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OneQuick.SysX
+namespace XJK.SysX
 {
     static class Reg
     {
