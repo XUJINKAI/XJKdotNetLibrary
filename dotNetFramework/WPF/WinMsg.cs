@@ -11,7 +11,7 @@ namespace XJK.WPF
 {
     public static class WinMsg
     {
-        private static AppHelperWindow Window { get; set; }
+        public static AppHelperWindow Window { get; private set; }
         private static readonly Dictionary<string, int> RegisteredMessage = new Dictionary<string, int>();
         private static readonly Dictionary<int, Action> MsgActionDict = new Dictionary<int, Action>();
 

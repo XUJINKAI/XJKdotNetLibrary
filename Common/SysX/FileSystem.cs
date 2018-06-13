@@ -80,4 +80,17 @@ namespace XJK.SysX
             }
         }
     }
+
+    public static class FileSystemExtension
+    {
+        public static void WriteToAll(this string text, string path)
+        {
+            FS.WriteAllText(path, text);
+        }
+
+        public static void WriteToAppend(this string text, string path)
+        {
+            FS.AppendText(path, text);
+        }
+    }
 }

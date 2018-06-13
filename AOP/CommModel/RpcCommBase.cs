@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
-using XJK.MethodWrapper;
 
-namespace XJK.CommunicationModel
+namespace XJK.AOP.CommunicationModel
 {
     public abstract class RpcCommBase : IInvokerProxy
     {
@@ -13,64 +13,66 @@ namespace XJK.CommunicationModel
         protected abstract object GetExcuteObject();
         protected abstract Task<MethodCallInfo> SendMessageAsync(MethodCallInfo methodCallInfo);
 
-        protected async Task OnReceiveMethodCallAsync(MethodCallInfo methodCallInfo, Func<MethodCallInfo, Task<string>> SendResponse)
-        {
-            LogDebug($"[ReciveInvoke] {methodCallInfo}");
-            object excuteResult;
-            try
-            {
-                excuteResult = methodCallInfo.Excute(GetExcuteObject());
-                LogDebug("[ExcuteResult] " + excuteResult?.ToString());
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-                excuteResult = null;
-            }
-            if (excuteResult != null)
-            {
-                LogDebug("[SendingResponse]");
-                var response = (new MethodCallInfo() { Name = methodCallInfo.Name, Result = excuteResult });
-                var result = await SendResponse(response);
-                LogDebug($"[Response] {result}");
-            }
-        }
-
-        public async Task<object> InvokeAsync(MethodInfo targetMethod, object[] args)
+        public virtual void BeforeInvoke(object sender, BeforeInvokeEventArgs args)
         {
             if (!IsConnceted())
             {
-                LogInfo("Not Connected");
-                if (targetMethod.ReturnType.IsValueType)
-                {
-                    return Activator.CreateInstance(targetMethod.ReturnType);
-                }
-                return null;
+                throw new Exception("[RpcCommBase.Invoke] Not Connected");
             }
+        }
+        public virtual void AfterInvoke(object sender, AfterInvokeEventArgs args) { }
+
+        protected async Task OnReceiveMethodCallAsync(MethodCallInfo methodCallInfo, Func<MethodCallInfo, Task<string>> SendResponse)
+        {
+            Debug.WriteLine($"[RpcCommBase.Recive] {methodCallInfo}");
+            var response = new MethodCallInfo()
+            {
+                Name = methodCallInfo.Name,
+            };
+            try
+            {
+                response.Result = methodCallInfo.Excute(GetExcuteObject());
+                Debug.WriteLine($"[RpcCommBase.Recive] {methodCallInfo}, result [{response.Result}]");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                response.Exception = ex.GetFullMessage();
+            }
+            var response_result = await SendResponse(response);
+            Debug.WriteLine($"[RpcCommBase.Recive] {methodCallInfo}, response result [{response_result}]");
+        }
+
+        public object Invoke(MethodInfo targetMethod, object[] args)
+        {
+            Debug.WriteLine($"[RpcCommBase] InvokeAsync {targetMethod}");
             MethodCallInfo methodCall = new MethodCallInfo()
             {
                 Name = targetMethod.Name,
                 Args = new List<object>(args),
             };
-            LogDebug($"[SendInvoke] {methodCall}");
-            var result = await SendMessageAsync(methodCall);
-            return result?.Result;
-        }
+            Debug.WriteLine($"[RpcCommBase] InvokeAsync {methodCall}");
 
+            object result = null;
+            if(targetMethod.ReturnType?.BaseType == typeof(Task))
+            {
+                var generic_method = typeof(RpcCommBase).GetMethod("SendAsyncTaskTHelperFunc");
+                var method = generic_method.MakeGenericMethod(targetMethod.ReturnType.GenericTypeArguments[0]);
+                result = method.Invoke(this, new object[] { methodCall });
+            }
+            else if(targetMethod.ReturnType == typeof(Task))
+            {
+                result = new Task(() => { });
+            }
+
+            result.AssertType(targetMethod.ReturnType);
+            return result;
+        }
         
-        protected virtual void LogDebug(string msg)
+        public async Task<T> SendAsyncTaskTHelperFunc<T>(MethodCallInfo methodCall)
         {
-            Trace.WriteLine("[RpcCommBase.LogDebug(virtual)]" + msg);
-        }
-
-        protected virtual void LogError(Exception ex)
-        {
-            Trace.WriteLine("[RpcCommBase.LogError(virtual)]" + ex.Message + "\r\n" + ex.StackTrace);
-        }
-
-        protected virtual void LogInfo(string msg)
-        {
-            Trace.WriteLine("[RpcCommBase.LogInfo(virtual)]" + msg);
+            var re = await SendMessageAsync(methodCall);
+            return (T)re.Result;
         }
     }
 }

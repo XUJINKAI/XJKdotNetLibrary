@@ -9,7 +9,7 @@ using static XJK.SysX.NativeMethods;
 
 namespace XJK.SysX
 {
-    public static class Current
+    public static class ENV
     {
         public readonly static string Directory = AppDomain.CurrentDomain.BaseDirectory;
         public readonly static string ExePath = System.Reflection.Assembly.GetEntryAssembly().Location;
@@ -24,7 +24,7 @@ namespace XJK.SysX
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
         
-        static Current()
+        static ENV()
         {
             try
             {

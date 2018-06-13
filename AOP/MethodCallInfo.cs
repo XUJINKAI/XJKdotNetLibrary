@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace XJK.MethodWrapper
+namespace XJK.AOP
 {
     [Serializable]
     public class MethodCallInfo
     {
         public string Name { get; set; }
         public List<Object> Args { get; set; }
-        public object Result { get; set; }
+        public object Result { get; set; } = null;
+        public string Exception { get; set; } = null;
 
         public MethodCallInfo()
         {

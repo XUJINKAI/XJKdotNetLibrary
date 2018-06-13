@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 
-namespace XJK.MethodWrapper
+namespace XJK.AOP
 {
     public class InvokeEventArgsBase : EventArgs
     {
@@ -11,8 +12,18 @@ namespace XJK.MethodWrapper
 
     public class BeforeInvokeEventArgs : InvokeEventArgsBase
     {
-        public bool Handle { get; set; } = false;
-        public object FakeResult { get; set; }
+        public bool Handled { get; private set; } = false;
+        public object FakeResult { get; private set; }
+
+        public void Handle(object fakeResult)
+        {
+            Handled = true;
+            FakeResult = fakeResult;
+            if (fakeResult?.GetType() != MethodInfo.ReturnType)
+            {
+                throw new Exception($"[BeforeInvokeEventArgs] Type of FakeResult not Match: except [{MethodInfo.ReturnType}], result [{fakeResult?.GetType()}]");
+            }
+        }
     }
 
     public class AfterInvokeEventArgs : InvokeEventArgsBase

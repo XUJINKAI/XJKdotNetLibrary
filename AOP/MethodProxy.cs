@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace XJK.MethodWrapper
+namespace XJK.AOP
 {
     public enum InvokeType
     {
@@ -82,60 +83,63 @@ namespace XJK.MethodWrapper
 
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
-            System.Diagnostics.Debug.WriteLine("[MethodProxy.Invoke]" + (new MethodCallInfo() { Name = targetMethod.Name, Args = args.ToList() }).ToString());
-            BeforeInvokeEventArgs beforeArgs = new BeforeInvokeEventArgs()
-            {
-                MethodInfo = targetMethod,
-                Args = args,
-            };
-            BeforeInvoke?.Invoke(this, beforeArgs);
-            if (beforeArgs.Handle)
-            {
-                return beforeArgs.FakeResult;
-            }
-            object result;
+            Debug.WriteLine("[MethodProxy.Invoke] " + (new MethodCallInfo() { Name = targetMethod.Name, Args = args.ToList() }).ToString());
+
+            bool IsIInvokeProxy = _invokeType == InvokeType.Proxy || _invokeType == InvokeType.ProxyFunc;
+            IInvokerProxy invoker = null;
             switch (_invokeType)
             {
                 case InvokeType.Proxy:
-                    result = _invokerProxy.InvokeAsync(targetMethod, args);
+                    invoker = _invokerProxy;
                     break;
                 case InvokeType.ProxyFunc:
-                    result = GetIInvokerProxyFunc().InvokeAsync(targetMethod, args);
+                    invoker = GetIInvokerProxyFunc();
                     break;
-                case InvokeType.Object:
-                    result = targetMethod.Invoke(_invokeObject, args);
-                    break;
-                default:
-                    throw new Exception("InvokeProxy: unknown InvokeType");
             }
-            if (targetMethod.ReturnType?.BaseType == typeof(Task))
+
+            if (IsIInvokeProxy || BeforeInvoke != null)
             {
-                // Task<Object> to Task<T>
-                var convertMethod = typeof(MethodProxy).GetMethod("ConvertTaskObject");
-                if (convertMethod != null)
+                BeforeInvokeEventArgs beforeArgs = new BeforeInvokeEventArgs()
                 {
-                    Type type = targetMethod.ReturnType.GetGenericArguments()[0];
-                    var genericMethod = convertMethod.MakeGenericMethod(type);
-                    result = genericMethod.Invoke(null, new object[] { result });
+                    MethodInfo = targetMethod,
+                    Args = args,
+                };
+                BeforeInvoke?.Invoke(this, beforeArgs);
+                invoker.BeforeInvoke(this, beforeArgs);
+                if (beforeArgs.Handled)
+                {
+                    return beforeArgs.FakeResult;
                 }
             }
-            else if (targetMethod.ReturnType == typeof(Task))
-            {
-                result = Task.FromResult<object>(null);
-            }
-            AfterInvokeEventArgs afterArgs = new AfterInvokeEventArgs()
-            {
-                MethodInfo = targetMethod,
-                Args = args,
-                Result = result,
-            };
-            AfterInvoke?.Invoke(this, afterArgs);
-            return result;
-        }
 
-        public static async Task<T> ConvertTaskObject<T>(Task<object> task)
-        {
-            return (T)(await task);
+            object result;
+            if (IsIInvokeProxy)
+            {
+                result = invoker.Invoke(targetMethod, args);
+            }
+            else if(_invokeType == InvokeType.Object)
+            {
+                result = targetMethod.Invoke(_invokeObject, args);
+            }
+            else
+            {
+                throw new Exception("InvokeProxy: unknown InvokeType");
+            }
+
+            result.AssertType(targetMethod.ReturnType);
+
+            if (IsIInvokeProxy || AfterInvoke != null)
+            {
+                AfterInvokeEventArgs afterArgs = new AfterInvokeEventArgs()
+                {
+                    MethodInfo = targetMethod,
+                    Args = args,
+                    Result = result,
+                };
+                AfterInvoke?.Invoke(this, afterArgs);
+                invoker.AfterInvoke(this, afterArgs);
+            }
+            return result;
         }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
-using XJK.MethodWrapper;
-using XJK.ObjectExtension;
 
-namespace XJK.CommunicationModel
+namespace XJK.AOP.CommunicationModel
 {
     public abstract class AppServiceCommBase : RpcCommBase
     {
@@ -14,7 +13,7 @@ namespace XJK.CommunicationModel
 
         protected abstract void DispatchInvoke(Action action);
 
-        private AppServiceConnection _connection;
+        private AppServiceConnection _connection = null;
         protected AppServiceConnection Connection
         {
             get => _connection;
@@ -32,6 +31,7 @@ namespace XJK.CommunicationModel
                     _connection.RequestReceived += _connection_RequestReceived;
                     _connection.ServiceClosed += _connection_ServiceClosed;
                     Connected?.Invoke();
+                    Debug.WriteLine("AppsService new Connection");
                 }
             }
         }
@@ -50,10 +50,12 @@ namespace XJK.CommunicationModel
 
         public void DisposeConnection()
         {
+            Trace.TraceInformation($"[AppServiceCommBase] DisposeConnection, has connection: {_connection != null}");
             if (_connection != null)
             {
                 _connection.Dispose();
                 _connection = null;
+                Trace.WriteLine("AppsService Connection Disposed");
             }
         }
 
@@ -62,28 +64,16 @@ namespace XJK.CommunicationModel
             DisposeConnection();
         }
 
-        protected virtual void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
-        {
-            var set = args.Request.Message;
-            var methodinfo = set.ToMethodCall();
-            DispatchInvoke(async () =>
-            {
-                await OnReceiveMethodCallAsync(methodinfo, async (response) =>
-                {
-                    var result = await args.Request.SendResponseAsync(response.ToValueSet());
-                    return result.ToString();
-                });
-            });
-        }
-
         protected async Task<bool> TryNewConnection(string AppServiceName, string PackageFamilyName, bool force = false)
         {
+            Trace.TraceInformation($"[AppServiceCommBase] TryNewConnection, IsConnceted  = {IsConnceted()}, force = {force}");
             if (force && IsConnceted())
             {
                 DisposeConnection();
             }
             if (!IsConnceted())
             {
+                Trace.TraceInformation("AppService Connecting...");
                 Connection = new AppServiceConnection
                 {
                     AppServiceName = AppServiceName,
@@ -94,6 +84,7 @@ namespace XJK.CommunicationModel
                 {
                     DisposeConnection();
                 }
+                Trace.TraceInformation($"AppService Connection status [{status}]");
             }
             return IsConnceted();
         }
@@ -103,17 +94,35 @@ namespace XJK.CommunicationModel
             return Connection != null;
         }
 
-        protected virtual Task BeforeSendMessage(MethodCallInfo methodCallInfo)
+        protected virtual void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            return Task.FromResult<object>(null);
+            Log.TagDebugger();
+            var set = args.Request.Message;
+            Log.TagDebugger();
+            var methodinfo = set.ToMethodCall();
+            Log.TagDebugger();
+            DispatchInvoke(async () =>
+            {
+                async Task<string> response_func(MethodCallInfo response)
+                {
+                    Log.TagDebugger();
+                    var result = await args.Request.SendResponseAsync(response.ToValueSet());
+                    Log.TagDebugger();
+                    return result.ToString();
+                }
+                Log.TagDebugger();
+                await OnReceiveMethodCallAsync(methodinfo, response_func);
+            });
         }
 
         protected override async Task<MethodCallInfo> SendMessageAsync(MethodCallInfo methodCallInfo)
         {
-            await BeforeSendMessage(methodCallInfo);
             var set = methodCallInfo.ToValueSet();
+            Log.TagDebugger();
             var response = await Connection.SendMessageAsync(set);
+            Log.TagDebugger();
             var result = response.Message.ToMethodCall();
+            Log.TagDebugger();
             return result;
         }
 

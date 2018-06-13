@@ -2,9 +2,8 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Windows.Foundation.Collections;
-using XJK.MethodWrapper;
 
-namespace XJK.ObjectExtension
+namespace XJK.AOP
 {
     public static class ValueSetExtension
     {

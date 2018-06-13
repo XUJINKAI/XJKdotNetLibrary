@@ -80,7 +80,7 @@
   <ItemGroup>
     <Compile Include="Cmd.cs" />
     <Compile Include="CommandLineHelper.cs" />
-    <Compile Include="Current.cs" />
+    <Compile Include="ENV.cs" />
     <Compile Include="Device\Monitor.cs" />
     <Compile Include="Device\Mouse.cs" />
     <Compile Include="Device\OS.cs" />
