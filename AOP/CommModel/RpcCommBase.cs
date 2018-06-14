@@ -24,7 +24,7 @@ namespace XJK.AOP.CommunicationModel
 
         protected async Task OnReceiveMethodCallAsync(MethodCallInfo methodCallInfo, Func<MethodCallInfo, Task<string>> SendResponse)
         {
-            Debug.WriteLine($"[RpcCommBase.Recive] {methodCallInfo}");
+            Log.Debug($"[RpcCommBase.Recive] {methodCallInfo}");
             var response = new MethodCallInfo()
             {
                 Name = methodCallInfo.Name,
@@ -32,15 +32,16 @@ namespace XJK.AOP.CommunicationModel
             try
             {
                 response.Result = methodCallInfo.Excute(GetExcuteObject());
-                Debug.WriteLine($"[RpcCommBase.Recive] {methodCallInfo}, result [{response.Result}]");
+                Log.Debug($"[RpcCommBase.Recive] {methodCallInfo}, result [{response.Result}]");
             }
             catch (Exception ex)
             {
+                Debugger.Break();
                 Log.Error(ex);
                 response.Exception = ex.GetFullMessage();
             }
             var response_result = await SendResponse(response);
-            Debug.WriteLine($"[RpcCommBase.Recive] {methodCallInfo}, response result [{response_result}]");
+            Log.Debug($"[RpcCommBase.Recive] {methodCallInfo}, response result [{response_result}]");
         }
 
         public object Invoke(MethodInfo targetMethod, object[] args)
@@ -51,27 +52,44 @@ namespace XJK.AOP.CommunicationModel
                 Name = targetMethod.Name,
                 Args = new List<object>(args),
             };
-            Debug.WriteLine($"[RpcCommBase] InvokeAsync {methodCall}");
 
-            object result = null;
-            if(targetMethod.ReturnType?.BaseType == typeof(Task))
+            object result = null; Log.TagDebugger();
+            if (targetMethod.ReturnType?.BaseType == typeof(Task))
             {
-                var generic_method = typeof(RpcCommBase).GetMethod("SendAsyncTaskTHelperFunc");
+                Log.TagDebugger();
+                var generic_method = typeof(RpcCommBase).GetMethod("SendAsyncTaskGenericHelperFunc");
                 var method = generic_method.MakeGenericMethod(targetMethod.ReturnType.GenericTypeArguments[0]);
                 result = method.Invoke(this, new object[] { methodCall });
             }
-            else if(targetMethod.ReturnType == typeof(Task))
+            else if (targetMethod.ReturnType == typeof(Task))
             {
-                result = new Task(() => { });
+                Log.TagDebugger();
+                var method = typeof(RpcCommBase).GetMethod("SendAsyncTaskHelperFunc");
+                result = method.Invoke(this, new object[] { methodCall });
             }
-
+            else
+            {
+                throw new Exception("[RpcCommBase] Type of result must be Task");
+            }
+            Log.TagDebugger();
             result.AssertType(targetMethod.ReturnType);
             return result;
         }
-        
-        public async Task<T> SendAsyncTaskTHelperFunc<T>(MethodCallInfo methodCall)
+
+        public async Task SendAsyncTaskHelperFunc(MethodCallInfo methodCall)
         {
-            var re = await SendMessageAsync(methodCall);
+            var re = await SendMessageAsync(methodCall); Log.TagDebugger();
+            if (re.Exception != null) Log.Error(re.Exception);
+            Debug.WriteLine("re.Dump() " + re.Dump());
+        }
+
+        public async Task<T> SendAsyncTaskGenericHelperFunc<T>(MethodCallInfo methodCall)
+        {
+            var re = await SendMessageAsync(methodCall); Log.TagDebugger();
+            if (re.Exception != null)
+            {
+                Log.Error(re.Exception);
+            }
             return (T)re.Result;
         }
     }

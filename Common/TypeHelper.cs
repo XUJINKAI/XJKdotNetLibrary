@@ -12,7 +12,16 @@ namespace XJK
         {
             if (obj?.GetType() != type)
             {
-                string error_msg = $"[AssertType] Not Match: expect [{type}], object type [{obj?.GetType()}]";
+                string error_msg = $"[AssertType] Not Match: expect '{type}', object type '{obj?.GetType()}', object value '{obj}'";
+
+                if (type == typeof(Task) && obj?.GetType()?.BaseType == typeof(Task))
+                {
+                    // Task == Task<VoidTaskResult>
+                    // Task == Task<T>
+                    Log.Verbose(error_msg);
+                    return;
+                }
+
                 Log.Error(error_msg);
 #if DEBUG
                 Debugger.Break();

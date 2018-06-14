@@ -11,7 +11,7 @@ namespace XJK.AOP
         public string Name { get; set; }
         public List<Object> Args { get; set; }
         public object Result { get; set; } = null;
-        public string Exception { get; set; } = null;
+        public object Exception { get; set; } = null;
 
         public MethodCallInfo()
         {

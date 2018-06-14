@@ -19,10 +19,7 @@ namespace XJK.AOP
         {
             Handled = true;
             FakeResult = fakeResult;
-            if (fakeResult?.GetType() != MethodInfo.ReturnType)
-            {
-                throw new Exception($"[BeforeInvokeEventArgs] Type of FakeResult not Match: except [{MethodInfo.ReturnType}], result [{fakeResult?.GetType()}]");
-            }
+            FakeResult.AssertType(MethodInfo.ReturnType);
         }
     }
 

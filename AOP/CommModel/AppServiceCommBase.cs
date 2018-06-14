@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
+using Windows.Foundation.Collections;
 
 namespace XJK.AOP.CommunicationModel
 {
@@ -12,6 +13,7 @@ namespace XJK.AOP.CommunicationModel
         public event Action<AppServiceRequestReceivedEventArgs> Recived;
 
         protected abstract void DispatchInvoke(Action action);
+        public override bool IsConnceted() => Connection != null;
 
         private AppServiceConnection _connection = null;
         protected AppServiceConnection Connection
@@ -19,18 +21,22 @@ namespace XJK.AOP.CommunicationModel
             get => _connection;
             set
             {
+                if (_connection == value)
+                {
+                    Trace.TraceWarning($"[AppServiceCommBase] set_Connection: _connection == value;");
+                    return;
+                }
                 if (_connection != null)
                 {
                     _connection.RequestReceived -= _connection_RequestReceived;
                     _connection.ServiceClosed -= _connection_ServiceClosed;
-                    _connection.Dispose();
                 }
                 _connection = value;
                 if (_connection != null)
                 {
-                    _connection.RequestReceived += _connection_RequestReceived;
                     _connection.ServiceClosed += _connection_ServiceClosed;
-                    Connected?.Invoke();
+                    _connection.RequestReceived += _connection_RequestReceived;
+                    OnConnectionConnected();
                     Debug.WriteLine("AppsService new Connection");
                 }
             }
@@ -39,29 +45,24 @@ namespace XJK.AOP.CommunicationModel
         private void _connection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             OnRequestReceived(sender, args);
-            Recived?.Invoke(args);
         }
 
         private void _connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
-            OnConnectionClosed(sender, args.Status);
-            Closed?.Invoke(args.Status);
+            OnConnectionClosed(args.Status);
         }
 
         public void DisposeConnection()
         {
-            Trace.TraceInformation($"[AppServiceCommBase] DisposeConnection, has connection: {_connection != null}");
-            if (_connection != null)
+            Trace.TraceInformation($"[AppServiceCommBase] DisposeConnection, has connection: {IsConnceted()}");
+            if (IsConnceted())
             {
-                _connection.Dispose();
-                _connection = null;
+                var t = Connection;
+                Connection = null;
+                t.Dispose();
+                t = null;
                 Trace.WriteLine("AppsService Connection Disposed");
             }
-        }
-
-        protected virtual void OnConnectionClosed(AppServiceConnection sender, AppServiceClosedStatus status)
-        {
-            DisposeConnection();
         }
 
         protected async Task<bool> TryNewConnection(string AppServiceName, string PackageFamilyName, bool force = false)
@@ -89,41 +90,62 @@ namespace XJK.AOP.CommunicationModel
             return IsConnceted();
         }
 
-        public override bool IsConnceted()
+        protected virtual void OnConnectionConnected()
         {
-            return Connection != null;
+            Connected?.Invoke();
+        }
+
+        protected virtual void OnConnectionClosed(AppServiceClosedStatus status)
+        {
+            DisposeConnection();
+            Closed?.Invoke(status);
         }
 
         protected virtual void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            Log.TagDebugger();
+            Recived?.Invoke(args);
             var set = args.Request.Message;
-            Log.TagDebugger();
             var methodinfo = set.ToMethodCall();
-            Log.TagDebugger();
             DispatchInvoke(async () =>
             {
                 async Task<string> response_func(MethodCallInfo response)
                 {
-                    Log.TagDebugger();
-                    var result = await args.Request.SendResponseAsync(response.ToValueSet());
-                    Log.TagDebugger();
+                    Log.Debug($"[AppServiceCommBase.OnRequestReceived] response_func({response.Dump()})");
+                    var re_set = response.ToValueSet();
+                    Log.Debug($"[AppServiceCommBase.OnRequestReceived] response set:{C.LF}{set.Dump()}");
+                    var result = await args.Request.SendResponseAsync(re_set);
+                    Log.Debug($"[AppServiceCommBase.OnRequestReceived] response result '{result}'");
                     return result.ToString();
                 }
-                Log.TagDebugger();
                 await OnReceiveMethodCallAsync(methodinfo, response_func);
             });
         }
 
         protected override async Task<MethodCallInfo> SendMessageAsync(MethodCallInfo methodCallInfo)
         {
-            var set = methodCallInfo.ToValueSet();
-            Log.TagDebugger();
-            var response = await Connection.SendMessageAsync(set);
-            Log.TagDebugger();
-            var result = response.Message.ToMethodCall();
-            Log.TagDebugger();
-            return result;
+            ValueSet set;
+            AppServiceResponse response;
+            MethodCallInfo result;
+            Log.Debug($"[AppServiceCommBase.SendMessageAsync] send MethodInfo:{C.LF}{methodCallInfo.Dump()}");
+            set = methodCallInfo.ToValueSet();
+            Log.Debug($"[AppServiceCommBase.SendMessageAsync] send set:{C.LF}{set.Dump()}");
+            response = await Connection.SendMessageAsync(set);
+            Log.Debug($"[AppServiceCommBase.SendMessageAsync] response:{C.LF}{response.Dump()}");
+            if (response.Status == AppServiceResponseStatus.Success)
+            {
+                if (!response.Message.ContainsKey(ValueSetExtension.FuncMethodBase64Key))
+                {
+                    Debugger.Break();
+                }
+                result = response.Message.ToMethodCall();
+                return result;
+            }
+            else
+            {
+                result = new MethodCallInfo() { Name = methodCallInfo.Name, Exception = response.Status };
+                Debugger.Break();
+                return result;
+            }
         }
 
     }
