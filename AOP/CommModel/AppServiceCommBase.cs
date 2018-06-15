@@ -123,14 +123,9 @@ namespace XJK.AOP.CommunicationModel
 
         protected override async Task<MethodCallInfo> SendMessageAsync(MethodCallInfo methodCallInfo)
         {
-            ValueSet set;
-            AppServiceResponse response;
-            MethodCallInfo result;
-            Log.Debug($"[AppServiceCommBase.SendMessageAsync] send MethodInfo:{C.LF}{methodCallInfo.Dump()}");
-            set = methodCallInfo.ToValueSet();
-            Log.Debug($"[AppServiceCommBase.SendMessageAsync] send set:{C.LF}{set.Dump()}");
-            response = await Connection.SendMessageAsync(set);
-            Log.Debug($"[AppServiceCommBase.SendMessageAsync] response:{C.LF}{response.Dump()}");
+            MethodCallInfo result = null;
+            ValueSet set = methodCallInfo.ToValueSet();
+            AppServiceResponse response = await Connection.SendMessageAsync(set);
             if (response.Status == AppServiceResponseStatus.Success)
             {
                 if (!response.Message.ContainsKey(ValueSetExtension.FuncMethodBase64Key))
@@ -138,14 +133,13 @@ namespace XJK.AOP.CommunicationModel
                     Debugger.Break();
                 }
                 result = response.Message.ToMethodCall();
-                return result;
             }
             else
             {
-                result = new MethodCallInfo() { Name = methodCallInfo.Name, Exception = response.Status };
                 Debugger.Break();
-                return result;
+                throw new Exception($"SendMessageAsync Error: {response.Status}");
             }
+            return result;
         }
 
     }

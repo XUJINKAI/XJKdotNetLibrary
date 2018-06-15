@@ -86,7 +86,7 @@ namespace XJK.AOP
             Debug.WriteLine("[MethodProxy.Invoke] " + (new MethodCallInfo() { Name = targetMethod.Name, Args = args.ToList() }).ToString());
 
             bool IsIInvokeProxy = _invokeType == InvokeType.Proxy || _invokeType == InvokeType.ProxyFunc;
-            IInvokerProxy invoker = null;
+            IInvokerProxy invoker;
             switch (_invokeType)
             {
                 case InvokeType.Proxy:
@@ -94,6 +94,9 @@ namespace XJK.AOP
                     break;
                 case InvokeType.ProxyFunc:
                     invoker = GetIInvokerProxyFunc();
+                    break;
+                default:
+                    invoker = null;
                     break;
             }
 
@@ -105,7 +108,7 @@ namespace XJK.AOP
                     Args = args,
                 };
                 BeforeInvoke?.Invoke(this, beforeArgs);
-                invoker.BeforeInvoke(this, beforeArgs);
+                invoker?.BeforeInvoke(this, beforeArgs);
                 if (beforeArgs.Handled)
                 {
                     return beforeArgs.FakeResult;
@@ -126,8 +129,22 @@ namespace XJK.AOP
                 throw new Exception("InvokeProxy: unknown InvokeType");
             }
 
+            if (result is Task task)
+            {
+                if (targetMethod.ReturnType.IsGenericType)
+                {
+                    Type type = targetMethod.ReturnType.GetGenericArguments()[0];
+                    result = TypeHelper.ConvertTaskObject(task, type);
+                }
+                else
+                {
+                    Task.Run(async () => await task);
+                    result = Task.CompletedTask;
+                }
+            }
+            
             result.AssertType(targetMethod.ReturnType);
-
+            
             if (IsIInvokeProxy || AfterInvoke != null)
             {
                 AfterInvokeEventArgs afterArgs = new AfterInvokeEventArgs()
@@ -137,9 +154,10 @@ namespace XJK.AOP
                     Result = result,
                 };
                 AfterInvoke?.Invoke(this, afterArgs);
-                invoker.AfterInvoke(this, afterArgs);
+                invoker?.AfterInvoke(this, afterArgs);
             }
             return result;
         }
+
     }
 }

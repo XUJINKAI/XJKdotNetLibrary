@@ -46,51 +46,15 @@ namespace XJK.AOP.CommunicationModel
 
         public object Invoke(MethodInfo targetMethod, object[] args)
         {
-            Debug.WriteLine($"[RpcCommBase] InvokeAsync {targetMethod}");
+            Debug.WriteLine($"[RpcCommBase.InvokeAsync] {targetMethod}");
             MethodCallInfo methodCall = new MethodCallInfo()
             {
                 Name = targetMethod.Name,
                 Args = new List<object>(args),
             };
-
-            object result = null; Log.TagDebugger();
-            if (targetMethod.ReturnType?.BaseType == typeof(Task))
-            {
-                Log.TagDebugger();
-                var generic_method = typeof(RpcCommBase).GetMethod("SendAsyncTaskGenericHelperFunc");
-                var method = generic_method.MakeGenericMethod(targetMethod.ReturnType.GenericTypeArguments[0]);
-                result = method.Invoke(this, new object[] { methodCall });
-            }
-            else if (targetMethod.ReturnType == typeof(Task))
-            {
-                Log.TagDebugger();
-                var method = typeof(RpcCommBase).GetMethod("SendAsyncTaskHelperFunc");
-                result = method.Invoke(this, new object[] { methodCall });
-            }
-            else
-            {
-                throw new Exception("[RpcCommBase] Type of result must be Task");
-            }
-            Log.TagDebugger();
-            result.AssertType(targetMethod.ReturnType);
+            object result = SendMessageAsync(methodCall).ContinueWith(async task => (await task).Result).Unwrap();
+            Debug.WriteLine($"[RpcCommBase.InvokeAsync] result {result}");
             return result;
-        }
-
-        public async Task SendAsyncTaskHelperFunc(MethodCallInfo methodCall)
-        {
-            var re = await SendMessageAsync(methodCall); Log.TagDebugger();
-            if (re.Exception != null) Log.Error(re.Exception);
-            Debug.WriteLine("re.Dump() " + re.Dump());
-        }
-
-        public async Task<T> SendAsyncTaskGenericHelperFunc<T>(MethodCallInfo methodCall)
-        {
-            var re = await SendMessageAsync(methodCall); Log.TagDebugger();
-            if (re.Exception != null)
-            {
-                Log.Error(re.Exception);
-            }
-            return (T)re.Result;
         }
     }
 }
