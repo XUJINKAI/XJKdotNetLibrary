@@ -36,6 +36,51 @@ namespace AOP
                 LogBox.Text += obj;
             });
         }
+        
+        private async void MethodCallInfoInvokeObject(object sender, RoutedEventArgs e)
+        {
+            Client client = new Client();
+            MethodCallInfo methodCallInfo = new MethodCallInfo()
+            {
+                Name = "ToBase64",
+                Args = new List<object>()
+                {
+                    Helper.RandomString(20),
+                }
+            };
+            var result = await methodCallInfo.InvokeAsync(client);
+            Log.Info($"{result}");
+        }
+
+        private async void MethodCallInfoInvokeTask(object sender, RoutedEventArgs e)
+        {
+            Client client = new Client();
+            MethodCallInfo methodCallInfo = new MethodCallInfo()
+            {
+                Name = "WriteLog",
+                Args = new List<object>()
+                {
+                    Helper.RandomString(20),
+                }
+            };
+            var result = await methodCallInfo.InvokeAsync(client);
+            Log.Info($"{result}");
+        }
+
+        private async void MethodCallInfoInvokeTaskObject(object sender, RoutedEventArgs e)
+        {
+            Client client = new Client();
+            MethodCallInfo methodCallInfo = new MethodCallInfo()
+            {
+                Name = "ToBase64Async",
+                Args = new List<object>()
+                {
+                    Helper.RandomString(20),
+                }
+            };
+            var result = await methodCallInfo.InvokeAsync(client);
+            Log.Info(result);
+        }
 
         private void InterceptSync(object sender, RoutedEventArgs e)
         {

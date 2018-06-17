@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BFABDD52-F228-490D-A7CF-C019DF252D5B}</ProjectGuid>
+    <ProjectGuid>{9CE7C93B-5368-416B-BF14-ED237F813F14}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>XJK.SysX</RootNamespace>

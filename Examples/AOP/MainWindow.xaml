@@ -22,6 +22,12 @@
                     </Style>
                 </StackPanel.Resources>
                 <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="MethodCallInfo Invoke: "></TextBlock>
+                    <Button Content="Object" Click="MethodCallInfoInvokeObject"></Button>
+                    <Button Content="Task" Click="MethodCallInfoInvokeTask"></Button>
+                    <Button Content="TaskObject" Click="MethodCallInfoInvokeTaskObject"></Button>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Intercept Obj: "></TextBlock>
                     <Button Content="Sync" Click="InterceptSync"></Button>
                     <Button Content="Async" Click="InterceptAsync"></Button>

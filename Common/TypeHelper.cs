@@ -8,17 +8,38 @@ namespace XJK
 {
     public static class TypeHelper
     {
-        public static void AssertType(this object obj, Type type)
+        public static bool IsType(this object obj, Type type)
         {
-            if (obj?.GetType() != type)
+            if (obj == null)
             {
-                if (type == typeof(Task) &&
+                return type == null;
+            }
+            if (obj.GetType() == type)
+            {
+                return true;
+            }
+            else if(obj.GetType().GetGenericTypeDefinition() == type)
+            {
+                // T<TX> ==> T<>
+                return true;
+            }
+            else if (type == typeof(Task) &&
                 obj.GetType().GetGenericTypeDefinition() == typeof(Task<>) &&
                 obj.GetType().GetGenericArguments()[0].Name == "VoidTaskResult")
-                {
-                    return;
-                }
+            {
+                // Task<VoidTaskResult> ==> Task
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
+        public static void AssertType(this object obj, Type type)
+        {
+            if (!IsType(obj, type))
+            {
                 string error_msg = $"[AssertType] Not Match: expect '{type}', object type '{obj?.GetType()}', object value '{obj}'";
 
                 Log.Error(error_msg);
@@ -68,25 +89,12 @@ namespace XJK
             Debug.WriteLine($"DefaultValue for [{type}] is [{result}]");
             return result;
         }
-        
-        public static object ConvertTaskObject(object task, Type type)
-        {
-            var convertMethod = typeof(TypeHelper).GetMethod("ConvertTaskObjectHelperFunction");
-            var genericMethod = convertMethod.MakeGenericMethod(type);
-            var result = genericMethod.Invoke(null, new object[] { task });
-            return result;
-        }
 
         // Helper Function
 
         public static Task<T> WrapTaskHelperFunction<T>(object value)
         {
             return Task.FromResult((T)value);
-        }
-        
-        public static async Task<T> ConvertTaskObjectHelperFunction<T>(object task)
-        {
-            return (T)(await (Task<object>)task);
         }
     }
 }

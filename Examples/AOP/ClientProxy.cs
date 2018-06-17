@@ -11,20 +11,20 @@ using XJK.Serializers;
 
 namespace AOP
 {
-    public class Message
-    {
-        public object Msg { get; set; }
-
-        public static Message InvokeMethod(MethodInfo targetMethod, object[] args)
-        {
-            var Client = new Client();
-            var result = targetMethod.Invoke(Client, args);
-            return new Message() { Msg = result };
-        }
-    }
-    
     public class ClientInvoker : IInvokerProxy
     {
+        public async Task<MethodCallInfo> SendMessageAsync(MethodCallInfo methodCallInfo)
+        {
+            var Client = new Client();
+            var response = new MethodCallInfo()
+            {
+                Name = methodCallInfo.Name,
+            };
+            var result = await methodCallInfo.InvokeAsync(Client);
+            response.Result = result;
+            return response;
+        }
+
         public void AfterInvoke(object sender, AfterInvokeEventArgs args)
         {
             Log.Info(args);
@@ -37,8 +37,13 @@ namespace AOP
 
         public object Invoke(MethodInfo targetMethod, object[] args)
         {
-            object result;
-            result = Message.InvokeMethod(targetMethod, args).Msg;
+            MethodCallInfo methodCall = new MethodCallInfo()
+            {
+                Name = targetMethod.Name,
+                Args = new List<object>(args),
+            };
+            var task = SendMessageAsync(methodCall);
+            var result = task.ContinueWith(async t => { return (await t).Result; }).Unwrap();
             return result;
         }
     }

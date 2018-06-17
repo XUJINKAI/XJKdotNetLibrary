@@ -17,20 +17,19 @@ namespace XJK.AOP
         {
             Args = new List<object>();
         }
-
-        public object Excute(object obj)
+        
+        public async Task<object> InvokeAsync(object obj)
         {
             Type[] types = Args.Select(o => o.GetType()).ToArray();
             var method = obj.GetType().GetMethod(Name, types);
             var invokeresult = method.Invoke(obj, Args.ToArray());
-            if(invokeresult is Task)
+            if (invokeresult is Task task)
             {
-                Task.Run(async () => { await (Task)invokeresult; });
-                return invokeresult.GetType().GetMethod("get_Result").Invoke(invokeresult, null);
+                return await TaskHelper.ConvertTaskReturnObject(task);
             }
             return invokeresult;
         }
-
+        
         public override string ToString()
         {
             string s = Name;

@@ -31,7 +31,7 @@ namespace XJK.AOP.CommunicationModel
             };
             try
             {
-                response.Result = methodCallInfo.Excute(GetExcuteObject());
+                response.Result = await methodCallInfo.InvokeAsync(GetExcuteObject());
                 Log.Debug($"[RpcCommBase.Recive] {methodCallInfo}, result [{response.Result}]");
             }
             catch (Exception ex)
@@ -52,7 +52,11 @@ namespace XJK.AOP.CommunicationModel
                 Name = targetMethod.Name,
                 Args = new List<object>(args),
             };
-            object result = SendMessageAsync(methodCall).ContinueWith(async task => (await task).Result).Unwrap();
+            object result = SendMessageAsync(methodCall).ContinueWith(
+                async task =>
+                {
+                    return (await task).Result;
+                }).Unwrap();
             Debug.WriteLine($"[RpcCommBase.InvokeAsync] result {result}");
             return result;
         }

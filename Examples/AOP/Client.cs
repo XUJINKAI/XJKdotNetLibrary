@@ -29,6 +29,7 @@ namespace AOP
         public string ToBase64(string str)
         {
             Thread.Sleep(2000);
+            Log.Info("ToBase64");
             return str.ToBase64BinaryString();
         }
 
@@ -37,6 +38,7 @@ namespace AOP
             return await Task.Run(() =>
             {
                 Thread.Sleep(2000);
+                Log.Info("ToBase64Async");
                 return Task.FromResult(str.ToBase64BinaryString());
             });
         }
@@ -46,7 +48,7 @@ namespace AOP
             await Task.Run(() =>
             {
                 Thread.Sleep(2000);
-                Log.Info(str);
+                Log.Info("WriteLog: " + str);
             });
         }
     }

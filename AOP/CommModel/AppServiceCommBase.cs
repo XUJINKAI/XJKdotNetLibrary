@@ -123,21 +123,18 @@ namespace XJK.AOP.CommunicationModel
 
         protected override async Task<MethodCallInfo> SendMessageAsync(MethodCallInfo methodCallInfo)
         {
-            MethodCallInfo result = null;
             ValueSet set = methodCallInfo.ToValueSet();
             AppServiceResponse response = await Connection.SendMessageAsync(set);
-            if (response.Status == AppServiceResponseStatus.Success)
+            MethodCallInfo result = response.Message.ToMethodCall();
+            if (response.Status != AppServiceResponseStatus.Success)
             {
-                if (!response.Message.ContainsKey(ValueSetExtension.FuncMethodBase64Key))
-                {
-                    Debugger.Break();
-                }
-                result = response.Message.ToMethodCall();
-            }
-            else
-            {
+                Log.Error($"SendMessageAsync {response.Status}");
                 Debugger.Break();
-                throw new Exception($"SendMessageAsync Error: {response.Status}");
+            }
+            else if (!response.Message.ContainsKey(ValueSetExtension.FuncMethodBase64Key))
+            {
+                Log.Error($"SendMessageAsync Response Message ValueSet void");
+                Debugger.Break();
             }
             return result;
         }

@@ -134,7 +134,16 @@ namespace XJK.AOP
                 if (targetMethod.ReturnType.IsGenericType)
                 {
                     Type type = targetMethod.ReturnType.GetGenericArguments()[0];
-                    result = TypeHelper.ConvertTaskObject(task, type);
+                    if (task.IsType(typeof(Task<object>)))
+                    {
+                        result = TaskHelper.ConvertTaskObject((Task<object>)task, type);
+                    }
+                    else
+                    {
+                        // e.g. UnwrapPromise<object>
+                        var generic_task = TaskHelper.ConvertTaskReturnObject(task);
+                        result = TaskHelper.ConvertTaskObject(generic_task, type);
+                    }
                 }
                 else
                 {
