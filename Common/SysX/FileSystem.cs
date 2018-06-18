@@ -49,6 +49,7 @@ namespace XJK.SysX
 
         public static string ReadAllText(string path)
         {
+            Log.Debug($"ReadAllText {path}");
             using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 using (var textReader = new StreamReader(fileStream))
@@ -60,18 +61,22 @@ namespace XJK.SysX
 
         public static void WriteAllText(string path, string content)
         {
-            using (var fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite))
-            {
-                using (var textWriter = new StreamWriter(fileStream))
-                {
-                    textWriter.Write(content);
-                }
-            }
+            Log.Debug($"WriteAllText {path}");
+            File.WriteAllText(path, content);
+            // 写入容易错乱
+            //using (var fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+            //{
+            //    using (var textWriter = new StreamWriter(fileStream))
+            //    {
+            //        textWriter.Write(content);
+            //    }
+            //}
         }
 
         public static void AppendText(string path, string content)
         {
-            using (var fileStream = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+            Log.Debug($"AppendText {path}");
+            using (var fileStream = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.Read))
             {
                 using (var textWriter = new StreamWriter(fileStream))
                 {

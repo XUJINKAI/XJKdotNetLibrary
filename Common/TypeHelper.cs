@@ -72,7 +72,7 @@ namespace XJK
             }
             else if (type == typeof(Task))
             {
-                result = Task.FromResult<object>(null);
+                result = Task.CompletedTask;
             }
             else if (type.BaseType == typeof(Task))
             {

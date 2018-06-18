@@ -12,7 +12,7 @@ namespace XJK.AOP.AppServiceRpc
         public event Action<AppServiceClosedStatus> Closed;
         public event Action<AppServiceRequestReceivedEventArgs> Recived;
 
-        protected abstract void DispatchInvoke(Action action);
+        public abstract void DispatchInvoke(Action action);
         protected abstract object GetExcuteObject();
         protected abstract void OnInvokeNoConnection();
 
