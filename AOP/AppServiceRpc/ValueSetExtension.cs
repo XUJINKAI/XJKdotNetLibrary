@@ -5,7 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Windows.Foundation.Collections;
 using XJK.Serializers;
 
-namespace XJK.AOP
+namespace XJK.AOP.AppServiceRpc
 {
     public static class ValueSetExtension
     {
@@ -22,10 +22,6 @@ namespace XJK.AOP
 
         public static MethodCallInfo ToMethodCall(this ValueSet set)
         {
-            if (!set.ContainsKey(FuncMethodBase64Key))
-            {
-                Debugger.Break();
-            }
             string b64 = set[FuncMethodBase64Key] as string;
             var method = BinarySerialization.FromBase64BinaryString<MethodCallInfo>(b64);
             return method;

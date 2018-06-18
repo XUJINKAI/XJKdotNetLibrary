@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace XJK.AOP
+namespace XJK.AOP.ObjectExtension
 {
     public static class ExpressionExtension
     {
