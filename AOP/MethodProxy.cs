@@ -83,7 +83,7 @@ namespace XJK.AOP
 
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
-            Debug.WriteLine("[MethodProxy.Invoke] " + (new MethodCallInfo() { Name = targetMethod.Name, Args = args.ToList() }).ToString());
+            Log.Debug("[MethodProxy.Invoke] " + (new MethodCallInfo() { Name = targetMethod.Name, Args = args.ToList() }).ToString());
 
             bool IsIInvokeProxy = _invokeType == InvokeType.Proxy || _invokeType == InvokeType.ProxyFunc;
             IInvokerProxy invoker;

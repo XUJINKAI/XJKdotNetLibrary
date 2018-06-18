@@ -15,10 +15,10 @@ namespace XJK.AOP
         public bool Handled { get; private set; } = false;
         public object FakeResult { get; private set; }
 
-        public void Handle(object fakeResult)
+        public void Handle(object fakeResult = null)
         {
             Handled = true;
-            FakeResult = fakeResult;
+            FakeResult = fakeResult ?? MethodInfo.ReturnType.DefaultValue();
             FakeResult.AssertType(MethodInfo.ReturnType);
         }
     }

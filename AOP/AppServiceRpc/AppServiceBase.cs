@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.AppService;
@@ -15,7 +14,7 @@ namespace XJK.AOP.AppServiceRpc
 
         protected abstract void DispatchInvoke(Action action);
         protected abstract object GetExcuteObject();
-        protected abstract void NotConnectedError(BeforeInvokeEventArgs args);
+        protected abstract void OnInvokeNoConnection();
 
         public bool IsConnceted() => Connection != null;
 
@@ -64,7 +63,7 @@ namespace XJK.AOP.AppServiceRpc
                 Connection = null;
                 t.Dispose();
                 t = null;
-                Trace.WriteLine("[AppServiceBase] Connection Disposed");
+                Log.Trace("[AppServiceBase] Connection Disposed");
             }
         }
 
@@ -79,7 +78,7 @@ namespace XJK.AOP.AppServiceRpc
             Closed?.Invoke(status);
         }
 
-        protected virtual async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        protected async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             Recived?.Invoke(args);
             var set = args.Request.Message;
@@ -117,12 +116,16 @@ namespace XJK.AOP.AppServiceRpc
                 }).Unwrap();
             return result;
         }
-
+        
         public void BeforeInvoke(object sender, BeforeInvokeEventArgs args)
         {
             if (!IsConnceted())
             {
-                NotConnectedError(args);
+                OnInvokeNoConnection();
+                if (!IsConnceted())
+                {
+                    args.Handle();
+                }
             }
         }
 

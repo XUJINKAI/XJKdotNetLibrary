@@ -35,12 +35,12 @@ namespace XJK
         
         public static async Task<TReturn> _ConvertTaskObjectToTaskTHelperFunction<TReturn>(Task<object> task)
         {
-            return (TReturn)(await task);
+            return (TReturn)(await task.ConfigureAwait(false));
         }
 
         public static async Task<object> _ConvertTaskTToObjectHelperFunction<T>(Task<T> task)
         {
-            return await task;
+            return await task.ConfigureAwait(false);
         }
     }
 }

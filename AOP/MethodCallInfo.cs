@@ -25,7 +25,7 @@ namespace XJK.AOP
             var invokeresult = method.Invoke(obj, Args.ToArray());
             if (invokeresult is Task task)
             {
-                return await TaskHelper.ConvertTaskReturnObject(task);
+                return await TaskHelper.ConvertTaskReturnObject(task).ConfigureAwait(false);
             }
             return invokeresult;
         }
