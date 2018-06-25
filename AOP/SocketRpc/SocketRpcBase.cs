@@ -12,16 +12,7 @@ namespace XJK.AOP.SocketRpc
     {
         public abstract void DispatchInvoke(Action action);
         protected abstract object GetExcuteObject();
-        
-        SocketPipeClient SocketPipeClient;
-
-        private async Task<MethodCallInfo> SendMessageAsync(MethodCallInfo methodCallInfo)
-        {
-            byte[] bytes = BytesSerialization.ObjectToBytesArray(methodCallInfo);
-            var response = await SocketPipeClient.SendBytes(bytes);
-            MethodCallInfo result = (MethodCallInfo)BytesSerialization.BytesArrayToObject(response);
-            return result;
-        }
+        protected abstract Task<byte[]> SendBytesAsync(byte[] Bytes);
 
         public void AfterInvoke(object sender, AfterInvokeEventArgs args)
         {
@@ -40,10 +31,13 @@ namespace XJK.AOP.SocketRpc
                 Name = targetMethod.Name,
                 Args = new List<object>(args),
             };
-            object result = SendMessageAsync(methodCall).ContinueWith(
+            byte[] methodCallBytes = BytesSerialization.ObjectToBytesArray(methodCall);
+            object result = SendBytesAsync(methodCallBytes).ContinueWith(
                 async task =>
                 {
-                    return (await task).Result;
+                    byte[] responseBytes = await task;
+                    MethodCallInfo responseMethodCall = (MethodCallInfo)BytesSerialization.BytesArrayToObject(responseBytes);
+                    return responseMethodCall.Result;
                 }).Unwrap();
             return result;
         }
