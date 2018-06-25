@@ -26,7 +26,7 @@ namespace Test
         public MainWindow()
         {
             InitializeComponent();
-            Title += $", Admin({XJK.SysX.Current.IsAdministrator()})";
+            Title += $", Admin({ENV.IsAdministrator()})";
             Log.ListenSystemDiagnosticsLog();
             Log.TextListener += Log_TextListener;
         }

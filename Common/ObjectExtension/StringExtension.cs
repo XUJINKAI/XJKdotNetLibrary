@@ -30,5 +30,15 @@ namespace XJK
             }
             return s;
         }
+
+        public static byte[] ConvertBytes(this string s)
+        {
+            return Encoding.ASCII.GetBytes(s);
+        }
+
+        public static string ConvertString(this byte[] bytes)
+        {
+            return Encoding.ASCII.GetString(bytes);
+        }
     }
 }

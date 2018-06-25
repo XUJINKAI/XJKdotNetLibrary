@@ -28,9 +28,9 @@ namespace CmdRun
             InitializeComponent();
             Log.ListenSystemDiagnosticsLog();
             Log.TextListener += Log_TextListener;
-            IsAdminTextBox.Text = Current.IsAdministrator() ? "Administrator" : "Normal User";
-            CurrentExePath.Text = Current.ExePath;
-            CommandBox.Text = Current.ExePath; //"D:\\space space.exe";
+            IsAdminTextBox.Text = ENV.IsAdministrator() ? "Administrator" : "Normal User";
+            CurrentExePath.Text = ENV.ExePath;
+            CommandBox.Text = ENV.ExePath; //"D:\\space space.exe";
             ArgsBox.Text = "";
             ShowWindowCheckBox.IsChecked = false;
             foreach(var x in Environment.GetCommandLineArgs())
