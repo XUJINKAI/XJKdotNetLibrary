@@ -11,17 +11,18 @@ namespace XJK.Network.Socket
 {
     public class SocketPipeClient: SocketBase
     {
-        public string Name { get; set; } = null;
+        public string Name { get; set; } = "";
         public string HostName { get; private set; }
         public int Port { get; private set; }
 
         public TcpClient Client { get; private set; }
         private Thread ListenThread;
 
-        public SocketPipeClient(TcpClient tcpClient)
+        public SocketPipeClient(TcpClient tcpClient, string name = "")
         {
+            Name = name;
             Client = tcpClient;
-            ListenThread = ReceivingLoopThread(Client, Name ?? "SocketPipeClient", client =>
+            ListenThread = ReceivingLoopThread(Client, Name, client =>
             {
                 Close();
             });
@@ -34,29 +35,50 @@ namespace XJK.Network.Socket
         {
             HostName = host;
             Port = port;
-            Client = new TcpClient(HostName, Port);
-            Log.Info($"connect {HostName}:{Port}");
-            ListenThread = ReceivingLoopThread(Client, Name ?? "SocketPipeClient", client =>
+        }
+
+        public bool Connect()
+        {
+            Log.Info($"[{Name}] Connect {HostName}:{Port}");
+            if (Client?.Connected ?? false) return false;
+            if(Client == null)
+            {
+                try
+                {
+                    Client = new TcpClient(HostName, Port);
+                }
+                catch (Exception ex)
+                {
+                    Log.Verbose($"[{Name}] Connect error, {ex.Message}");
+                    return false;
+                }
+            }
+            else
+            {
+                Client.Connect(HostName, Port);
+            }
+            ListenThread = ReceivingLoopThread(Client, Name, client =>
             {
                 Close();
             });
             ListenThread.Start();
+            return true;
         }
 
         public void Close()
         {
-            Debug.WriteLine($"Close Client: Current Thread ID '{Thread.CurrentThread.ManagedThreadId}', Close Thread ID '{ListenThread.ManagedThreadId}'");
-            ListenThread.Abort();
-            OnClose(Client);
+            Debug.WriteLine($"[{Name}] Close Client: Current Thread ID '{Thread.CurrentThread.ManagedThreadId}', Close Thread ID '{ListenThread?.ManagedThreadId}'");
+            ListenThread?.Abort();
+            if (Client != null) OnClose(Client);
         }
         
         public async Task<byte[]> SendBytes(byte[] Bytes)
         {
-            if (!Client.Connected) throw new Exception("Can't send cause client not connected.");
-            Log.Debug($"SendBytes byte[{Bytes.Length}]");
+            if (!Client.Connected) throw new Exception($"[{Name}] Can't send cause client not connected.");
+            Log.Debug($"[{Name}] SendBytes byte[{Bytes.Length}]");
             int id = await SendRequestAsync(Client, Bytes);
             var response = await GetResponseAsync(id);
-            Log.Debug($"ResponseBytes byte[{response.Length}]");
+            Log.Debug($"[{Name}] ResponseBytes byte[{response.Length}]");
             return response;
         }
 

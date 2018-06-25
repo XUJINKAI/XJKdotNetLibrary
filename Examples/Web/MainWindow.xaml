@@ -24,15 +24,23 @@
         <StackPanel Margin="0,10,0,5">
             <StackPanel Orientation="Horizontal">
                 <Button Content="NewThread" Click="OpenNewThread"></Button>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Socket: "></TextBlock>
-                <Button Content="Server" Click="SocketServerOpen"></Button>
-                <Button Content="Client" Click="SocketClientOpen"></Button>
-                <Button Content="ClientClose" Click="SocketClientClose"></Button>
                 <TextBlock Text="port"></TextBlock>
                 <TextBox x:Name="SocketPortBox" Width="100" Text="9000"></TextBox>
+                <Button Content="TestPort" Click="TestPort"></Button>
+                <Button Content="UnusedPort" Click="UnusedPort"></Button>
                 <Button Content="ClearLog" Click="ClearLog"></Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Server: "></TextBlock>
+                <Button Content="New" Click="SocketServerNew"></Button>
+                <Button Content="Start" Click="SocketServerStart"></Button>
+                <Button Content="Stop" Click="SocketServerClose"></Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Client: "></TextBlock>
+                <Button Content="New" Click="SocketClientNew"></Button>
+                <Button Content="Connect" Click="SocketClientConnect"></Button>
+                <Button Content="Close" Click="SocketClientClose"></Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBox Width="500" x:Name="MsgBox"></TextBox>

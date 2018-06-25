@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using XJK;
 using XJK.Serializers;
@@ -14,7 +16,11 @@ namespace XJK.Network.Socket
     {
         public event RequestReceivedEventHandler RequestReceived;
 
+        public string HostName { get; private set; }
+        public int Port { get; private set; }
+
         private TcpListener Server;
+        private Thread ListenThread;
         private readonly List<SocketPipeClient> ClientList = new List<SocketPipeClient>();
 
         public int ClientCount => ClientList.Count;
@@ -23,39 +29,68 @@ namespace XJK.Network.Socket
 
         public SocketPipeServer(string host, int port)
         {
-            IPAddress localAddr = IPAddress.Parse(host);
-            Server = new TcpListener(localAddr, port);
-            StartListen();
-            Log.Info($"listen {host}:{port}");
+            HostName = host;
+            Port = port;
         }
 
         public void StopListen()
         {
+            Debug.WriteLine($"Stop Listen {Server.LocalEndpoint}");
+            ListenThread?.Abort();
             Server.Stop();
-            
         }
 
-        public async void StartListen()
+        public bool StartListen()
         {
-            Server.Start();
-            while (true)
+            if (Server?.Server.Connected ?? false) return false;
+            if(Server == null)
             {
-                var tcpClient = await Server.AcceptTcpClientAsync();
-                SocketPipeClient client = new SocketPipeClient(tcpClient)
+                try
                 {
-                    Name = $"Income[{ClientCount}]",
-                };
-                ClientList.Add(client);
-                client.Closed += (sender, args) =>
+                    IPAddress localAddr = IPAddress.Parse(HostName);
+                    Server = new TcpListener(localAddr, Port);
+                }
+                catch (Exception ex)
                 {
-                    ClientList.Remove(client);
-                };
-                client.RequestReceived += async (sender, args) =>
-                {
-                    await RequestReceived?.Invoke(this, args);
-                };
-                Log.Info($"new incomming client, count {ClientCount}");
+                    Log.Verbose($"Connect error, {ex.Message}");
+                    return false;
+                }
             }
+            Server.Start();
+            ListenThread = ListenningLoopThread();
+            ListenThread.Start();
+            return true;
+        }
+
+        public Thread ListenningLoopThread()
+        {
+            return new Thread(async() =>
+            {
+                Log.Info($"listen {Server.LocalEndpoint}");
+                while (true)
+                {
+                    try
+                    {
+                        var tcpClient = await Server.AcceptTcpClientAsync();
+                        SocketPipeClient client = new SocketPipeClient(tcpClient, $"Income[{ClientCount}]");
+                        ClientList.Add(client);
+                        client.Closed += (sender, args) =>
+                        {
+                            ClientList.Remove(client);
+                        };
+                        client.RequestReceived += async (sender, args) =>
+                        {
+                            await RequestReceived?.Invoke(this, args);
+                        };
+                        Log.Info($"new incomming client, count {ClientCount}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Info($"Stop listen {Server.LocalEndpoint}");
+                        break;
+                    }
+                }
+            });
         }
         
         public async Task<List<byte[]>> BroadcastBytes(byte[] Bytes)

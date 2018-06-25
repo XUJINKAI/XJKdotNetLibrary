@@ -34,6 +34,16 @@ namespace Web
             RandMsg();
         }
 
+        private void OpenNewThread(object sender, RoutedEventArgs e)
+        {
+            Cmd.RunSmart(ENV.ExePath);
+        }
+
+        private void ClearLog(object sender, RoutedEventArgs e)
+        {
+            LogBox.Text = "";
+        }
+
         private void RandMsg(object sender = null, RoutedEventArgs e = null)
         {
             MsgBox.Text = Helper.RandomString(Helper.RandomInt(3, 10));
@@ -62,10 +72,21 @@ namespace Web
         SocketPipeServer SocketPipeServer;
         SocketPipeClient SocketPipeClient;
 
-        private void SocketServerOpen(object sender, RoutedEventArgs e)
+        private void SocketServerNew(object sender, RoutedEventArgs e)
         {
+            Log.Info("New server");
             SocketPipeServer = new SocketPipeServer(Port);
             SocketPipeServer.RequestReceived += SocketPipeServer_RequestReceived;
+        }
+
+        private void SocketServerStart(object sender, RoutedEventArgs e)
+        {
+            SocketPipeServer.StartListen();
+        }
+
+        private void SocketServerClose(object sender, RoutedEventArgs e)
+        {
+            SocketPipeServer.StopListen();
         }
 
         private async Task SocketPipeServer_RequestReceived(object sender, SocketRequestReceivedEventArgs args)
@@ -74,11 +95,23 @@ namespace Web
             Log.Info($"Server Receive '{msg}', response '{msg.Length}'");
             await args.SendResponseAsync(msg.Length.ToString());
         }
-        
-        private void SocketClientOpen(object sender, RoutedEventArgs e)
+
+
+        private void SocketClientNew(object sender, RoutedEventArgs e)
         {
+            Log.Info("New client");
             SocketPipeClient = new SocketPipeClient(Port);
             SocketPipeClient.RequestReceived += SocketPipeClient_RequestReceived;
+        }
+
+        private void SocketClientConnect(object sender, RoutedEventArgs e)
+        {
+            SocketPipeClient.Connect();
+        }
+
+        private void SocketClientClose(object sender, RoutedEventArgs e)
+        {
+            SocketPipeClient.Close();
         }
 
         private async Task SocketPipeClient_RequestReceived(object sender, SocketRequestReceivedEventArgs args)
@@ -103,19 +136,16 @@ namespace Web
             Log.Info($"Server Result List({list.Count}), {list.Join(o => o.ConvertString())}");
         }
 
-        private void SocketClientClose(object sender, RoutedEventArgs e)
+        private void TestPort(object sender, RoutedEventArgs e)
         {
-            SocketPipeClient.Close();
+            string s = NetHelper.PortIsUsed(Port) ? "Used" : "Not Used";
+            Log.Info($"Port {Port} is {s}");
         }
 
-        private void ClearLog(object sender, RoutedEventArgs e)
+        private void UnusedPort(object sender, RoutedEventArgs e)
         {
-            LogBox.Text = "";
-        }
-
-        private void OpenNewThread(object sender, RoutedEventArgs e)
-        {
-            Cmd.RunSmart(ENV.ExePath);
+            int port = NetHelper.GetAvailablePort(Port);
+            Log.Info($"Available port: {port}");
         }
     }
 }
