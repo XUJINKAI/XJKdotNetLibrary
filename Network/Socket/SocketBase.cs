@@ -123,7 +123,7 @@ namespace XJK.Network.Socket
 
         private async Task<bool> WriteStreamAsync(TcpClient Client, SocketHeader header, byte[] Bytes)
         {
-            Debug.WriteLine($"[WriteStream] {header}, {Bytes.Join(o => o.ToString())}");
+            //Debug.WriteLine($"[WriteStream] {header}, {Bytes.Join(o => o.ToString())}");
             NetworkStream NetworkStream = Client.GetStream();
             return await Task.Run(() =>
             {
@@ -169,7 +169,7 @@ namespace XJK.Network.Socket
                 {
                     int _ = NetworkStream.Read(result, 0, length);
                 }
-                Debug.WriteLine($"[ReadStream] {header}, {result.Join(o => o.ToString())}");
+                //Debug.WriteLine($"[ReadStream] {header}, {result.Join(o => o.ToString())}");
                 var tuple = Tuple.Create(header, result);
                 return tuple;
             });

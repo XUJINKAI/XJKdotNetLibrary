@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -21,25 +22,31 @@ namespace CmdRun
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private RunType _runType = RunType.Invoker;
+        private WindowType _windowType = WindowType.Show;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string Name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(Name));
+        }
+
         public MainWindow()
         {
             InitializeComponent();
             Log.ListenSystemDiagnosticsLog();
-            Log.TextListener += Log_TextListener;
-            IsAdminTextBox.Text = ENV.IsAdministrator() ? "Administrator" : "Normal User";
-            CurrentExePath.Text = ENV.ExePath;
-            CommandBox.Text = ENV.ExePath; //"D:\\space space.exe";
-            ArgsBox.Text = "";
-            ShowWindowCheckBox.IsChecked = false;
-            foreach(var x in Environment.GetCommandLineArgs())
+            Log.TextListener += LogText;
+            this.Title = ENV.IsAdministrator() ? "Administrator" : "Normal User";
+            this.CommandBox.Text = ENV.ExePath; //"D:\\space space.exe";
+            foreach (var x in Environment.GetCommandLineArgs())
             {
-                LogBox.Text += x + C.LF;
+                LogText(x + C.LF);
             }
         }
 
-        private void Log_TextListener(string obj)
+        private void LogText(string obj)
         {
             LogBox.Dispatcher.Invoke(() =>
             {
@@ -47,9 +54,29 @@ namespace CmdRun
             });
         }
 
+        private void CatchException(Exception ex)
+        {
+
+        }
+
         public string Command => CommandBox.Text;
         public string Args => ArgsBox.Text;
-        public bool ShowWindow => ShowWindowCheckBox.IsChecked ?? false;
+        public RunType RunType
+        {
+            get => _runType; set
+            {
+                _runType = value;
+                OnPropertyChanged("RunType");
+            }
+        }
+        public WindowType WindowType
+        {
+            get => _windowType; set
+            {
+                _windowType = value;
+                OnPropertyChanged("WindowType");
+            }
+        }
 
         private void RunAsInvoker(object sender, RoutedEventArgs e)
         {
@@ -71,22 +98,27 @@ namespace CmdRun
             Cmd.RunWithCmdStart(Command, Args);
         }
 
-        private void DumpFile(object sender, RoutedEventArgs e)
-        {
-            Trace.WriteLine(new ProcessStartInfo(Command).Dump());
-        }
-
-        private void ParseArgsBox(object sender, RoutedEventArgs e)
-        {
-            foreach (var x in CommandLineHelper.CommandLineToArgs(Args))
-            {
-                LogBox.Text += x + C.LF;
-            }
-        }
-
         private async void RunCmdResult(object sender, RoutedEventArgs e)
         {
-            await Cmd.RunCmdResultAsync(Command, Args);
+            var x = await Cmd.RunCmdResultAsync(Command, Args);
+            LogText(x);
+        }
+
+        private void RunRadioOption(object sender, RoutedEventArgs e)
+        {
+            ProcessInfoChain.New(Command, Args).RunAs(RunType).Window(WindowType).Catch(CatchException).Start();
+        }
+
+        private void ParseArgs(object sender, RoutedEventArgs e)
+        {
+            string x = CommandBox.Text;
+            var tuple = Cmd.SplitCommandArg(x);
+            LogText($"Command :{tuple.Item1}{C.LF}Arg     :{tuple.Item2}{C.LF}");
+        }
+
+        private void SetCurrentExePath(object sender, RoutedEventArgs e)
+        {
+            CommandBox.Text = ENV.ExePath;
         }
     }
 }

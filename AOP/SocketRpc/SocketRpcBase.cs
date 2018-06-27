@@ -13,7 +13,7 @@ namespace XJK.AOP.SocketRpc
         public abstract void DispatchInvoke(Action action);
         protected abstract object GetExcuteObject();
         protected abstract Task<byte[]> SendBytesAsync(byte[] Bytes);
-
+        
         public void AfterInvoke(object sender, AfterInvokeEventArgs args)
         {
 
@@ -23,7 +23,7 @@ namespace XJK.AOP.SocketRpc
         {
 
         }
-
+        
         public object Invoke(MethodInfo targetMethod, object[] args)
         {
             MethodCallInfo methodCall = new MethodCallInfo()

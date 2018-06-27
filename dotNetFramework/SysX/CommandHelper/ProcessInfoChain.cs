@@ -40,6 +40,7 @@ namespace XJK.SysX
         
         private event Action<string> RedirectOutputAction;
         private event Action<string> RedirectErrorAction;
+        private event Action<Exception> CatchExceptionAction;
         
         public string Command { get; set; } = "";
         public string Args { get; set; } = "";
@@ -113,6 +114,12 @@ namespace XJK.SysX
         public ProcessInfoChain RedirectError(Action<string> action)
         {
             RedirectErrorAction += action;
+            return this;
+        }
+
+        public ProcessInfoChain Catch(Action<Exception> action)
+        {
+            CatchExceptionAction += action;
             return this;
         }
 
@@ -223,6 +230,7 @@ namespace XJK.SysX
                     if (win32Exception.NativeErrorCode == ERROR_CANCELLED)
                     {
                         Log.Trace($"[User Canceled Run] {_processStartInfo.FileName} {_processStartInfo.Arguments}");
+                        return this;
                     }
                 }
                 if (RedirectErrorAction != null)
@@ -234,7 +242,14 @@ namespace XJK.SysX
                         RedirectErrorAction(x);
                     });
                 }
-                throw ex;
+                if (CatchExceptionAction != null)
+                {
+                    CatchExceptionAction(ex);
+                }
+                else
+                {
+                    throw ex;
+                }
             }
             return this;
         }

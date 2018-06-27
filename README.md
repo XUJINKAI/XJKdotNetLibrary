@@ -1,11 +1,5 @@
 # XJKdotNetLibrary
 
-## .net standard
+https://github.com/XUJINKAI/XJKdotNetLibrary/wiki
 
-### Common
-
-### AOP
-
-## .net framework
-
-### SysX
+Log, Serializers, Conventers, Netword, RPC, Command, Window Message...

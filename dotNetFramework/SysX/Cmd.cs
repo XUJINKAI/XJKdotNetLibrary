@@ -41,6 +41,14 @@ namespace XJK.SysX
             }
         }
 
+        public static Tuple<string, string> SplitCommandArg(string CommandWithArgs)
+        {
+            var argArray = CommandLineToArgs(CommandWithArgs);
+            string command = argArray[0];
+            string arg = CommandWithArgs.Substring(Math.Min(command.Length + 1, CommandWithArgs.Length));
+            return Tuple.Create(command, arg);
+        }
+
         public static void RunSmart(string CommandWithArgs)
         {
             if (IsUrl(CommandWithArgs))
@@ -49,9 +57,9 @@ namespace XJK.SysX
             }
             else
             {
-                var args = CommandLineToArgs(CommandWithArgs);
-                string command = args[0];
-                string arg = CommandWithArgs.Substring(Math.Min(command.Length + 1, CommandWithArgs.Length));
+                var tuple = SplitCommandArg(CommandWithArgs);
+                string command = tuple.Item1;
+                string arg = tuple.Item2;
                 bool showWindow = command.ToLower().Equals("cmd") && arg.IsNullOrEmpty();
                 if(showWindow) RunAsInvoker(command, arg);
                 else ProcessInfoChain.New(command, arg).Window(WindowType.Hide).Start();

@@ -142,6 +142,10 @@
       <Project>{bfabdd52-f228-490d-a7cf-c019df252d5b}</Project>
       <Name>SysX</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\dotNetFramework\WPF\WPF.csproj">
+      <Project>{e91d5857-d99b-4825-bae8-5cf06c706a3d}</Project>
+      <Name>WPF</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

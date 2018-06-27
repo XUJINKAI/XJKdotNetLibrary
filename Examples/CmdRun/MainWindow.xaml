@@ -4,56 +4,78 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CmdRun"
+        xmlns:wpf="clr-namespace:XJK.WPF;assembly=XJKdotNetLibrary.WPF"
         mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"></RowDefinition>
-                <RowDefinition></RowDefinition>
-            </Grid.RowDefinitions>
-            <StackPanel Margin="0,20,0,5">
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel.Resources>
-                        <Style TargetType="Button">
-                            <Style.Setters>
-                                <Setter Property="Width" Value="100"/>
-                                <Setter Property="Margin" Value="0,0,5,0"/>
-                            </Style.Setters>
-                        </Style>
-                    </StackPanel.Resources>
-                    <Button Content="RunAsInvoker" Click="RunAsInvoker"></Button>
-                    <Button Content="RunAsAdmin" Click="RunAsAdmin"></Button>
-                    <Button Content="RunAsLimited" Click="RunAsLimitedPrevilege"></Button>
-                    <Button Content="cmd /c start" Click="RunWithCmdStart"></Button>
-                    <Button Content="Cmd Result" Click="RunCmdResult"></Button>
-                    <Button Content="Dump Info" Click="DumpFile"></Button>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton Content="Invoker"></RadioButton>
-                    <RadioButton Content="Admin"></RadioButton>
-                    <RadioButton Content="Limited"></RadioButton>
-                    <RadioButton Content="CmdStart"></RadioButton>
-                    <RadioButton Content="CmdStartAdmin"></RadioButton>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton Content="Show"></RadioButton>
-                    <RadioButton Content="Hide"></RadioButton>
-                    <RadioButton Content="NoWin"></RadioButton>
-                    <RadioButton Content="NoWinHide"></RadioButton>
-                </StackPanel>
-                <TextBox x:Name="CommandBox"></TextBox>
-                <DockPanel>
-                    <Button x:Name="ParseArgs" Content="Parse" Click="ParseArgsBox" Width="80"></Button>
-                    <TextBox x:Name="ArgsBox"></TextBox>
-                </DockPanel>
-                <CheckBox x:Name="ShowWindowCheckBox" Content="ShowWindow"></CheckBox>
-                <TextBox x:Name="IsAdminTextBox" IsReadOnly="True"></TextBox>
-                <TextBox x:Name="CurrentExePath" IsReadOnly="True"></TextBox>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.Resources>
+            <wpf:EnumBooleanConverter x:Key="EnumBoolean"></wpf:EnumBooleanConverter>
+            <Style TargetType="TextBox">
+                <Setter Property="FontFamily" Value="Consolas"></Setter>
+            </Style>
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="Consolas"></Setter>
+            </Style>
+            <Style TargetType="Button">
+                    <Style.Setters>
+                    <Setter Property="Width" Value="100"/>
+                    <Setter Property="Margin" Value="0,0,5,0"/>
+                </Style.Setters>
+            </Style>
+        </Grid.Resources>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Vertical">
+            <StackPanel.Resources>
+                <Style TargetType="StackPanel">
+                    <Style.Setters>
+                        <Setter Property="Orientation" Value="Horizontal"></Setter>
+                    </Style.Setters>
+                </Style>
+            </StackPanel.Resources>
+            <StackPanel>
+                <TextBlock Text="Cmd: "></TextBlock>
+                <Button Content="AsInvoker" Click="RunAsInvoker"></Button>
+                <Button Content="AsAdmin" Click="RunAsAdmin"></Button>
+                <Button Content="AsLimitedPrivilege" Click="RunAsLimitedPrevilege"></Button>
+                <Button Content="WithCmdStart" Click="RunWithCmdStart"></Button>
+                <Button Content="CmdResultAsync" Click="RunCmdResult"></Button>
+                <TextBlock Text="||"></TextBlock>
+                <Button Content="Run Option" Click="RunRadioOption"></Button>
             </StackPanel>
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="1">
-                <TextBox x:Name="LogBox" FontFamily="Consolas"></TextBox>
-            </ScrollViewer>
-        </Grid>
+            <StackPanel>
+                <RadioButton Content="Invoker" IsChecked="{Binding RunType, Converter={StaticResource EnumBoolean}, ConverterParameter=Invoker}"></RadioButton>
+                <RadioButton Content="Admin" IsChecked="{Binding RunType, Converter={StaticResource EnumBoolean}, ConverterParameter=Admin}"></RadioButton>
+                <RadioButton Content="Limited" IsChecked="{Binding RunType, Converter={StaticResource EnumBoolean}, ConverterParameter=Limited}"></RadioButton>
+                <RadioButton Content="CmdStart" IsChecked="{Binding RunType, Converter={StaticResource EnumBoolean}, ConverterParameter=CmdStart}"></RadioButton>
+                <RadioButton Content="CmdStartAdmin" IsChecked="{Binding RunType, Converter={StaticResource EnumBoolean}, ConverterParameter=CmdStartAdmin}"></RadioButton>
+            </StackPanel>
+            <StackPanel>
+                <RadioButton Content="Show" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Show}"></RadioButton>
+                <RadioButton Content="Hide" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Hide}"></RadioButton>
+                <RadioButton Content="NoWin" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=NoWin}"></RadioButton>
+                <RadioButton Content="NoWinHide" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=NoWinHide}"></RadioButton>
+            </StackPanel>
+            <DockPanel>
+                <TextBlock Text="Command: "></TextBlock>
+                <TextBox x:Name="CommandBox"></TextBox>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Args:    "></TextBlock>
+                <TextBox x:Name="ArgsBox"></TextBox>
+            </DockPanel>
+            <StackPanel>
+                <Button Content="Parse" Click="ParseArgs"></Button>
+                <Button Content="CurrentExePath" Click="SetCurrentExePath"></Button>
+            </StackPanel>
+        </StackPanel>
+        
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+            <TextBox x:Name="LogBox"></TextBox>
+        </ScrollViewer>
     </Grid>
 </Window>
