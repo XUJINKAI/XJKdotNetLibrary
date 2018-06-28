@@ -24,15 +24,12 @@ namespace CmdRun
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private RunType _runType = RunType.Invoker;
-        private WindowType _windowType = WindowType.Show;
-
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string Name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(Name));
         }
-
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -43,6 +40,24 @@ namespace CmdRun
             foreach (var x in Environment.GetCommandLineArgs())
             {
                 LogText(x + C.LF);
+            }
+        }
+
+        private void StreamResultSync(object sender, RoutedEventArgs e)
+        {
+            using (CommandStreamSynchronous CommandStream = new CommandStreamSynchronous("cmd", ""))
+            {
+                CommandStream.WriteLine(Command + " " + Args);
+                LogText(CommandStream.Output.ReadLine());
+            }
+        }
+
+        private void StreamResultAsync(object sender, RoutedEventArgs e)
+        {
+            using (CommandStreamAsync CommandStream = new CommandStreamAsync("cmd", ""))
+            {
+                CommandStream.Receive(s => LogText(s), s => LogText(s));
+                CommandStream.WriteLine(Command + " " + Args);
             }
         }
 
@@ -61,19 +76,33 @@ namespace CmdRun
 
         public string Command => CommandBox.Text;
         public string Args => ArgsBox.Text;
-        public RunType RunType
+
+
+        private Privilege s_Privilege = Privilege.NotSet;
+        private LaunchType s_LaunchType = LaunchType.NotSet;
+        private WindowType s_WindowType = WindowType.NotSet;
+
+        public Privilege Privilege
         {
-            get => _runType; set
+            get => s_Privilege; set
             {
-                _runType = value;
-                OnPropertyChanged("RunType");
+                s_Privilege = value;
+                OnPropertyChanged("Privilege");
+            }
+        }
+        public LaunchType LaunchType
+        {
+            get => s_LaunchType; set
+            {
+                s_LaunchType = value;
+                OnPropertyChanged("LaunchType");
             }
         }
         public WindowType WindowType
         {
-            get => _windowType; set
+            get => s_WindowType; set
             {
-                _windowType = value;
+                s_WindowType = value;
                 OnPropertyChanged("WindowType");
             }
         }
@@ -87,26 +116,20 @@ namespace CmdRun
         {
             Cmd.RunAsAdmin(Command, Args);
         }
-
-        private void RunAsLimitedPrevilege(object sender, RoutedEventArgs e)
-        {
-            Cmd.RunAsLimitedPrivilege(Command, Args);
-        }
-
+        
         private void RunWithCmdStart(object sender, RoutedEventArgs e)
         {
             Cmd.RunWithCmdStart(Command, Args);
         }
 
-        private async void RunCmdResult(object sender, RoutedEventArgs e)
-        {
-            var x = await Cmd.RunCmdResultAsync(Command, Args);
-            LogText(x);
-        }
-
         private void RunRadioOption(object sender, RoutedEventArgs e)
         {
-            ProcessInfoChain.New(Command, Args).RunAs(RunType).Window(WindowType).Catch(CatchException).Start();
+            ProcessInfoChain.New(Command, Args)
+                .SetWindow(WindowType)
+                .LaunchBy(LaunchType)
+                .RunAs(Privilege)
+                .Excute()
+                .Catch(CatchException);
         }
 
         private void ParseArgs(object sender, RoutedEventArgs e)
@@ -119,6 +142,17 @@ namespace CmdRun
         private void SetCurrentExePath(object sender, RoutedEventArgs e)
         {
             CommandBox.Text = ENV.ExePath;
+        }
+
+        private void ClearLog(object sender, RoutedEventArgs e)
+        {
+            LogBox.Text = "";
+        }
+
+        private void SetCmdPath(object sender, RoutedEventArgs e)
+        {
+            CommandBox.Text = "cmd";
+            ArgsBox.Text = "/c dir";
         }
     }
 }

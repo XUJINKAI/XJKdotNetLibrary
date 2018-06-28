@@ -2,62 +2,179 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using static XJK.SysX.CommandLineHelper;
 
 namespace XJK.SysX
 {
-    public enum RunType
+    /*
+     * WindowStyle --> UI
+     * UseShellExecute --> default (new console) (NO Redirect)
+     * !UseShellExecute --> in parent's console window (NO Admin)
+     * !UseShellExecute && CreateNoWindow --> No Window (NO Admin)
+     * RunAs (Admin) --> UseShellExecute = true
+     * Redirect --> UseShellExecute = false
+     */
+
+    public enum Privilege
     {
+        NotSet = 0,
         Invoker,
-        Admin,
-        Limited,
-        CmdStart,
-        CmdStartAdmin,
+        Limited, // (change command or not)
+        Admin, // UseShellExecute && RunAs
+    }
+
+    public enum LaunchType
+    {
+        NotSet = 0,
+        Normal,
+        CmdStart, // (change command)
     }
 
     public enum WindowType
     {
-        Show,
-        Hide,
-        NoWin,
-        NoWinHide,
+        NotSet = 0,
+        Normal,
+        Hidden,
+        Minimized,
+        Maximized,
+        ConsoleInParent, // !UseShellExecute (NO Admin)
+        ConsoleNoWindow, // !UseShellExecute && CreateNoWindow (NO Admin)
     }
 
     public class ProcessInfoChain
     {
-        public ProcessStartInfo ProcessStartInfo
+        public ProcessStartInfo ProcessStartInfo { get; private set; }
+        public Process Process { get; private set; }
+        public bool ThrowConflict { get; set; } = true;
+
+        private const int ERROR_CANCELLED = 1223;
+        private Privilege _privilege = Privilege.NotSet;
+        private LaunchType _launchType = LaunchType.NotSet;
+        private WindowType _windowType = WindowType.NotSet;
+
+        public Privilege Privilege
+        {
+            get => _privilege; set
+            {
+                switch (value)
+                {
+                    case Privilege.Admin:
+                        ProcessStartInfo.UseShellExecute = true;
+                        ProcessStartInfo.Verb = "RunAs";
+                        break;
+                    default:
+                        ProcessStartInfo.Verb = "";
+                        break;
+                }
+                _privilege = value;
+                AutoDefineWindowStyle();
+            }
+        }
+
+        public LaunchType LaunchType
+        {
+            get => _launchType; set
+            {
+                _launchType = value;
+                AutoDefineWindowStyle();
+            }
+        }
+
+        public WindowType WindowType
+        {
+            get => _windowType; set
+            {
+                switch (value)
+                {
+                    case WindowType.Normal:
+                        ProcessStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                        break;
+                    case WindowType.Hidden:
+                        ProcessStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                        break;
+                    case WindowType.Minimized:
+                        ProcessStartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+                        break;
+                    case WindowType.Maximized:
+                        ProcessStartInfo.WindowStyle = ProcessWindowStyle.Maximized;
+                        break;
+                    case WindowType.ConsoleInParent:
+                        ProcessStartInfo.UseShellExecute = false;
+                        break;
+                    case WindowType.ConsoleNoWindow:
+                        ProcessStartInfo.UseShellExecute = false;
+                        ProcessStartInfo.CreateNoWindow = true;
+                        break;
+                }
+                _windowType = value;
+            }
+        }
+
+        public string Command
+        {
+            get => ProcessStartInfo.FileName;
+            set => ProcessStartInfo.FileName = value;
+        }
+        public string Args
+        {
+            get => ProcessStartInfo.Arguments;
+            set => ProcessStartInfo.Arguments = value;
+        }
+
+        private void AutoDefineWindowStyle()
+        {
+            // if change cmd/arg
+            if (Privilege == Privilege.Limited && ENV.IsAdministrator()
+                || LaunchType == LaunchType.CmdStart)
+            {
+                // if not conflict
+                if (Privilege != Privilege.Admin && WindowType == WindowType.NotSet)
+                {
+                    WindowType = WindowType.ConsoleNoWindow;
+                }
+            }
+        }
+
+        public Tuple<string, string> ExcuteCommandArgs
         {
             get
             {
-                Apply();
-                return _processStartInfo;
+                string cmd = Command;
+                string arg = Args;
+                if (Privilege == Privilege.Limited)
+                {
+                    if (ENV.IsAdministrator())
+                    {
+                        string combine = ShouldQuote(cmd) ? QuoteMark(cmd, QuoteRepalce.DoubleQuote) : cmd;
+                        combine += arg.IsNullOrEmpty() ? "" : (" " + arg);
+                        cmd = "RunAs";
+                        arg = $"/trustlevel:0x20000 {QuoteMark(combine, QuoteRepalce.BackSlashQuote)}";
+                    }
+                }
+                if (LaunchType == LaunchType.CmdStart)
+                {
+                    string combine = ShouldQuote(cmd) ? QuoteMark(cmd, QuoteRepalce.DoubleQuote) : cmd;
+                    combine += arg.IsNullOrEmpty() ? "" : (" " + arg);
+                    cmd = "cmd";
+                    arg = $"/c start \"\" {combine}";
+                }
+                return Tuple.Create(cmd, arg);
             }
         }
-        private readonly ProcessStartInfo _processStartInfo;
-        private Process _process = null;
         
-        private event Action<string> RedirectOutputAction;
-        private event Action<string> RedirectErrorAction;
-        private event Action<Exception> CatchExceptionAction;
-        
-        public string Command { get; set; } = "";
-        public string Args { get; set; } = "";
-        public string CommandApplied { get; private set; } = "";
-        public string ArgsApplied { get; private set; } = "";
-        public RunType RunType { get; set; } = RunType.Invoker;
-        public WindowType WindowType { get; set; } = WindowType.Show;
 
         #region 构造函数
         public ProcessInfoChain()
         {
-            _processStartInfo = new ProcessStartInfo();
+            ProcessStartInfo = new ProcessStartInfo();
         }
 
         public ProcessInfoChain(ProcessStartInfo processStartInfo)
         {
-            _processStartInfo = processStartInfo;
+            ProcessStartInfo = processStartInfo;
         }
 
         public static ProcessInfoChain New()
@@ -80,186 +197,118 @@ namespace XJK.SysX
         }
         #endregion
 
+        #region Set Property
+
+        public ProcessInfoChain DumpInfo(Action<string> action)
+        {
+            action(this.ToString());
+            return this;
+        }
+        
+        public ProcessInfoChain SetCommand(string command, string args)
+        {
+            Command = command;
+            Args = args;
+            return this;
+        }
+
         public ProcessInfoChain Set(Action<ProcessStartInfo> action)
         {
             action(ProcessStartInfo);
             return this;
         }
 
-        public ProcessInfoChain RunAs(RunType runType)
+        public ProcessInfoChain RunAs(Privilege Privilege)
         {
-            RunType = runType;
+            this.Privilege = Privilege;
             return this;
         }
 
-        public ProcessInfoChain Window(WindowType window)
+        public ProcessInfoChain LaunchBy(LaunchType LaunchType)
         {
-            WindowType = window;
+            this.LaunchType = LaunchType;
             return this;
         }
 
-        public ProcessInfoChain CmdLine(string command, string args)
+        public ProcessInfoChain SetWindow(WindowType WindowType)
         {
-            Command = command;
-            Args = args;
-            return this;
-        }
-        
-        public ProcessInfoChain RedirectOutput(Action<string> action)
-        {
-            RedirectOutputAction += action;
+            this.WindowType = WindowType;
             return this;
         }
 
-        public ProcessInfoChain RedirectError(Action<string> action)
-        {
-            RedirectErrorAction += action;
-            return this;
-        }
+        #endregion
 
-        public ProcessInfoChain Catch(Action<Exception> action)
+        public ProcessInfoChain CheckConflict()
         {
-            CatchExceptionAction += action;
-            return this;
-        }
-
-        public ProcessInfoChain Apply()
-        {
-            string argarg;
-            switch (RunType)
+            string conflict = "";
+            if (Privilege == Privilege.Admin
+                && (WindowType == WindowType.ConsoleInParent || WindowType == WindowType.ConsoleNoWindow)
+                )
             {
-                case RunType.Invoker:
-                case RunType.Admin:
-                    CommandApplied = Command;
-                    ArgsApplied = Args;
-                    break;
-                case RunType.Limited:
-                    argarg = ShouldQuote(Command) ? QuoteMark(Command, QuoteRepalce.DoubleQuote) : Command;
-                    if (!Args.IsNullOrEmpty())
-                    {
-                        argarg += " " + Args;
-                    }
-                    CommandApplied = "RunAs";
-                    ArgsApplied = $"/trustlevel:0x20000 {QuoteMark(argarg, QuoteRepalce.BackSlashQuote)}";
-                    break;
-                case RunType.CmdStart:
-                case RunType.CmdStartAdmin:
-                    argarg = ShouldQuote(Command) ? QuoteMark(Command, QuoteRepalce.DoubleQuote) : Command;
-                    if (!Args.IsNullOrEmpty())
-                    {
-                        argarg += " " + Args;
-                    }
-                    CommandApplied = "cmd";
-                    ArgsApplied = $"/c start \"\" {argarg}";
-                    break;
-                default:
-                    throw new Exception("ProcessInfoChain unknown RunAs Type");
+                conflict += "RunAs Admin confict with ConsoleInParent/ConsoleNoWindow WindowType" + C.LF;
             }
-            bool as_admin = RunType == RunType.Admin || RunType == RunType.CmdStartAdmin;
-            if (as_admin)
+
+            if (conflict != "")
             {
-                _processStartInfo.UseShellExecute = true;
-                _processStartInfo.Verb = "RunAs";
-            }
-            _processStartInfo.FileName = CommandApplied;
-            _processStartInfo.Arguments = ArgsApplied;
-            switch (WindowType)
-            {
-                case WindowType.Show:
-                    _processStartInfo.CreateNoWindow = false;
-                    _processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
-                    break;
-                case WindowType.Hide:
-                    _processStartInfo.CreateNoWindow = false;
-                    _processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    break;
-                case WindowType.NoWin:
-                    _processStartInfo.CreateNoWindow = true;
-                    _processStartInfo.WindowStyle = ProcessWindowStyle.Normal;
-                    break;
-                case WindowType.NoWinHide:
-                    _processStartInfo.CreateNoWindow = true;
-                    _processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    break;
-            }
-            bool has_redirect = RedirectOutputAction != null || RedirectErrorAction != null;
-            if (has_redirect)
-            {
-                if (as_admin)
+                conflict = "ProcessInfoChain Conflict:" + C.LF + conflict;
+                if (ThrowConflict)
                 {
-                    Log.Warning("[ProcessInfoChain.Apply] AsAdmin but HasRedirect, UseShellExecute conflict");
+                    throw new Exception(conflict);
                 }
-                _processStartInfo.UseShellExecute = false;
+                else
+                {
+                    Log.Warning(conflict);
+                }
             }
-            _processStartInfo.RedirectStandardOutput = RedirectOutputAction != null;
-            _processStartInfo.RedirectStandardError = RedirectErrorAction != null;
             return this;
         }
 
-        public ProcessInfoChain LogDetail()
+        public ExcuteResult Excute(bool ThrowExp = true)
         {
-            Apply();
-            Log.Debug($"Apply Process Chain{C.LF}Command: {_processStartInfo.FileName}{C.LF}Args: {_processStartInfo.Arguments}{C.LF}" +
-                $"Verb: {_processStartInfo.Verb}{C.LF}WindowStyle: {_processStartInfo.WindowStyle}, {_processStartInfo.CreateNoWindow}");
-            return this;
-        }
+            ExcuteResult excuteResult = new ExcuteResult()
+            {
+                InfoChain = this,
+            };
 
-        const int ERROR_CANCELLED = 1223;
+            Log.Debug(this);
+            CheckConflict();
+            var ActualCmdArg = ExcuteCommandArgs;
+            ProcessStartInfo.FileName = ActualCmdArg.Item1;
+            ProcessStartInfo.Arguments = ActualCmdArg.Item2;
 
-        public ProcessInfoChain Start()
-        {
-            Apply();
             try
             {
-                _process = Process.Start(_processStartInfo);
-                if (RedirectOutputAction != null)
-                {
-                    Task.Run(async () =>
-                    {
-                        var x = await _process.StandardOutput.ReadToEndAsync();
-                        Log.Debug($"Process Result: {x}");
-                        RedirectOutputAction(x);
-                    });
-                }
+                Process = Process.Start(ProcessStartInfo);
+                excuteResult.ExcuteStatus = ExcuteStatus.Success;
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
-                if (ex is Win32Exception win32Exception)
+                if (ex is Win32Exception win32Exception && win32Exception.NativeErrorCode == ERROR_CANCELLED)
                 {
-                    if (win32Exception.NativeErrorCode == ERROR_CANCELLED)
-                    {
-                        Log.Trace($"[User Canceled Run] {_processStartInfo.FileName} {_processStartInfo.Arguments}");
-                        return this;
-                    }
-                }
-                if (RedirectErrorAction != null)
-                {
-                    Task.Run(async () =>
-                    {
-                        var x = await _process.StandardError.ReadToEndAsync();
-                        Log.Debug($"Process Error: {x}");
-                        RedirectErrorAction(x);
-                    });
-                }
-                if (CatchExceptionAction != null)
-                {
-                    CatchExceptionAction(ex);
+                    excuteResult.ExcuteStatus = ExcuteStatus.UserCancel;
                 }
                 else
                 {
-                    throw ex;
+                    excuteResult.ExcuteStatus = ExcuteStatus.Exception;
+                    excuteResult.Exception = ex;
+
+                    if (ThrowExp)
+                    {
+                        throw ex;
+                    }
                 }
             }
-            return this;
+            return excuteResult;
         }
-    }
 
-    public static class ProcessInfoChainExtension
-    {
-        public static ProcessInfoChain ToChain(this ProcessStartInfo startInfo)
+        public override string ToString()
         {
-            return new ProcessInfoChain(startInfo);
+            return  $"<ProcessInfoChain>{C.LF}" +
+                $"Command : {Command}{C.LF}" +
+                $"Argument: {Args}{C.LF}" +
+                $"ExcuteCommandArgs: {ExcuteCommandArgs.Item1} {ExcuteCommandArgs.Item2}{C.LF}" +
+                $"{Privilege}, {LaunchType}, {WindowType}";
         }
     }
 }

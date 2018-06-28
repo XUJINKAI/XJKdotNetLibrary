@@ -7,7 +7,7 @@
         xmlns:wpf="clr-namespace:XJK.WPF;assembly=XJKdotNetLibrary.WPF"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="1200">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
@@ -41,24 +41,35 @@
                 <TextBlock Text="Cmd: "></TextBlock>
                 <Button Content="AsInvoker" Click="RunAsInvoker"></Button>
                 <Button Content="AsAdmin" Click="RunAsAdmin"></Button>
-                <Button Content="AsLimitedPrivilege" Click="RunAsLimitedPrevilege"></Button>
                 <Button Content="WithCmdStart" Click="RunWithCmdStart"></Button>
-                <Button Content="CmdResultAsync" Click="RunCmdResult"></Button>
+                <TextBlock Text="||"></TextBlock>
+                <Button Content="Stream Sync" Click="StreamResultSync"></Button>
+                <Button Content="StreamAsync" Click="StreamResultAsync"></Button>
                 <TextBlock Text="||"></TextBlock>
                 <Button Content="Run Option" Click="RunRadioOption"></Button>
             </StackPanel>
             <StackPanel>
-                <RadioButton Content="Invoker" IsChecked="{Binding RunType, Converter={StaticResource EnumBoolean}, ConverterParameter=Invoker}"></RadioButton>
-                <RadioButton Content="Admin" IsChecked="{Binding RunType, Converter={StaticResource EnumBoolean}, ConverterParameter=Admin}"></RadioButton>
-                <RadioButton Content="Limited" IsChecked="{Binding RunType, Converter={StaticResource EnumBoolean}, ConverterParameter=Limited}"></RadioButton>
-                <RadioButton Content="CmdStart" IsChecked="{Binding RunType, Converter={StaticResource EnumBoolean}, ConverterParameter=CmdStart}"></RadioButton>
-                <RadioButton Content="CmdStartAdmin" IsChecked="{Binding RunType, Converter={StaticResource EnumBoolean}, ConverterParameter=CmdStartAdmin}"></RadioButton>
+                <TextBlock Text="Privilege: "></TextBlock>
+                <RadioButton Content="NotSet" IsChecked="{Binding Privilege, Converter={StaticResource EnumBoolean}, ConverterParameter=NotSet}"></RadioButton>
+                <RadioButton Content="Invoker" IsChecked="{Binding Privilege, Converter={StaticResource EnumBoolean}, ConverterParameter=Invoker}"></RadioButton>
+                <RadioButton Content="Limited" IsChecked="{Binding Privilege, Converter={StaticResource EnumBoolean}, ConverterParameter=Limited}"></RadioButton>
+                <RadioButton Content="Admin" IsChecked="{Binding Privilege, Converter={StaticResource EnumBoolean}, ConverterParameter=Admin}"></RadioButton>
             </StackPanel>
             <StackPanel>
-                <RadioButton Content="Show" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Show}"></RadioButton>
-                <RadioButton Content="Hide" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Hide}"></RadioButton>
-                <RadioButton Content="NoWin" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=NoWin}"></RadioButton>
-                <RadioButton Content="NoWinHide" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=NoWinHide}"></RadioButton>
+                <TextBlock Text="LaunchType: "></TextBlock>
+                <RadioButton Content="NotSet" IsChecked="{Binding LaunchType, Converter={StaticResource EnumBoolean}, ConverterParameter=NotSet}"></RadioButton>
+                <RadioButton Content="Normal" IsChecked="{Binding LaunchType, Converter={StaticResource EnumBoolean}, ConverterParameter=Normal}"></RadioButton>
+                <RadioButton Content="CmdStart" IsChecked="{Binding LaunchType, Converter={StaticResource EnumBoolean}, ConverterParameter=CmdStart}"></RadioButton>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="WindowType: "></TextBlock>
+                <RadioButton Content="NotSet" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=NotSet}"></RadioButton>
+                <RadioButton Content="Normal" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Normal}"></RadioButton>
+                <RadioButton Content="Hidden" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Hidden}"></RadioButton>
+                <RadioButton Content="Minimized" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Minimized}"></RadioButton>
+                <RadioButton Content="Maximized" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Maximized}"></RadioButton>
+                <RadioButton Content="ConsoleInParent" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=ConsoleInParent}"></RadioButton>
+                <RadioButton Content="ConsoleNoWindow" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=ConsoleNoWindow}"></RadioButton>
             </StackPanel>
             <DockPanel>
                 <TextBlock Text="Command: "></TextBlock>
@@ -69,8 +80,10 @@
                 <TextBox x:Name="ArgsBox"></TextBox>
             </DockPanel>
             <StackPanel>
+                <Button Content="Clear" Click="ClearLog"></Button>
                 <Button Content="Parse" Click="ParseArgs"></Button>
                 <Button Content="CurrentExePath" Click="SetCurrentExePath"></Button>
+                <Button Content="CmdPath" Click="SetCmdPath"></Button>
             </StackPanel>
         </StackPanel>
         

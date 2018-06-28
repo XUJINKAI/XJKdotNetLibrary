@@ -65,7 +65,9 @@ namespace Test
         
         private void Test(object sender, RoutedEventArgs e)
         {
-
+            int local1 = 222;
+            string local2 = "yyy";
+            DumpObject.ThrowException();
         }
 
     }

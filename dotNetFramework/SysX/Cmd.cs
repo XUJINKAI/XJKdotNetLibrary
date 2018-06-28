@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -62,43 +63,29 @@ namespace XJK.SysX
                 string arg = tuple.Item2;
                 bool showWindow = command.ToLower().Equals("cmd") && arg.IsNullOrEmpty();
                 if(showWindow) RunAsInvoker(command, arg);
-                else ProcessInfoChain.New(command, arg).Window(WindowType.Hide).Start();
+                else ProcessInfoChain.New(command, arg).SetWindow(WindowType.ConsoleNoWindow).Excute();
             }
         }
 
         #region Process Run
 
-        public static void RunAsInvoker(string Command, string Args)
+        public static ExcuteResult RunAsInvoker(string Command, string Args)
         {
-             ProcessInfoChain.New(Command, Args).Start();
+             return ProcessInfoChain.New(Command, Args).Excute();
         }
 
-        public static void RunAsAdmin(string Command, string Args)
+        public static ExcuteResult RunAsAdmin(string Command, string Args)
         {
-             ProcessInfoChain.New(Command, Args).RunAs(RunType.Admin).Start();
-        }
-
-        public static void RunAsLimitedPrivilege(string Command, string Args)
-        {
-             ProcessInfoChain.New(Command, Args).RunAs(RunType.Limited).Start();
+            return ProcessInfoChain.New(Command, Args).RunAs(Privilege.Admin).Excute();
         }
         
-        public static void RunWithCmdStart(string Command, string Args)
+        public static ExcuteResult RunWithCmdStart(string Command, string Args)
         {
-             ProcessInfoChain.New(Command, Args).RunAs(RunType.CmdStart).Window(WindowType.NoWin).Start();
+            return ProcessInfoChain.New(Command, Args).LaunchBy(LaunchType.CmdStart).Excute();
         }
-
-        public static async Task<string> RunCmdResultAsync(string command, string args)
-        {
-            var t = new TaskCompletionSource<string>();
-            ProcessInfoChain.New(command, args).Window(WindowType.NoWin).RedirectOutput(result =>
-            {
-                t.SetResult(result);
-            }).Start();
-            return await t.Task;
-        }
-
+        
         #endregion
 
     }
+
 }
