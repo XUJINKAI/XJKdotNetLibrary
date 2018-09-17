@@ -39,12 +39,12 @@ namespace XJK.SysX
             return this;
         }
 
-        public ExcuteResult Finally(Action<Exception> action)
+        public ExcuteResult Finally(Action<ExcuteResult> action)
         {
             NeedAfterRun("Finally");
             if (ExcuteStatus != ExcuteStatus.NotRun)
             {
-                action(Exception);
+                action(this);
             }
             return this;
         }

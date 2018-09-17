@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace XJK.WPF
+namespace XJK
 {
-    public static class SingleInstance
+    public static class ThreadHelper
     {
         private static Mutex mutex;
         private static bool isNewInstance;

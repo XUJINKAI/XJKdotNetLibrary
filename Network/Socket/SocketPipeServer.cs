@@ -40,26 +40,17 @@ namespace XJK.Network.Socket
             Server.Stop();
         }
 
-        public bool StartListen()
+        public void StartListen()
         {
-            if (Server?.Server.Connected ?? false) return false;
-            if(Server == null)
+            if (Server?.Server.Connected ?? false) throw new InvalidOperationException("Already connected");
+            if (Server == null)
             {
-                try
-                {
-                    IPAddress localAddr = IPAddress.Parse(HostName);
-                    Server = new TcpListener(localAddr, Port);
-                }
-                catch (Exception ex)
-                {
-                    Log.Verbose($"Connect error, {ex.Message}");
-                    return false;
-                }
+                IPAddress localAddr = IPAddress.Parse(HostName);
+                Server = new TcpListener(localAddr, Port);
             }
             Server.Start();
             ListenThread = ListenningLoopThread();
             ListenThread.Start();
-            return true;
         }
 
         public Thread ListenningLoopThread()

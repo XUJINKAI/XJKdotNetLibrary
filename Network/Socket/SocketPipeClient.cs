@@ -37,21 +37,13 @@ namespace XJK.Network.Socket
             Port = port;
         }
 
-        public bool Connect()
+        public void Connect()
         {
             Log.Info($"[{Name}] Connect {HostName}:{Port}");
-            if (Client?.Connected ?? false) return false;
+            if (Client?.Connected ?? false) throw new InvalidOperationException("Already connected");
             if(Client == null)
             {
-                try
-                {
-                    Client = new TcpClient(HostName, Port);
-                }
-                catch (Exception ex)
-                {
-                    Log.Verbose($"[{Name}] Connect error, {ex.Message}");
-                    return false;
-                }
+                Client = new TcpClient(HostName, Port);
             }
             else
             {
@@ -62,7 +54,6 @@ namespace XJK.Network.Socket
                 Close();
             });
             ListenThread.Start();
-            return true;
         }
 
         public void Close()

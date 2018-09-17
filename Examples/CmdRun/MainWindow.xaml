@@ -47,6 +47,8 @@
                 <Button Content="StreamAsync" Click="StreamResultAsync"></Button>
                 <TextBlock Text="||"></TextBlock>
                 <Button Content="Run Option" Click="RunRadioOption"></Button>
+                <TextBlock Text="||"></TextBlock>
+                <Button Content="Verbs" Click="GetVerbs"></Button>
             </StackPanel>
             <StackPanel>
                 <TextBlock Text="Privilege: "></TextBlock>

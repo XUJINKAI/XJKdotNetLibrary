@@ -154,5 +154,10 @@ namespace CmdRun
             CommandBox.Text = "cmd";
             ArgsBox.Text = "/c dir";
         }
+
+        private void GetVerbs(object sender, RoutedEventArgs e)
+        {
+            Log.Info(Cmd.GetRunVerbs(Command));
+        }
     }
 }

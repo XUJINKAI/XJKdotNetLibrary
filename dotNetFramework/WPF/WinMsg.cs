@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using XJK.WPF.WpfWindow;
@@ -21,15 +22,15 @@ namespace XJK.WPF
 
         #region Message
 
-        public static void BroadcastMessage(string msg)
+        public static void BroadcastMessage(string msgId, string MsgBody = "")
         {
-            NativeMethods.PostMessage(
+            NativeMethods.SendMessage(
                 (IntPtr)NativeMethods.HWND_BROADCAST,
-                GetMesssageId(msg),
+                GetMesssageId(msgId),
                 IntPtr.Zero,
-                IntPtr.Zero);
+                MsgBody);
         }
-
+        
         public static int GetMesssageId(string msg)
         {
             if (RegisteredMessage.ContainsKey(msg))
