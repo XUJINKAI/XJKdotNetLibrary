@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>XJK.NotifyPropertyChanged</RootNamespace>
+    <AssemblyName>XJKdotNetLibrary.NotifyPropertyChanged</AssemblyName>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

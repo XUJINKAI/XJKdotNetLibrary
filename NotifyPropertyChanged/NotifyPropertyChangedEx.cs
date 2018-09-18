@@ -10,8 +10,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
-namespace PostSharpExtension
+namespace XJK.NotifyPropertyChanged
 {
+    /// <summary>
+    /// 订阅Instance属性的PropertyChanged，并向上传递
+    /// </summary>
     [Serializable]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, "Tracing")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, "Threading")]
@@ -20,31 +23,26 @@ namespace PostSharpExtension
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(NotifyPropertyChangedAttribute))]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(AggregatableAttribute))]
     [IntroduceInterface(typeof(INotifyPropertyChanged), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
-    [IntroduceInterface(typeof(INotifyNestedPropertyChanged), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
-    [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Strict)]
-    public class NotifyNestedPropertyChanged : InstanceLevelAspect, INotifyPropertyChanged, INotifyNestedPropertyChanged
+    [IntroduceInterface(typeof(INotifyPropertyChangedEx), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
+    [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Strict, PersistMetaData = true, AllowMultiple = false, TargetTypeAttributes = MulticastAttributes.UserGenerated)]
+    public class NotifyPropertyChangedEx : InstanceLevelAspect, INotifyPropertyChanged, INotifyPropertyChangedEx
     {
-        public bool Propagation { get; set; }
+        public bool PropagationNotificationEx { get; set; } = true;
 
         private readonly Dictionary<object, PropertyChangedEventHandler> Dict = new Dictionary<object, PropertyChangedEventHandler>();
-
-        public NotifyNestedPropertyChanged(bool propagation = false)
-        {
-            Propagation = propagation;
-        }
-
-        [ImportMember("OnPropertyChanged", IsRequired = true)]
+        
+        [ImportMember(nameof(OnPropertyChanged), IsRequired = true)]
         public Action<string> OnPropertyChangedMethod;
 
-        [ImportMember("OnNestedPropertyChanged", IsRequired = true)]
-        public Action<string, string> OnNestedPropertyChangedMethod;
+        [ImportMember(nameof(OnPropertyChangedEx), IsRequired = true)]
+        public Action<PropertyChangedEventArgsEx> OnPropertyChangedExMethod;
 
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore)]
         public event PropertyChangedEventHandler PropertyChanged;
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore)]
-        public event NestedPropertyChangedEventHandler NestedPropertyChanged;
+        public event PropertyChangedEventHandlerEx PropertyChangedEx;
 
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, Visibility = Visibility.Family, LinesOfCodeAvoided = 2)]
@@ -54,16 +52,18 @@ namespace PostSharpExtension
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, Visibility = Visibility.Family, LinesOfCodeAvoided = 2)]
-        public void OnNestedPropertyChanged(string propertyName, string childPropertyName)
+        public void OnPropertyChangedEx(PropertyChangedEventArgsEx e)
         {
-            OnNestedPropertyChangedMethod?.Invoke(propertyName, childPropertyName);
+            OnPropertyChangedExMethod?.Invoke(e);
         }
 
 
-        [OnLocationSetValueAdvice, MethodPointcut(nameof(SelectProperties))]
-        public void OnPropertySet(LocationInterceptionArgs args)
+        // For this.Object = ...
+        // subscribe Object's event
+        [OnLocationSetValueAdvice, MethodPointcut(nameof(InstancePropertiesSelector))]
+        public void OnInstancePropertySet(LocationInterceptionArgs args)
         {
-            if (args.Value == args.GetCurrentValue()) return;
+            if (ReferenceEquals(args.Value, args.GetCurrentValue())) return;
 
             if (args.GetCurrentValue() is INotifyPropertyChanged current)
             {
@@ -82,8 +82,8 @@ namespace PostSharpExtension
                 void action(object s, PropertyChangedEventArgs o)
                 {
                     var Name = args.LocationName;
-                    OnNestedPropertyChanged(Name, o.PropertyName);
-                    if (Propagation)
+                    OnPropertyChangedEx(PropertyChangedEventArgsEx.NewItemPropertyChange(Name, o.PropertyName, newValue));
+                    if (PropagationNotificationEx)
                     {
                         OnPropertyChanged(Name);
                     }
@@ -93,11 +93,11 @@ namespace PostSharpExtension
             }
         }
 
-        private IEnumerable<PropertyInfo> SelectProperties(Type type)
+        private IEnumerable<PropertyInfo> InstancePropertiesSelector(Type type)
         {
             const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public;
             return from property in type.GetProperties(bindingFlags)
-                   where property.CanWrite && typeof(INotifyPropertyChanged).IsAssignableFrom(property.PropertyType)
+                   where property.CanWrite// && typeof(INotifyPropertyChanged).IsAssignableFrom(property.PropertyType)
                    select property;
         }
     }
