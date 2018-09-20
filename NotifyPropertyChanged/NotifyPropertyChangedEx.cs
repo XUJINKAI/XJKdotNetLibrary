@@ -1,9 +1,11 @@
 ﻿using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
+using PostSharp.Constraints.Internals;
 using PostSharp.Extensibility;
 using PostSharp.Patterns.Model;
 using PostSharp.Reflection;
+using PostSharp.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,25 +13,27 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace XJK.NotifyPropertyChanged
 {
     /// <summary>
-    /// 订阅 Instance 属性的 PropertyChanged，并触发 OnPropertyChanged 和 OnPropertyChangedEx
+    /// 订阅 Property 的 PropertyChanged, CollectionChanged, 并触发 OnPropertyChangedEx
     /// </summary>
-    [Serializable]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, "Tracing")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, "Threading")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, "Validation")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, "Caching")]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(NotifyPropertyChangedAttribute))]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(AggregatableAttribute))]
+    [HasConstraint]
     [IntroduceInterface(typeof(INotifyPropertyChanged), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
     [IntroduceInterface(typeof(INotifyPropertyChangedEx), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
     [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Strict, PersistMetaData = true, AllowMultiple = false, TargetTypeAttributes = MulticastAttributes.UserGenerated)]
-    public class NotifyPropertyChangedEx : InstanceLevelAspect, INotifyPropertyChanged, INotifyPropertyChangedEx
+    [Serializer(typeof(Serializer))]
+    public class NotifyPropertyChangedExAttribute : InstanceLevelAspect, INotifyPropertyChanged, INotifyPropertyChangedEx
     {
-        public bool PropagationToPropertyChanged { get; set; } = true;
+        public bool PropagationEvent { get; set; } = false;
         /// <summary>
         /// Also Notify when property = property;
         /// </summary>
@@ -57,10 +61,14 @@ namespace XJK.NotifyPropertyChanged
         {
             OnPropertyChangedMethod?.Invoke(propertyName);
         }
-
+        
         [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, Visibility = Visibility.Family, LinesOfCodeAvoided = 2)]
         public void OnPropertyChangedEx(PropertyChangedEventArgsEx e)
         {
+            if (PropagationEvent)
+            {
+                OnPropertyChanged(e.PropertyName);
+            }
             OnPropertyChangedExMethod?.Invoke(e);
         }
         
@@ -194,6 +202,19 @@ namespace XJK.NotifyPropertyChanged
                    where property.CanWrite
                         //&& typeof(INotifyPropertyChanged).IsAssignableFrom(property.PropertyType)
                    select property;
+        }
+
+        //TODO What's this?
+        //没有不行，又不会写，但又好像不影响
+        [CompilerGenerated]
+        public class Serializer : ReferenceTypeSerializer
+        {
+            public override object CreateInstance(Type type, IArgumentsReader constructorArguments)
+            {
+                return Activator.CreateInstance(type);
+            }
+            public override void DeserializeFields(object obj, IArgumentsReader initializationArguments) { }
+            public override void SerializeObject(object obj, IArgumentsWriter constructorArguments, IArgumentsWriter initializationArguments) { }
         }
     }
 }

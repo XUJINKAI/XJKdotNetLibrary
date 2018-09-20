@@ -28,5 +28,6 @@ namespace XJK
         public static bool operator true(Status val) => val.State;
         public static bool operator false(Status val) => !val.State;
         public static bool operator !(Status val) => !val.State;
+        public static implicit operator bool(Status status) => status.State;
     }
 }

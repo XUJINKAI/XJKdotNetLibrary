@@ -30,7 +30,7 @@ namespace INotify
             };
             NewCollection();
             LogBoxEx.Text += Main.Dump();
-            //Main.PropertyChanged += Main_PropertyChanged;
+            Main.PropertyChanged += Main_PropertyChanged;
             Main.PropertyChangedEx += Main_PropertyChangedEx;
         }
 
