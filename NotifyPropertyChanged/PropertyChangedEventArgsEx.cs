@@ -25,11 +25,6 @@ namespace XJK.NotifyPropertyChanged
         public IList CollectionNewItems { get; private set; }
         public IList CollectionOldItems { get; private set; }
 
-        public object TryRetriveProperty(object Target)
-        {
-            return Target?.GetType().GetProperty(PropertyName)?.GetValue(Target);
-        }
-
         public object TryGetItemPropertyValue()
         {
             return Item?.GetType().GetProperty(ItemPropertyName)?.GetValue(Item);
@@ -44,15 +39,14 @@ namespace XJK.NotifyPropertyChanged
                 case PropertyChangeType.ItemProperty:
                     return $"{PropertyName}.{ItemPropertyName}";
                 case PropertyChangeType.Collection:
-                    return $"{PropertyName} New:{CollectionNewItems.Count}, Old:{CollectionOldItems.Count}";
+                    return $"{PropertyName} New:{CollectionNewItems?.Count ?? 0}, Old:{CollectionOldItems?.Count ?? 0}";
                 case PropertyChangeType.CollectionItemsProperty:
                     return $"{PropertyName}.{ItemPropertyName}";
                 default:
                     return "Unknown PropertyChangedEventArgsEx Type";
             }
         }
-
-
+        
         public static PropertyChangedEventArgsEx NewPropertyChange(string propertyName)
         {
             return new PropertyChangedEventArgsEx()
@@ -62,7 +56,7 @@ namespace XJK.NotifyPropertyChanged
             };
         }
         
-        public static PropertyChangedEventArgsEx NewItemPropertyChange(string propertyName, string itemPropertyName, object item = null)
+        public static PropertyChangedEventArgsEx NewItemPropertyChange(string propertyName, object item, string itemPropertyName)
         {
             return new PropertyChangedEventArgsEx()
             {

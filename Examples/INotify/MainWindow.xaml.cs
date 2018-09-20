@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Reflection;
+using XJK.ReflectionUtils;
+using XJK.NotifyPropertyChanged;
+using System.Collections.ObjectModel;
+using XJK;
 
 namespace INotify
 {
@@ -21,6 +15,7 @@ namespace INotify
     public partial class MainWindow : Window
     {
         MainCls Main;
+        Status PauseLog = new Status(false);
         public MainWindow()
         {
             InitializeComponent();
@@ -32,26 +27,31 @@ namespace INotify
                 {
                     ElementString1 = "ElementString1_init",
                 },
-                List = new XJK.NotifyPropertyChanged.ObservableCollectionEx<ElementCls>()
-                {
-                    new ElementCls(){ ElementString1 = "List.Item0_init" },
-                },
             };
-            Main.PropertyChanged += Main_PropertyChanged;
+            NewCollection();
+            LogBoxEx.Text += Main.Dump();
+            //Main.PropertyChanged += Main_PropertyChanged;
             Main.PropertyChangedEx += Main_PropertyChangedEx;
         }
 
-        private void Main_PropertyChangedEx(object sender, XJK.NotifyPropertyChanged.PropertyChangedEventArgsEx e)
+        private void Main_PropertyChangedEx(object sender, PropertyChangedEventArgsEx e)
         {
-            LogBox.Text += $"{e} = {e.TryGetItemPropertyValue()} {Environment.NewLine}";
+            if (PauseLog) return;
+            LogBox.Text += $"<{e.Type}> {e} = {e.TryGetItemPropertyValue() ?? e.TryRetriveProperty(sender)} {Environment.NewLine}";
         }
 
-        private void Main_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Main_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            LogBox.Text += $"{e.PropertyName}{Environment.NewLine}";
+            if (PauseLog) return;
+            LogBoxEx.Text += $"{e.PropertyName} = {e.TryRetriveProperty(sender)}{Environment.NewLine}";
         }
 
         //
+
+        private void Test_DumpMain(object sender, RoutedEventArgs e)
+        {
+            LogBox.Text += Main.Dump();
+        }
 
         private void Test_BaseAbsClsString1(object sender, RoutedEventArgs e)
         {
@@ -78,10 +78,7 @@ namespace INotify
 
         private void Test_List__New(object sender, RoutedEventArgs e)
         {
-            Main.List = new XJK.NotifyPropertyChanged.ObservableCollectionEx<ElementCls>()
-            {
-                new ElementCls(){ ElementString1 = "List_new__Element" }
-            };
+            NewCollection();
         }
 
         private void Test_List__Add(object sender, RoutedEventArgs e)
@@ -93,12 +90,44 @@ namespace INotify
         {
             Main.List[0].ElementString1 = "List_0_ElementString1_m_after__" + XJK.Helper.RandomString(10);
         }
-        
+
+        private void Test_ExpectNothing(object sender, RoutedEventArgs e)
+        {
+            var Cls = Main.List;
+            PauseLog.InChanging(() =>
+            {
+                NewCollection();
+            });
+            Cls.Add(new ElementCls());
+            Cls[0].ElementString1 = Helper.RandomString(10);
+
+            var Ele = Main.List[0];
+            PauseLog.InChanging(() =>
+            {
+                Main.List.Remove(Ele);
+            });
+            Ele.ElementString1 = Helper.RandomString(10);
+        }
+
         //
+
+        private void NewCollection()
+        {
+            Main.List = new ObservableCollection<ElementCls>()
+            {
+                new ElementCls(){ ElementString1 = XJK.Helper.RandomString(10) },
+                new ElementCls(){ ElementString1 = XJK.Helper.RandomString(10) },
+            };
+        }
 
         private void Test(object sender, RoutedEventArgs e)
         {
         }
 
+        private void Test_ClearLogBox(object sender, RoutedEventArgs e)
+        {
+            LogBox.Clear();
+            LogBoxEx.Clear();
+        }
     }
 }

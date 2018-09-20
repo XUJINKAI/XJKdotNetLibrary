@@ -6,7 +6,7 @@ using System.Collections;
 using System.Threading.Tasks;
 using System.Reflection;
 
-namespace XJK
+namespace XJK.ReflectionUtils
 {
     public static class ObjectDumper
     {

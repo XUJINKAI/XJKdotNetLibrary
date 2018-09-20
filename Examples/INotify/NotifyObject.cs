@@ -17,13 +17,12 @@ namespace INotify
     [NotifyPropertyChangedEx]
     public abstract class NotifyObject : INotifyObject
     {
-        public bool PropagationNotificationEx { get; set; } = true;
-
         public event PropertyChangedEventHandler PropertyChanged;
         public event PropertyChangedEventHandlerEx PropertyChangedEx;
 
         protected virtual void OnPropertyChanged(string Name)
         {
+            OnPropertyChangedEx(PropertyChangedEventArgsEx.NewPropertyChange(Name));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(Name));
         }
 

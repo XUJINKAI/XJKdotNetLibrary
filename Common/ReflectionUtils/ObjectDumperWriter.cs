@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace XJK
+namespace XJK.ReflectionUtils
 {
     internal class ObjectDumperWriter
     {

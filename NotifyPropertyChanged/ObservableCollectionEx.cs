@@ -13,7 +13,6 @@ namespace XJK.NotifyPropertyChanged
     public class ObservableCollectionEx<T> : ObservableCollection<T>, INotifyPropertyChangedEx
         where T : INotifyPropertyChanged
     {
-        public bool PropagationNotificationEx { get; set; } = true;
         public event PropertyChangedEventHandlerEx PropertyChangedEx;
 
         private readonly string DataPropertyName = "Items";
@@ -25,15 +24,9 @@ namespace XJK.NotifyPropertyChanged
 
         public ObservableCollectionEx()
         {
-            PropertyChanged += ObservableCollectionX_PropertyChanged;
             CollectionChanged += ObservableCollectionX_CollectionChanged;
         }
-
-        private void ObservableCollectionX_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            OnPropertyChangedEx(PropertyChangedEventArgsEx.NewPropertyChange(e.PropertyName));
-        }
-
+        
         protected void ObservableCollectionX_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -51,13 +44,11 @@ namespace XJK.NotifyPropertyChanged
                 }
             }
             OnPropertyChangedEx(PropertyChangedEventArgsEx.NewCollectionChange(DataPropertyName, e.NewItems, e.OldItems));
-            if (PropagationNotificationEx) OnPropertyChanged(new PropertyChangedEventArgs(DataPropertyName));
         }
 
         protected void CollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             OnPropertyChangedEx(PropertyChangedEventArgsEx.NewCollectionItemPropertyChange(DataPropertyName, sender, e.PropertyName));
-            if (PropagationNotificationEx) OnPropertyChanged(new PropertyChangedEventArgs(DataPropertyName));
         }
     }
 }

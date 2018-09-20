@@ -5,25 +5,45 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:INotify"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="700" Width="1400">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="10"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <Button Content="BaseAbsClsString1" Click="Test_BaseAbsClsString1"></Button>
-            <Button Content="MainString1" Click="Test_MainString1"></Button>
-            <Button Content="Element1 = new()" Click="Test_Element1__New"></Button>
-            <Button Content="Element1.ElementString1" Click="Test_Element1_ElementString1"></Button>
-            <Button Content="List = new()" Click="Test_List__New"></Button>
-            <Button Content="List.Add()" Click="Test_List__Add"></Button>
-            <Button Content="List[0].ElementString1" Click="Test_List_0_ElementString1"></Button>
-            <Button Content="Test" Click="Test"></Button>
+        <StackPanel Grid.Row="1">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="BaseAbsClsString1" Click="Test_BaseAbsClsString1"></Button>
+                <Button Content="MainString1" Click="Test_MainString1"></Button>
+                <Button Content="Element1 = new()" Click="Test_Element1__New"></Button>
+                <Button Content="Element1.ElementString1" Click="Test_Element1_ElementString1"></Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="List = new()" Click="Test_List__New"></Button>
+                <Button Content="List.Add()" Click="Test_List__Add"></Button>
+                <Button Content="List[0].ElementString1" Click="Test_List_0_ElementString1"></Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Content="ExpectNothing!" Click="Test_ExpectNothing" Width="150"></Button>
+                <Button Content="Clear" Click="Test_ClearLogBox" Width="200"></Button>
+                <Button Content="Dump" Click="Test_DumpMain"></Button>
+                <Button Content="Test" Click="Test"></Button>
+            </StackPanel>
         </StackPanel>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-            <TextBox x:Name="LogBox" FontFamily="Consolas">
-            </TextBox>
-        </ScrollViewer>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <TextBox x:Name="LogBox" FontFamily="Consolas" IsReadOnly="False">
+                </TextBox>
+            </ScrollViewer>
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <TextBox x:Name="LogBoxEx" FontFamily="Consolas" IsReadOnly="False">
+                </TextBox>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Window>

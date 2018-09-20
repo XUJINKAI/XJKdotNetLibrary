@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using XJK.ReflectionUtils;
 using XJK.Serializers;
 
 namespace XJK
