@@ -200,6 +200,7 @@ namespace XJK.NotifyPropertyChanged
             const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public;
             return from property in type.GetProperties(bindingFlags)
                    where property.CanWrite
+                        && !IsDefined(property, typeof(IgnoreAutoChangeNotificationAttribute))
                         //&& typeof(INotifyPropertyChanged).IsAssignableFrom(property.PropertyType)
                    select property;
         }

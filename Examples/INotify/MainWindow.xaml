@@ -18,6 +18,7 @@
                 <Button Content="MainString1" Click="Test_MainString1"></Button>
                 <Button Content="Element1 = new()" Click="Test_Element1__New"></Button>
                 <Button Content="Element1.ElementString1" Click="Test_Element1_ElementString1"></Button>
+                <Button Content="Set Combination" Click="Test_SetCombination"></Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Content="List = new()" Click="Test_List__New"></Button>

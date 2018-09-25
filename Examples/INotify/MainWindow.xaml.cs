@@ -76,6 +76,13 @@ namespace INotify
             Main.Element1.ElementString1 = "ElementString1_m__" + XJK.Helper.RandomString(10);
         }
 
+        private void Test_SetCombination(object sender, RoutedEventArgs e)
+        {
+            Main.Combination = "Combine_m__" + XJK.Helper.RandomString(10);
+        }
+
+        // List
+
         private void Test_List__New(object sender, RoutedEventArgs e)
         {
             NewCollection();
@@ -129,5 +136,6 @@ namespace INotify
             LogBox.Clear();
             LogBoxEx.Clear();
         }
+
     }
 }
