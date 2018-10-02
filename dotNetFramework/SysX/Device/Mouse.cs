@@ -5,7 +5,7 @@ namespace XJK.SysX.Device
 {
     public static class Mouse
     {
-        public static Point MousePos()
+        public static Point GetPosition()
         {
             return Control.MousePosition;
         }

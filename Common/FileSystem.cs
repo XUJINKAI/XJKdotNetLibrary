@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace XJK.SysX
+namespace XJK
 {
     public static class FS
     {

@@ -78,6 +78,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clips.cs" />
     <Compile Include="Cmd.cs" />
     <Compile Include="CommandHelper\CommandLineHelper.cs" />
     <Compile Include="CommandHelper\CommandStream.cs" />
@@ -96,10 +97,6 @@
     <ProjectReference Include="..\..\Common\Common.csproj">
       <Project>{c64271f6-b253-428e-a728-80ffa970ec1b}</Project>
       <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PInvokeStruct\PInvokeStruct.csproj">
-      <Project>{e98a1a68-87ba-4c59-a958-dab093adeea0}</Project>
-      <Name>PInvokeStruct</Name>
     </ProjectReference>
     <ProjectReference Include="..\PInvoke\PInvoke.csproj">
       <Project>{c6f66f18-d8ae-4005-b4a2-9fa05a953417}</Project>

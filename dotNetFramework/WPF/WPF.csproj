@@ -87,10 +87,6 @@
     <Compile Include="WpfWindow\HelperWindow.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PInvokeStruct\PInvokeStruct.csproj">
-      <Project>{e98a1a68-87ba-4c59-a958-dab093adeea0}</Project>
-      <Name>PInvokeStruct</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PInvoke\PInvoke.csproj">
       <Project>{c6f66f18-d8ae-4005-b4a2-9fa05a953417}</Project>
       <Name>PInvoke</Name>
