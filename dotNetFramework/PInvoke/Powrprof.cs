@@ -9,16 +9,5 @@ namespace XJK.PInvoke
     {
         [DllImport("Powrprof.dll", SetLastError = true)]
         public static extern bool SetSuspendState(bool hibernate, bool forceCritical, bool disableWakeEvent);
-
-
-        public static void Hibernate()
-        {
-            SetSuspendState(true, false, false);
-        }
-
-        public static void Suspend()
-        {
-            SetSuspendState(false, false, false);
-        }
     }
 }

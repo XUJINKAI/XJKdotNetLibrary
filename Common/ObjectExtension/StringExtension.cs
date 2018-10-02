@@ -16,6 +16,11 @@ namespace XJK
             return string.Join(sep, strings);
         }
 
+        public static string Join(this IEnumerable<string> strings, string sep = ", ")
+        {
+            return string.Join(sep, strings);
+        }
+
         public static string Dup(this char ch, int times)
         {
             return new string(ch, times);

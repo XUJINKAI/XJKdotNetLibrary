@@ -49,12 +49,13 @@ namespace XJK.NotifyPropertyChanged
         public Action<PropertyChangedEventArgsEx> OnPropertyChangedExMethod;
 
 
+#pragma warning disable CS0067
         [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore)]
         public event PropertyChangedEventHandler PropertyChanged;
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore)]
         public event PropertyChangedEventHandlerEx PropertyChangedEx;
-
+#pragma warning restore
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, Visibility = Visibility.Family, LinesOfCodeAvoided = 2)]
         public void OnPropertyChanged(string propertyName)

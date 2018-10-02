@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
-using static XJK.SysX.NativeMethods;
+using XJK.PInvoke;
 
 namespace XJK.SysX.Device
 {
@@ -9,7 +9,7 @@ namespace XJK.SysX.Device
     {
         public static int GetTouchPointCount()
         {
-            return GetSystemMetrics(SM_MAXIMUMTOUCHES);
+            return User32.GetSystemMetrics(SystemMetric.SM_MAXIMUMTOUCHES);
         }
 
         public static List<Rectangle> AllMonitorsRectangle()

@@ -158,8 +158,8 @@
       <Project>{c64271f6-b253-428e-a728-80ffa970ec1b}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\NotifyPropertyChanged\NotifyPropertyChanged.csproj">
-      <Project>{462b6a8a-8422-4fa4-8dbc-90ce38654cd9}</Project>
+    <ProjectReference Include="..\..\PostSharpRelied\NotifyPropertyChanged\NotifyPropertyChanged.csproj">
+      <Project>{239b2cfb-e80c-4ebf-818d-7ca71973adb9}</Project>
       <Name>NotifyPropertyChanged</Name>
     </ProjectReference>
   </ItemGroup>

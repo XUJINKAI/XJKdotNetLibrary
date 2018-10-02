@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using XJK.WPF.WpfWindow;
+using XJK.PInvoke;
 
 namespace XJK.WPF
 {
@@ -24,8 +25,8 @@ namespace XJK.WPF
 
         public static void BroadcastMessage(string msgId, string MsgBody = "")
         {
-            NativeMethods.SendMessage(
-                (IntPtr)NativeMethods.HWND_BROADCAST,
+            User32.SendMessage(
+                SpecialWindowHandles.HWND_BROADCAST,
                 GetMesssageId(msgId),
                 IntPtr.Zero,
                 MsgBody);
@@ -39,7 +40,7 @@ namespace XJK.WPF
             }
             else
             {
-                int msgid = NativeMethods.RegisterWindowMessage(msg);
+                int msgid = User32.RegisterWindowMessage(msg);
                 RegisteredMessage[msg] = msgid;
                 return msgid;
             }
@@ -88,11 +89,11 @@ namespace XJK.WPF
         {
             if (AutoRestart)
             {
-                if (msg == NativeMethods.WM_QUERYENDSESSION)
+                if (msg == WM.QUERYENDSESSION)
                 {
-                    NativeMethods.RegisterApplicationRestart(AutoRestartParameter, 0);
+                    Kernel32.RegisterApplicationRestart(AutoRestartParameter, 0);
                 }
-                if (msg == NativeMethods.WM_ENDSESSION)
+                if (msg == WM.ENDSESSION)
                 {
                     AutoRestartShutdownAction();
                 }

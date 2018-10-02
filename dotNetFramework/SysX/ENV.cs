@@ -5,7 +5,6 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
-using static XJK.SysX.NativeMethods;
 
 namespace XJK.SysX
 {
@@ -28,7 +27,7 @@ namespace XJK.SysX
         {
             try
             {
-                ModuleHandle = GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName);
+                ModuleHandle = PInvoke.Kernel32.GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName);
                 ModuleHandleHex = "0x" + ModuleHandle.ToString("x");
             }
             catch
