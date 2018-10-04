@@ -84,7 +84,8 @@
     <Compile Include="Converters\EnumBooleanConverter.cs" />
     <Compile Include="WinMsg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WpfWindow\HelperWindow.cs" />
+    <Compile Include="HelperWindow.cs" />
+    <Compile Include="WndMsgEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PInvoke\PInvoke.csproj">

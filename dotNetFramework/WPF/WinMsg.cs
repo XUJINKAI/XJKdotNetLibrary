@@ -6,103 +6,76 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
-using XJK.WPF.WpfWindow;
 using XJK.PInvoke;
 
 namespace XJK.WPF
 {
+    public delegate void WndMsgProcPowerBroadcast(PBT pbt, WndMsgEventArgs e);
+
     public static class WinMsg
     {
-        public static AppHelperWindow Window { get; private set; }
-        private static readonly Dictionary<string, int> RegisteredMessage = new Dictionary<string, int>();
-        private static readonly Dictionary<int, Action> MsgActionDict = new Dictionary<int, Action>();
+        public static event WndMsgProc WndMsgProc;
 
-        public static bool AutoRestart { get; private set; } = false;
-        private static string AutoRestartParameter = "";
-        private static Action AutoRestartShutdownAction;
+        static WinMsg()
+        {
+            WinMsgHelperWindow.WndProcReceived += WinMsgHelperWindow_WndProcReceived;
+        }
 
-        #region Message
+        private static void WinMsgHelperWindow_WndProcReceived(WndMsgEventArgs e)
+        {
+            WndMsgProc?.Invoke(e);
+        }
 
-        public static void BroadcastMessage(string msgId, string MsgBody = "")
+        public static void AddEvent(WndMsgProc wndMsgProc)
+        {
+            WndMsgProc += wndMsgProc;
+        }
+
+        public static void AddEvent(int msg, WndMsgProc action)
+        {
+            void hanlder(WndMsgEventArgs e)
+            {
+                if (e.Msg == msg)
+                {
+                    action(e);
+                }
+            }
+            WndMsgProc += hanlder;
+        }
+        
+        public static void RegisterAutoRestart(WndMsgProc shutdownAction, string LaunchParameter = "")
+        {
+            Debug.Assert(shutdownAction != null, "shutdownAction Can't be null.");
+            void hanlder(WndMsgEventArgs e)
+            {
+                if (e.Msg == WindowsMessages.QUERYENDSESSION)
+                {
+                    Kernel32.RegisterApplicationRestart(LaunchParameter, 0);
+                }
+                if (e.Msg == WindowsMessages.ENDSESSION)
+                {
+                    shutdownAction(e);
+                }
+            }
+            WndMsgProc += hanlder;
+        }
+
+        public static void RegisterPowerBroadcast(WndMsgProcPowerBroadcast wndMsgProc)
+        {
+            AddEvent(WindowsMessages.POWERBROADCAST, e =>
+            {
+                wndMsgProc((PBT)e.wParam, e);
+            });
+        }
+
+        public static void BroadcastMessage(int msg, string MsgBody = "")
         {
             User32.SendMessage(
                 SpecialWindowHandles.HWND_BROADCAST,
-                GetMesssageId(msgId),
+                msg,
                 IntPtr.Zero,
                 MsgBody);
         }
-        
-        public static int GetMesssageId(string msg)
-        {
-            if (RegisteredMessage.ContainsKey(msg))
-            {
-                return RegisteredMessage[msg];
-            }
-            else
-            {
-                int msgid = User32.RegisterWindowMessage(msg);
-                RegisteredMessage[msg] = msgid;
-                return msgid;
-            }
-        }
 
-        #endregion
-
-        public static void RegisterReciveMessage(string msg, Action action)
-        {
-            EnsureHelperWindow();
-            int msgid = GetMesssageId(msg);
-            MsgActionDict[msgid] = action;
-        }
-
-
-        public static void RegisterAutoRestart(Action shutdownAction, string Parameter = "")
-        {
-            Debug.Assert(shutdownAction != null, "");
-            EnsureHelperWindow();
-            AutoRestartShutdownAction = shutdownAction;
-            AutoRestartParameter = Parameter;
-            AutoRestart = true;
-        }
-
-        private static void EnsureHelperWindow()
-        {
-            if (Window == null)
-            {
-                Window = new AppHelperWindow();
-                Window.RecivingMsg += AppHelperWindow_RecivingMsg;
-                Window.Show();
-            }
-        }
-
-        public static void DisposeHelperWindow()
-        {
-            if (Window != null)
-            {
-                Window.RecivingMsg -= AppHelperWindow_RecivingMsg;
-                Window.Close();
-                Window = null;
-            }
-        }
-        
-        private static void AppHelperWindow_RecivingMsg(int msg)
-        {
-            if (AutoRestart)
-            {
-                if (msg == WM.QUERYENDSESSION)
-                {
-                    Kernel32.RegisterApplicationRestart(AutoRestartParameter, 0);
-                }
-                if (msg == WM.ENDSESSION)
-                {
-                    AutoRestartShutdownAction();
-                }
-            }
-            if (MsgActionDict.ContainsKey(msg))
-            {
-                Action action = MsgActionDict[msg];
-                action();
-            }
-        }
     }
 }

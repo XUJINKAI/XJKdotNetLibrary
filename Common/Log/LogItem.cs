@@ -39,7 +39,7 @@ namespace XJK
 
         public string ToIndentString()
         {
-            return $"{new String(' ', Indent * Log.IndentSize)}{Message}";
+            return $"{new string(' ', Indent * Log.IndentSize)}{Message}";
         }
 
         public string ToIndentOrFullString()

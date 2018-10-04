@@ -19,11 +19,6 @@ namespace XJK.SysX
             User32.ExitWindowsEx(ExitWindows.LogOff, ShutdownReason.MajorOther);
         }
 
-        public static void MonitorOff()
-        {
-            User32.SendMessage(0xFFFF, 0x112, 0xF170, 2);
-        }
-
         public static void Suspend()
         {
             Powrprof.SetSuspendState(false, false, false);
@@ -42,6 +37,18 @@ namespace XJK.SysX
         public static void Restart()
         {
             Cmd.RunAsInvoker("shotdown", "/r /t 0");
+        }
+        
+        /// <summary>
+        /// prevent monitor off and system sleep
+        /// </summary>
+        public static void KeepSystemMonitorOn(bool keep)
+        {
+            if (keep)
+                Kernel32.SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_SYSTEM_REQUIRED
+                    | EXECUTION_STATE.ES_DISPLAY_REQUIRED | EXECUTION_STATE.ES_AWAYMODE_REQUIRED);
+            else
+                Kernel32.SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS);
         }
     }
 }

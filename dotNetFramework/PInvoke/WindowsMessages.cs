@@ -9,8 +9,20 @@ namespace XJK.PInvoke
     /// Defined in winuser.h from Windows SDK v6.1
     /// Documentation pulled from MSDN.
     /// </summary>
-    public static class WM
+    public static class WindowsMessages
     {
+        public static string GetNameByValue(int value)
+        {
+            foreach (var field in typeof(WindowsMessages).GetFields())
+            {
+                if ((int)field.GetValue(null) == value)
+                {
+                    return field.Name;
+                }
+            }
+            return null;
+        }
+
         public const int
         /// <summary>
         /// The WM_NULL message performs no operation. An application sends the WM_NULL message if it wants to post a message that the recipient window will ignore.

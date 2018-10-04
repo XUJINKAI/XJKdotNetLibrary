@@ -52,6 +52,7 @@
     <Compile Include="User32.LayeredWindowAttributes.cs" />
     <Compile Include="User32.SetWindowPos.cs" />
     <Compile Include="WindowsMessages.cs" />
+    <Compile Include="WindowsMessages.Subs.cs" />
     <Compile Include="WindowStyles.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -59,6 +60,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="User32.ExitWindowsEx.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="WindowsMessages.SysCommands.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="User32.SetWindowsHookEx.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -4,6 +4,16 @@ using System.Text;
 
 namespace XJK.PInvoke
 {
+    public static class HWND
+    {
+        public const int
+            BROADCAST = 0xffff,
+            TOP = 0,
+            BOTTOM = 1,
+            TOPMOST = -1,
+            NOTOPMOST = -2,
+            MESSAGE = -3;
+    }
     /// <summary>
     /// Special window handles
     /// </summary>
