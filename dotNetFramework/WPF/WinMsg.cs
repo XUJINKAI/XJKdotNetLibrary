@@ -33,20 +33,18 @@ namespace XJK.WPF
 
         public static void AddEvent(int msg, WndMsgProc action)
         {
-            void hanlder(WndMsgEventArgs e)
+            AddEvent(e =>
             {
                 if (e.Msg == msg)
                 {
                     action(e);
                 }
-            }
-            WndMsgProc += hanlder;
+            });
         }
-        
+
         public static void RegisterAutoRestart(WndMsgProc shutdownAction, string LaunchParameter = "")
         {
-            Debug.Assert(shutdownAction != null, "shutdownAction Can't be null.");
-            void hanlder(WndMsgEventArgs e)
+            AddEvent(e =>
             {
                 if (e.Msg == WindowsMessages.QUERYENDSESSION)
                 {
@@ -56,15 +54,17 @@ namespace XJK.WPF
                 {
                     shutdownAction(e);
                 }
-            }
-            WndMsgProc += hanlder;
+            });
         }
 
         public static void RegisterPowerBroadcast(WndMsgProcPowerBroadcast wndMsgProc)
         {
-            AddEvent(WindowsMessages.POWERBROADCAST, e =>
+            AddEvent(e =>
             {
-                wndMsgProc((PBT)e.wParam, e);
+                if (e.Msg == WindowsMessages.POWERBROADCAST)
+                {
+                    wndMsgProc((PBT)e.wParam, e);
+                }
             });
         }
 

@@ -94,8 +94,8 @@
     <Compile Include="Win.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.csproj">
-      <Project>{c64271f6-b253-428e-a728-80ffa970ec1b}</Project>
+    <ProjectReference Include="..\..\dotNetStandard\Common\Common.csproj">
+      <Project>{2f20cfe8-a385-4cce-aeb2-1a69f8583047}</Project>
       <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\PInvoke\PInvoke.csproj">
