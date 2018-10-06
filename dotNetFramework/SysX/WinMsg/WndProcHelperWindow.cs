@@ -8,18 +8,18 @@ using System.Windows;
 using System.Windows.Interop;
 using XJK.PInvoke;
 
-namespace XJK.WPF
+namespace XJK.SysX.WinMsg
 {
-    public class WinMsgHelperWindow : Window
+    public class WndProcHelperWindow : Window
     {
-        private static WinMsgHelperWindow Instance = null;
-        private static WndMsgProc WndMsgProcDelegate;
-        public static event WndMsgProc WndProcReceived
+        private static WndProcHelperWindow Instance = null;
+        private static WindowMessageEvent WndMsgProcDelegate;
+        public static event WindowMessageEvent WndProcEvent
         {
             add
             {
                 WndMsgProcDelegate += value;
-                if (Instance == null) Instance = new WinMsgHelperWindow();
+                if (Instance == null) Instance = new WndProcHelperWindow();
             }
             remove
             {
@@ -32,7 +32,7 @@ namespace XJK.WPF
             }
         }
         
-        private WinMsgHelperWindow()
+        private WndProcHelperWindow()
         {
             WindowStyle = WindowStyle.None;
             Opacity = 0;
@@ -54,13 +54,7 @@ namespace XJK.WPF
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (WndMsgProcDelegate == null) return IntPtr.Zero;
-            WndMsgEventArgs arg = new WndMsgEventArgs()
-            {
-                Handled = false,
-                Msg = msg,
-                wParam = wParam,
-                lParam = lParam,
-            };
+            WindowMessageEventArgs arg = new WindowMessageEventArgs(msg, wParam, lParam);
             foreach (var dele in WndMsgProcDelegate.GetInvocationList())
             {
                 dele.DynamicInvoke(arg);

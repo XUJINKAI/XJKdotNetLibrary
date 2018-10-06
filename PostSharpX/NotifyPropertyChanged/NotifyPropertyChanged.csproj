@@ -12,8 +12,4 @@
     <PackageReference Include="PostSharp.Patterns.Model" Version="6.0.27" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\dotNetStandard\Common\Common.csproj" />
-  </ItemGroup>
-
 </Project>

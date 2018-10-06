@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using static XJK.SysX.CommandLineHelper;
+using static XJK.SysX.CommandHelper.CommandLineHelper;
 
-namespace XJK.SysX
+namespace XJK.SysX.CommandHelper
 {
     /*
      * WindowStyle --> UI

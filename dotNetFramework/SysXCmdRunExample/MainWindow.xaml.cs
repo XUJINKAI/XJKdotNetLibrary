@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using XJK;
 using XJK.SysX;
+using XJK.SysX.CommandHelper;
 
 namespace SysXCmdRunExample
 {

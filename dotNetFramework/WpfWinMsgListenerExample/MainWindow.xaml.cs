@@ -12,7 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using XJK.WPF;
+using XJK;
+using XJK.PInvoke;
+using XJK.SysX.Hooks;
+using XJK.SysX.WinMsg;
 
 namespace WpfWinMsgListenerExample
 {
@@ -30,9 +33,21 @@ namespace WpfWinMsgListenerExample
             App.Current.MainWindow = this;
             App.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
             FilterBox.Text = "13";
-            WinMsg.WndMsgProc += WinMsg_WndMsgProc;
+            WindowMessage.WindowMessageReceived += WindowMessage_WindowMessageReceived;
             Listen = true;
             ListenCheckBox.IsChecked = true;
+            //RegisterHook(HookType.WH_KEYBOARD_LL);
+        }
+
+        private void RegisterHook(HookType hookType)
+        {
+            var x = new WindowsHookEx(hookType, (_, e) =>
+            {
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    Log(e.ToString());
+                });
+            });
         }
 
         private void Log(string text)
@@ -44,7 +59,7 @@ namespace WpfWinMsgListenerExample
             }
         }
 
-        private void WinMsg_WndMsgProc(WndMsgEventArgs e)
+        private void WindowMessage_WindowMessageReceived(WindowMessageEventArgs e)
         {
             App.Current.Dispatcher.Invoke(() =>
             {
@@ -58,6 +73,11 @@ namespace WpfWinMsgListenerExample
         private void ClearBox(object sender, RoutedEventArgs e)
         {
             TextBox.Clear();
+        }
+
+        private void BroadcastMsg(object sender, RoutedEventArgs e)
+        {
+            WindowMessage.BroadcastMessage(User32.RegisterWindowMessage("WpfWinMsgListenerExample_BROADCAST_MSG"), Helper.RandomString(20));
         }
     }
 }

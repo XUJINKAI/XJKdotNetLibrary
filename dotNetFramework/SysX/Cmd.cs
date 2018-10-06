@@ -9,7 +9,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using XJK;
-using static XJK.SysX.CommandLineHelper;
+using XJK.SysX.CommandHelper;
+using static XJK.SysX.CommandHelper.CommandLineHelper;
 
 namespace XJK.SysX
 {

@@ -16,6 +16,7 @@
             <StackPanel Orientation="Horizontal">
                 <CheckBox Name="ListenCheckBox" IsChecked="{Binding Listen}">Listen</CheckBox>
                 <Button Click="ClearBox">Clear</Button>
+                <Button Click="BroadcastMsg">BroadcastMsg</Button>
             </StackPanel>
             <TextBox Name="FilterBox" ToolTip="Filter" Grid.Row="1"></TextBox>
             <ScrollViewer Name="ScrollViewer" Grid.Row="2" 

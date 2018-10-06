@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SysXCmdRunExample"
-        xmlns:wpf="clr-namespace:XJK.WPF;assembly=XJKdotNetLibrary.WPF"
+        xmlns:wpf="clr-namespace:XJK.WPF.Converters;assembly=XJKdotNetLibrary.WPF"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="MainWindow" Height="450" Width="1200">
@@ -14,7 +14,7 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.Resources>
-            <wpf:EnumBooleanConverter x:Key="EnumBoolean"></wpf:EnumBooleanConverter>
+            <wpf:EnumToBoolConverter x:Key="EnumBoolean"></wpf:EnumToBoolConverter>
             <Style TargetType="TextBox">
                 <Setter Property="FontFamily" Value="Consolas"></Setter>
             </Style>

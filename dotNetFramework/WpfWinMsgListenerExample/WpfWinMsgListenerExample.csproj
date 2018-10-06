@@ -139,6 +139,18 @@
       <Project>{E91D5857-D99B-4825-BAE8-5CF06C706A3D}</Project>
       <Name>WPF</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\dotNetStandard\Common\Common.csproj">
+      <Project>{2f20cfe8-a385-4cce-aeb2-1a69f8583047}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PInvoke\PInvoke.csproj">
+      <Project>{C6F66F18-D8AE-4005-B4A2-9FA05A953417}</Project>
+      <Name>PInvoke</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SysX\SysX.csproj">
+      <Project>{9CE7C93B-5368-416B-BF14-ED237F813F14}</Project>
+      <Name>SysX</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
