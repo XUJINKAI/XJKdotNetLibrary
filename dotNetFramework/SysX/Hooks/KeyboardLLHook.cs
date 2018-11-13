@@ -71,10 +71,9 @@ namespace XJK.SysX.Hooks
             {
                 Handled = false,
                 PressType = pressType,
-                VirtualKey = vk,
+                Key = vk,
                 KeyboardState = state,
                 InputChar = inputChar,
-                HookExSender = sender,
             };
             foreach (var action in KeyChange.GetInvocationList().Reverse())
             {

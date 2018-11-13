@@ -5,7 +5,6 @@ using System.ComponentModel;
 
 namespace XJK.NotifyPropertyChanged
 {
-    [Serializable]
     [NotifyPropertyChanged]
     [NotifyPropertyChangedEx(PropagationEvent = false)]
     public abstract class NotifyObject : INotifyPropertyChanged, INotifyPropertyChangedEx

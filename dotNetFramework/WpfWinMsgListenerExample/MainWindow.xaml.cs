@@ -25,6 +25,7 @@ namespace WpfWinMsgListenerExample
     public partial class MainWindow : Window
     {
         public bool Listen { get; set; }
+        private readonly WindowEx msgWin;
 
         public MainWindow()
         {
@@ -33,33 +34,14 @@ namespace WpfWinMsgListenerExample
             App.Current.MainWindow = this;
             App.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
             FilterBox.Text = "13";
-            WindowMessage.WindowMessageReceived += WindowMessage_WindowMessageReceived;
+            msgWin = new WindowEx().ShowInvisible(this);
+            msgWin.AllMsg += WindowEx_AllMsg;
             Listen = true;
             ListenCheckBox.IsChecked = true;
             //RegisterHook(HookType.WH_KEYBOARD_LL);
         }
 
-        private void RegisterHook(HookType hookType)
-        {
-            var x = new WindowsHookEx(hookType, (_, e) =>
-            {
-                App.Current.Dispatcher.Invoke(() =>
-                {
-                    Log(e.ToString());
-                });
-            });
-        }
-
-        private void Log(string text)
-        {
-            if (Listen)
-            {
-                TextBox.AppendText(text + Environment.NewLine);
-                ScrollViewer.ScrollToEnd();
-            }
-        }
-
-        private void WindowMessage_WindowMessageReceived(WindowMessageEventArgs e)
+        private void WindowEx_AllMsg(object sender, WndMsgEventArgs e)
         {
             App.Current.Dispatcher.Invoke(() =>
             {
@@ -69,7 +51,16 @@ namespace WpfWinMsgListenerExample
                 }
             });
         }
-
+        
+        private void Log(string text)
+        {
+            if (Listen)
+            {
+                TextBox.AppendText(text + Environment.NewLine);
+                ScrollViewer.ScrollToEnd();
+            }
+        }
+        
         private void ClearBox(object sender, RoutedEventArgs e)
         {
             TextBox.Clear();
@@ -77,7 +68,7 @@ namespace WpfWinMsgListenerExample
 
         private void BroadcastMsg(object sender, RoutedEventArgs e)
         {
-            WindowMessage.BroadcastMessage(User32.RegisterWindowMessage("WpfWinMsgListenerExample_BROADCAST_MSG"), Helper.RandomString(20));
+            msgWin.WndMsg.BroadcastMessage("WpfWinMsgListenerExample_BROADCAST_MSG", Helper.RandomString(20));
         }
     }
 }

@@ -11,7 +11,7 @@ namespace XJK.SysX.Hooks
     {
         public bool Handled { get; set; } = false;
         public PressType PressType { get; set; } = PressType.None;
-        public object HookExSender { get; set; }
+        public VirtualKeys Key { get; set; } = VirtualKeys.None;
     }
 
     // mouse
@@ -20,13 +20,13 @@ namespace XJK.SysX.Hooks
 
     public class MouseChangeEventArgs : LLEventArgs
     {
-        public VirtualKeys Key { get; set; } = VirtualKeys.None;
-        public int Click { get; set; } = 0;
+        public int MouseClick { get; set; } = 0;
         public bool MouseMoved { get; set; } = false;
-        public POINT Point { get; set; }
+        public POINT MousePosition { get; set; }
+
         public override string ToString()
         {
-            return $"<Mouse {PressType} {Key}, ({Point})>";
+            return $"<Mouse {PressType} {Key}, ({MousePosition})>";
         }
     }
 
@@ -36,13 +36,12 @@ namespace XJK.SysX.Hooks
 
     public class KeyChangeEventArgs : LLEventArgs
     {
-        public VirtualKeys VirtualKey { get; set; } = VirtualKeys.None;
         public KeyboardState KeyboardState { get; set; }
         public char? InputChar { get; set; }
 
         public override string ToString()
         {
-            return $"<Keyboard {PressType} {VirtualKey}, ({KeyboardState})>";
+            return $"<Keyboard {PressType} {Key}, ({KeyboardState})>";
         }
     }
 

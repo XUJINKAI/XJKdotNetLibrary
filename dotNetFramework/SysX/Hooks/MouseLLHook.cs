@@ -107,9 +107,8 @@ namespace XJK.SysX.Hooks
                 Handled = false,
                 PressType = pressType,
                 Key = vk,
-                Click = click,
-                Point = @struct.Point,
-                HookExSender = sender,
+                MouseClick = click,
+                MousePosition = @struct.Point,
             };
             if (LastMousePosX != @struct.Point.X || LastMousePosY != @struct.Point.Y)
             {

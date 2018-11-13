@@ -11,7 +11,7 @@
     <AssemblyName>XJKdotNetLibrary.AOP</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Reflection.DispatchProxy" Version="4.5.0" />
+    <PackageReference Include="System.Reflection.DispatchProxy" Version="4.5.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />

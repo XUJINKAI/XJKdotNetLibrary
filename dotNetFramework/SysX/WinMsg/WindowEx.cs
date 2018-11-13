@@ -59,13 +59,14 @@ namespace XJK.SysX.WinMsg
             }
         }
 
-        public void ShowInvisible(Window closeRelatedWindow)
+        public WindowEx ShowInvisible(Window closeRelatedWindow)
         {
             ShowInvisible();
             closeRelatedWindow.Closed += (s, e) =>
             {
                 this.Close();
             };
+            return this;
         }
 
         private void ShowInvisible()
