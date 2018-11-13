@@ -9,6 +9,8 @@ namespace XJK.PInvoke
 {
     public static partial class User32
     {
+        // Window Long
+
         [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
         private static extern IntPtr GetWindowLongPtr32(IntPtr hWnd, int nIndex);
 
@@ -42,6 +44,14 @@ namespace XJK.PInvoke
             else
                 return new IntPtr(SetWindowLong32(hWnd, (int)nIndex, (int)dwNewLong));
         }
+
+        // LayeredWindowAttributes
+
+        [DllImport("user32.dll")]
+        public static extern bool GetLayeredWindowAttributes(IntPtr hwnd, out uint crKey, out byte bAlpha, out uint dwFlags);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
     }
     
     public enum WindowLongFlags : int
@@ -81,5 +91,12 @@ namespace XJK.PInvoke
         /// <summary>Sets the new address of the dialog box procedure.</summary>
         /// <remarks>Only applies to dialog boxes.</remarks>
         DWLP_DLGPROC = 4
+    }
+
+    public static class LayeredWindowAttributes
+    {
+        public const uint
+        LWA_ALPHA = 0x2,
+        LWA_COLORKEY = 0x1;
     }
 }

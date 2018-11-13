@@ -19,11 +19,6 @@ namespace XJK.Objects
             }
         }
         
-        void CurrentDomain_ProcessExit(object sender, EventArgs e)
-        {
-            Dispose();
-        }
-
         ~DisposeBase()
         {
             Dispose();

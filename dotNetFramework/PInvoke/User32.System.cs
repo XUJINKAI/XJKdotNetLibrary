@@ -10,6 +10,9 @@ namespace XJK.PInvoke
     public static partial class User32
     {
         [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool LockWorkStation();
+
+        [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool ExitWindowsEx(ExitWindows uFlags, ShutdownReason dwReason);
     }

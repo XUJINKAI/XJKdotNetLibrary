@@ -43,12 +43,12 @@ namespace XJK.SysX
             }
         }
 
-        public static Tuple<string, string> SplitCommandArg(string CommandWithArgs)
+        public static (string, string) SplitCommandArg(string CommandWithArgs)
         {
             var argArray = CommandLineToArgs(CommandWithArgs);
             string command = argArray[0];
             string arg = CommandWithArgs.Substring(Math.Min(command.Length + 1, CommandWithArgs.Length));
-            return Tuple.Create(command, arg);
+            return (command, arg);
         }
 
         public static void RunSmart(string CommandWithArgs)
@@ -59,9 +59,7 @@ namespace XJK.SysX
             }
             else
             {
-                var tuple = SplitCommandArg(CommandWithArgs);
-                string command = tuple.Item1;
-                string arg = tuple.Item2;
+                var (command, arg) = SplitCommandArg(CommandWithArgs);
                 bool showWindow = command.ToLower().Equals("cmd") && arg.IsNullOrEmpty();
                 if(showWindow) RunAsInvoker(command, arg);
                 else ProcessInfoChain.New(command, arg).SetWindow(WindowType.ConsoleNoWindow).Excute();
@@ -75,11 +73,16 @@ namespace XJK.SysX
              return ProcessInfoChain.New(Command, Args).Excute();
         }
 
+        public static ExcuteResult RunAsLimited(string Command, string Args)
+        {
+            return ProcessInfoChain.New(Command, Args).RunAs(Privilege.Limited).Excute();
+        }
+
         public static ExcuteResult RunAsAdmin(string Command, string Args)
         {
             return ProcessInfoChain.New(Command, Args).RunAs(Privilege.Admin).Excute();
         }
-        
+
         public static ExcuteResult RunWithCmdStart(string Command, string Args)
         {
             return ProcessInfoChain.New(Command, Args).LaunchBy(LaunchType.CmdStart).Excute();

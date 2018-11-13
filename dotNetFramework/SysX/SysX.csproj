@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -71,6 +73,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -91,15 +94,23 @@
     <Compile Include="Device\Mouse.cs" />
     <Compile Include="Device\OS.cs" />
     <Compile Include="CommandHelper\ProcessInfoChain.cs" />
+    <Compile Include="Hooks\KeyboardLLHook.cs" />
+    <Compile Include="Hooks\KeyboardState.cs" />
+    <Compile Include="Hooks\LLEventArgs.cs" />
+    <Compile Include="Hooks\PressType.cs" />
+    <Compile Include="Hooks\MouseLLHook.cs" />
+    <Compile Include="Hooks\SystemHotkey.cs" />
     <Compile Include="Hooks\WindowsHookEx.cs" />
     <Compile Include="Hooks\WindowsHookExEventArgs.cs" />
     <Compile Include="Power.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reg.cs" />
     <Compile Include="Win.cs" />
-    <Compile Include="WinMsg\WindowMessage.cs" />
-    <Compile Include="WinMsg\WindowMessageEventArgs.cs" />
-    <Compile Include="WinMsg\WndProcHelperWindow.cs" />
+    <Compile Include="WinMsg\WindowCommunicate.cs" />
+    <Compile Include="WinMsg\WindowEx.cs" />
+    <Compile Include="WinMsg\WndMsgEventArgs.cs" />
+    <Compile Include="WinMsg\WndMsgCommEventArgs.cs" />
+    <Compile Include="WinMsg\WndMsgPowerBroadcastEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\dotNetStandard\Common\Common.csproj">
@@ -109,6 +120,10 @@
     <ProjectReference Include="..\PInvoke\PInvoke.csproj">
       <Project>{c6f66f18-d8ae-4005-b4a2-9fa05a953417}</Project>
       <Name>PInvoke</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WPF\WPF.csproj">
+      <Project>{E91D5857-D99B-4825-BAE8-5CF06C706A3D}</Project>
+      <Name>WPF</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

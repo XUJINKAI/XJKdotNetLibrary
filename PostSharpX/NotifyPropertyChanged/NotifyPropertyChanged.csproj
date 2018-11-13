@@ -5,6 +5,7 @@
     <RootNamespace>XJK.NotifyPropertyChanged</RootNamespace>
     <AssemblyName>XJKdotNetLibrary.NotifyPropertyChanged</AssemblyName>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

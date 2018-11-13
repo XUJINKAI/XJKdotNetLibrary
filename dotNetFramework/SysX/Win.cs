@@ -10,6 +10,8 @@ using static XJK.PInvoke.SetWindowPosFlags;
 using static XJK.PInvoke.SpecialWindowHandles;
 using static XJK.PInvoke.WindowStyles;
 using System.Drawing;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace XJK.SysX
 {
@@ -48,14 +50,7 @@ namespace XJK.SysX
             GetWindowRect(handle, out var rect);
             return rect;
         }
-
-        public static Point GetPosition(IntPtr handle)
-        {
-            GetWindowRect(handle, out var rect);
-            return new Point(rect.X, rect.Y);
-        }
-
-
+        
         public static class Foreground
         {
             public static IntPtr Get() => GetForegroundWindow();
@@ -64,6 +59,11 @@ namespace XJK.SysX
 
         public static class Find
         {
+            public static IntPtr ByWindow(Window window)
+            {
+                return new WindowInteropHelper(window).Handle;
+            }
+
             public static IntPtr ByTitle(string Title)
             {
                 IntPtr hWnd = IntPtr.Zero;
@@ -82,7 +82,7 @@ namespace XJK.SysX
         {
             public static bool Get(IntPtr handle)
             {
-                int exStyle = (int)GetWindowLong(handle,  WindowLongFlags.GWL_EXSTYLE);
+                var exStyle = ExStyle.Get(handle);
                 return (exStyle & WS_EX_TOPMOST) == WS_EX_TOPMOST;
             }
 
@@ -102,10 +102,10 @@ namespace XJK.SysX
         {
             public static double Get(IntPtr handle)
             {
-                SetWindowLong(handle, WindowLongFlags.GWL_EXSTYLE, WS_EX_LAYERED);
+                ExStyle.Set(handle, WS_EX_LAYERED);
                 GetLayeredWindowAttributes(handle, out uint crKey, out byte bAlpha, out uint dwFlags);
                 var re = bAlpha / 255.0;
-                if (re == 0)
+                if (re == 0) // 未设置
                 {
                     Set(handle, 1);
                     re = 1;
@@ -121,8 +121,62 @@ namespace XJK.SysX
             public static void Set(IntPtr handle, double opacity)
             {
                 if (opacity < 0 || opacity > 1) throw new ArgumentOutOfRangeException("opacity must in range 0 - 1.");
-                SetWindowLong(handle, WindowLongFlags.GWL_EXSTYLE, WS_EX_LAYERED);
+                ExStyle.Set(handle, WS_EX_LAYERED);
                 SetLayeredWindowAttributes(handle, 0, (byte)(opacity * 255), LayeredWindowAttributes.LWA_ALPHA);
+            }
+        }
+
+        public static class Style
+        {
+            public static uint Get(IntPtr Handle)
+            {
+                return (uint)GetWindowLong(Handle, WindowLongFlags.GWL_STYLE);
+            }
+
+            public static void Set(IntPtr Handle, uint style)
+            {
+                SetWindowLong(Handle, WindowLongFlags.GWL_STYLE, style);
+            }
+
+            public static uint Add(IntPtr Handle, uint style)
+            {
+                uint newStyle = Get(Handle) | style;
+                Set(Handle, newStyle);
+                return newStyle;
+            }
+
+            public static uint Remove(IntPtr Handle, uint style)
+            {
+                uint newStyle = Get(Handle) & ~style;
+                Set(Handle, newStyle);
+                return newStyle;
+            }
+        }
+
+        public static class ExStyle
+        {
+            public static uint Get(IntPtr Handle)
+            {
+                return (uint)GetWindowLong(Handle, WindowLongFlags.GWL_EXSTYLE);
+            }
+
+            public static void Set(IntPtr Handle, uint exstyle)
+            {
+                SetWindowLong(Handle, WindowLongFlags.GWL_EXSTYLE, exstyle);
+            }
+
+            public static uint Add(IntPtr Handle, uint exstyle)
+            {
+                uint newStyle = Get(Handle) | exstyle;
+                Set(Handle, newStyle);
+                return newStyle;
+            }
+
+            public static uint Remove(IntPtr Handle, uint exstyle)
+            {
+                uint newStyle = Get(Handle) & ~exstyle;
+                Set(Handle, newStyle);
+                return newStyle;
             }
         }
     }

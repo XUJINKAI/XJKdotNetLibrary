@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace XJK
@@ -20,7 +21,7 @@ namespace XJK
         {
             return string.Join(sep, strings);
         }
-
+        
         public static string Dup(this char ch, int times)
         {
             return new string(ch, times);

@@ -16,18 +16,17 @@ namespace XJK.SysX.Hooks
     /// </summary>
     public class WindowsHookEx : DisposeBase
     {
+        public event WindowsHookExEvent Events;
         public int HookId { get; private set; }
         public HookType HookType { get; private set; }
 
         [MarshalAs(UnmanagedType.FunctionPtr)]
         private HookProc _hookDele;
-        private WindowsHookExEvent _procMessage;
-
-        public WindowsHookEx(HookType Type, WindowsHookExEvent dele, WindowsHookExOnType hookOn = WindowsHookExOnType.Auto)
+        
+        public WindowsHookEx(HookType Type, WindowsHookExOnType hookOn = WindowsHookExOnType.Auto)
         {
             HookType = Type;
             _hookDele = ProcMsg;
-            _procMessage = dele;
             bool OnThread = true;
             if (hookOn == WindowsHookExOnType.Auto)
             {
@@ -65,9 +64,16 @@ namespace XJK.SysX.Hooks
 
         private int ProcMsg(int nCode, int wParam, IntPtr lParam)
         {
-            WindowsHookExEventArgs e = new WindowsHookExEventArgs(HookType, wParam, lParam);
-            _procMessage(this, e);
-            return (nCode >= 0 && e.Handled) ? 1 : User32.CallNextHookEx(HookId, nCode, wParam, lParam);
+            if (Events != null)
+            {
+                WindowsHookExEventArgs e = new WindowsHookExEventArgs(HookType, nCode, wParam, lParam);
+                foreach(var eve in Events.GetInvocationList().Reverse())
+                {
+                    eve.DynamicInvoke(this, e);
+                    if (e.Handled) return -1;
+                }
+            }
+            return User32.CallNextHookEx(HookId, nCode, wParam, lParam);
         }
 
         private void Current_Exit(object sender, ExitEventArgs e)

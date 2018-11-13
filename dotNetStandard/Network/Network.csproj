@@ -5,6 +5,7 @@
     <AssemblyName>XJKdotNetLibrary.Network</AssemblyName>
     <RootNamespace>XJK.Network</RootNamespace>
     <Platforms>AnyCPU;x64;x86</Platforms>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

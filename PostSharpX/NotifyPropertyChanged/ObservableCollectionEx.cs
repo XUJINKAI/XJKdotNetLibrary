@@ -24,10 +24,10 @@ namespace XJK.NotifyPropertyChanged
 
         public ObservableCollectionEx()
         {
-            CollectionChanged += ObservableCollectionX_CollectionChanged;
+            CollectionChanged += ObservableCollectionEx_CollectionChanged;
         }
         
-        protected void ObservableCollectionX_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected void ObservableCollectionEx_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
