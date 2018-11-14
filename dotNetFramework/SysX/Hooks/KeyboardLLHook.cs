@@ -44,27 +44,24 @@ namespace XJK.SysX.Hooks
             {
                 pressType = PressType.KeyUp;
             }
-            if (e.wParam == WM.KEYDOWN)
+            // Get Press Char
+            char? PressKey = null;
+            byte[] inBuffer = new byte[2];
+            if (User32.ToAscii(@struct.VirtualKeyCode,
+                      @struct.ScanCode,
+                      state.Bytes,
+                      inBuffer,
+                      @struct.Flags) == 1)
             {
-                // Get Press Char
-                char? PressKey = null;
-                byte[] inBuffer = new byte[2];
-                if (User32.ToAscii(@struct.VirtualKeyCode,
-                          @struct.ScanCode,
-                          state.Bytes,
-                          inBuffer,
-                          @struct.Flags) == 1)
+                char ch = (char)inBuffer[0];
+                if (!char.IsControl(ch))
                 {
-                    char ch = (char)inBuffer[0];
-                    if (!char.IsControl(ch))
+                    PressKey = ch;
+                    if ((state.CapsLockToggled ^ state.ShiftPressed) && char.IsLetter(ch))
                     {
-                        PressKey = ch;
-                        if ((state.CapsLockToggled ^ state.ShiftPressed) && char.IsLetter(ch))
-                        {
-                            PressKey = char.ToUpper(ch);
-                        }
-                        inputChar = PressKey;
+                        PressKey = char.ToUpper(ch);
                     }
+                    inputChar = PressKey;
                 }
             }
             var args = new KeyChangeEventArgs()

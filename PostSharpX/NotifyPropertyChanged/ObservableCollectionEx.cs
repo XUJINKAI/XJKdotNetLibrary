@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 
 namespace XJK.NotifyPropertyChanged
 {
@@ -49,6 +50,16 @@ namespace XJK.NotifyPropertyChanged
         protected void CollectionItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             OnPropertyChangedEx(PropertyChangedEventArgsEx.NewCollectionItemPropertyChange(DataPropertyName, sender, e.PropertyName));
+        }
+
+        // enhance
+
+        public void ForEach(Action<T> action)
+        {
+            foreach(var x in this)
+            {
+                action(x);
+            }
         }
     }
 }

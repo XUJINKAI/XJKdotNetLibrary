@@ -84,27 +84,28 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\HotkeyControl.xaml.cs">
-      <DependentUpon>HotkeyControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\EnumToBoolConverter.cs" />
     <Compile Include="Converters\NullToBoolConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Extensions\BoolExtension.cs" />
+    <Compile Include="ListViewX.xaml.cs">
+      <DependentUpon>ListViewX.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Controls\HotkeyControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <Compile Include="SortByProperty.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PInvoke\PInvoke.csproj">
       <Project>{C6F66F18-D8AE-4005-B4A2-9FA05A953417}</Project>
       <Name>PInvoke</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="ListViewX.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
