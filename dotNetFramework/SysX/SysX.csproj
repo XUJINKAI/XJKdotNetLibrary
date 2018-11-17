@@ -106,6 +106,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reg.cs" />
     <Compile Include="Win.cs" />
+    <Compile Include="WinFinder.cs" />
     <Compile Include="WinMsg\WindowCommunicate.cs" />
     <Compile Include="WinMsg\WindowEx.cs" />
     <Compile Include="WinMsg\WndMsgEventArgs.cs" />

@@ -15,8 +15,32 @@ using System.Windows.Interop;
 
 namespace XJK.SysX
 {
-    public static class Win
+    public class Win
     {
+        #region Class Instance Wrap
+
+        public IntPtr Handle { get; set; }
+        public static implicit operator IntPtr(Win win) => win.Handle;
+        public static implicit operator Win(IntPtr handle) => new Win() { Handle = handle };
+
+        public string Title => GetTitle(Handle);
+        public string Path => GetPath(Handle);
+        public string ClassName => throw new NotImplementedException();
+        public int ThreadID => GetThreadId(this);
+        public int ProcessID => GetProcessId(this);
+        public bool IsForeground
+        {
+            get { return Foreground.Get() == this; }
+        }
+        public bool IsTopmost
+        {
+            get => Topmost.Get(this);
+            set => Topmost.Set(this, value);
+        }
+        public Process Process => Process.GetProcessById(ProcessID);
+        
+        #endregion
+
         public static string GetTitle(IntPtr handle)
         {
             const int nChars = 256;
@@ -49,6 +73,27 @@ namespace XJK.SysX
         {
             GetWindowRect(handle, out var rect);
             return rect;
+        }
+
+        public static int GetThreadId(IntPtr handle)
+        {
+            return GetWindowThreadProcessId(handle, IntPtr.Zero);
+        }
+
+        public static int GetProcessId(IntPtr handle)
+        {
+            GetWindowThreadProcessId(handle, out int processId);
+            return processId;
+        }
+
+        public static void Close(IntPtr handle)
+        {
+            SendMessage(handle, WindowsMessages.CLOSE, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        public static void Kill(IntPtr handle)
+        {
+            Process.GetProcessById(GetProcessId(handle)).Kill();
         }
         
         public static class Foreground

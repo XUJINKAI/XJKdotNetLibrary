@@ -68,6 +68,11 @@ namespace XJK.SysX
 
         #region Process Run
 
+        public static ProcessInfoChain New(string Command, string Args)
+        {
+            return ProcessInfoChain.New(Command, Args);
+        }
+
         public static ExcuteResult RunAsInvoker(string Command, string Args)
         {
              return ProcessInfoChain.New(Command, Args).Excute();
@@ -87,6 +92,8 @@ namespace XJK.SysX
         {
             return ProcessInfoChain.New(Command, Args).LaunchBy(LaunchType.CmdStart).Excute();
         }
+
+        
         
         #endregion
 

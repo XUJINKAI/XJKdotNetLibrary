@@ -61,12 +61,12 @@ namespace XJK.PInvoke
         /// </remarks>
         // For Windows Mobile, replace user32.dll with coredll.dll
         [DllImport("user32.dll", SetLastError = true)]
-        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         // Find window by Caption only. Note you must pass IntPtr.Zero as the first parameter.
 
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
-        static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+        public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
         // You can also call FindWindow(default(string), lpWindowName) or FindWindow((string)null, lpWindowName)
 
@@ -79,8 +79,20 @@ namespace XJK.PInvoke
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
+        // Process
+
+        /// <summary>
+        /// Retrieves the identifier of the thread that created the specified window and, optionally, the identifier of the process that created the window.
+        /// </summary>
+        /// <param name="handle">A handle to the window.</param>
+        /// <param name="processId">A pointer to a variable that receives the process identifier. 
+        /// If this parameter is not NULL, GetWindowThreadProcessId copies the identifier of the process to the variable; otherwise, it does not.</param>
+        /// <returns>The return value is the identifier of the thread that created the window.</returns>
         [DllImport("user32.dll")]
-        public static extern int GetWindowThreadProcessId(IntPtr handle, out uint processId);
+        public static extern int GetWindowThreadProcessId(IntPtr handle, out int processId);
+
+        [DllImport("user32.dll")]
+        public static extern int GetWindowThreadProcessId(IntPtr handle, IntPtr _);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
