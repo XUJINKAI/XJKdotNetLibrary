@@ -19,14 +19,5 @@ namespace XJK
             if (str.Length > 1) str = str.Substring(1);
             return str;
         }
-
-        public static string ToUrlEncodeString(this Dictionary<string, string> dict, bool EncodePath = false)
-        {
-            string Trans(string s) => EncodePath ? HttpUtility.UrlPathEncode(s) : HttpUtility.UrlEncode(s);
-            string str;
-            str = dict.Aggregate("", (sum, next) => $"{sum}&{Trans(next.Key)}={Trans(next.Value)}");
-            if (str.Length > 1) str = str.Substring(1);
-            return str;
-        }
     }
 }

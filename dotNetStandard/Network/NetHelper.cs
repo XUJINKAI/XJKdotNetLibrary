@@ -9,6 +9,18 @@ namespace XJK.Network
 {
     public static class NetHelper
     {
+        public static string UrlEncode(string s)
+        {
+            return System.Web.HttpUtility.UrlEncode(s).Replace("+", "%20");
+        }
+        
+        public static string UrlEncode(Dictionary<string, string> dict)
+        {
+            string str = dict.Aggregate("", (sum, next) => $"{sum}&{UrlEncode(next.Key)}={UrlEncode(next.Value)}");
+            if (str.Length > 1) str = str.Substring(1);
+            return str;
+        }
+
         public static List<int> GetUsedPortList()
         {
             IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
