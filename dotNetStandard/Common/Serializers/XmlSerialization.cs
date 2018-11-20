@@ -6,7 +6,7 @@ namespace XJK.Serializers
 {
     public static class XmlSerialization
     {
-        public static string ToXmlText<T>(this T o) where T : new()
+        public static string ToXmlText<T>(this T o)
         {
             var serializer = new XmlSerializer(typeof(T));
             using (StringWriter writer = new StringWriter())
@@ -16,7 +16,7 @@ namespace XJK.Serializers
             }
         }
 
-        public static T FromXmlText<T>(string xml) where T : new()
+        public static T FromXmlText<T>(string xml)
         {
             var serializer = new XmlSerializer(typeof(T));
             using (StringReader reader = new StringReader(xml))
