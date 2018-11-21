@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AOPExample", "dotNetStandar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkExample", "dotNetStandard\NetworkExample\NetworkExample.csproj", "{82B06369-D0DE-45F1-837F-804230808F41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotNetStandardEnhancements", "PostSharpX\dotNetStandardEnhancements\dotNetStandardEnhancements.csproj", "{72979D9F-36A2-45EA-911E-ADE2F449E789}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -201,6 +203,18 @@ Global
 		{82B06369-D0DE-45F1-837F-804230808F41}.Release|x64.Build.0 = Release|x64
 		{82B06369-D0DE-45F1-837F-804230808F41}.Release|x86.ActiveCfg = Release|x86
 		{82B06369-D0DE-45F1-837F-804230808F41}.Release|x86.Build.0 = Release|x86
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Debug|x64.Build.0 = Debug|Any CPU
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Debug|x86.Build.0 = Debug|Any CPU
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Release|x64.ActiveCfg = Release|Any CPU
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Release|x64.Build.0 = Release|Any CPU
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Release|x86.ActiveCfg = Release|Any CPU
+		{72979D9F-36A2-45EA-911E-ADE2F449E789}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -219,6 +233,7 @@ Global
 		{50256404-E6AD-4B24-AFA2-9D7454CE07A3} = {C892D39F-625C-4B11-B6B9-B2CE83997178}
 		{E7AC393B-F334-41B8-B734-83DF821FD623} = {A2A2D6C4-1C93-47EC-BCDA-CB58A4A2AC47}
 		{82B06369-D0DE-45F1-837F-804230808F41} = {A2A2D6C4-1C93-47EC-BCDA-CB58A4A2AC47}
+		{72979D9F-36A2-45EA-911E-ADE2F449E789} = {662E98C8-E86E-4BF1-B847-04DE2358697B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9746469A-2EEC-4AFD-A395-83A538B2C08F}

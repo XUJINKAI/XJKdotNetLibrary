@@ -20,27 +20,17 @@ namespace XJK.Objects
             XmlText = xmlText;
         }
 
-        public void SaveToFile(string filePath)
-        {
-            File.WriteAllText(filePath, XmlText);
-        }
-
-        public static Database FromText(string xmlText)
-        {
-            return new Database(xmlText);
-        }
-
-        public static Database FromFile(string filePath)
-        {
-            return new Database(File.ReadAllText(filePath));
-        }
-
         public readonly DatabaseContent Content = new DatabaseContent();
 
         public string XmlText
         {
             get => Content.ToXmlText();
             set { ClearContent(); LoadInXmlText(value); }
+        }
+
+        public void SaveToFile(string filePath)
+        {
+            File.WriteAllText(filePath, XmlText);
         }
 
         public void LoadInXmlText(string xml)
@@ -63,16 +53,6 @@ namespace XJK.Objects
             set=> Content[key] = value;
         }
 
-        public void Set(string key, object value)
-        {
-            this[key] = value;
-        }
-
-        public T Get<T>(string key)
-        {
-            return (T)this[key];
-        }
-
         public T Get<T>(string key, T defValue)
         {
             if (Content.TryGetValue(key, out object value))
@@ -84,6 +64,33 @@ namespace XJK.Objects
             }
             return defValue;
         }
+
+        public void Set(string key, object value)
+        {
+            this[key] = value;
+        }
+
+
+        public static Database FromText(string xmlText)
+        {
+            return new Database(xmlText);
+        }
+
+        public static T FromText<T>(string xmlText) where T : Database, new()
+        {
+            return new T { XmlText = xmlText };
+        }
+
+        public static Database FromFile(string filePath)
+        {
+            return new Database(File.ReadAllText(filePath));
+        }
+
+        public static T FromFile<T>(string filePath) where T : Database, new()
+        {
+            return new T() { XmlText = File.ReadAllText(filePath) };
+        }
+
 
         public class DatabaseContent : Dictionary<string, object>, IXmlSerializable
         {

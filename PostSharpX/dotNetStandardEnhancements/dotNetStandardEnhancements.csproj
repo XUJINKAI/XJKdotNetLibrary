@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>XJKdotNetLibrary.dotNetStandardEnhancements</AssemblyName>
+    <RootNamespace>XJK</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PostSharp" Version="6.0.29" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\dotNetStandard\Common\Common.csproj" />
+  </ItemGroup>
+
+</Project>
