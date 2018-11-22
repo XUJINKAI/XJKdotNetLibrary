@@ -55,10 +55,10 @@ namespace XJK.SysX
         public static string GetPath(IntPtr handle)
         {
             if (Environment.Is64BitOperatingSystem != Environment.Is64BitProcess) return "";
-            GetWindowThreadProcessId(handle, out uint pid);
+            GetWindowThreadProcessId(handle, out int pid);
             // system idle, system
             if (pid == 0 || pid == 4) return "";
-            var proc = Process.GetProcessById((int)pid);
+            var proc = Process.GetProcessById(pid);
             try
             {
                 return proc.MainModule.FileName;

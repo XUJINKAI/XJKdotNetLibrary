@@ -12,6 +12,16 @@ namespace XJK
             return string.IsNullOrEmpty(s);
         }
 
+        /// <summary>
+        /// Not Null or Empty
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool IsNotNullOrEmpty(this string s)
+        {
+            return !string.IsNullOrEmpty(s);
+        }
+
         public static string Join(this string[] strings, string sep = ", ")
         {
             return string.Join(sep, strings);

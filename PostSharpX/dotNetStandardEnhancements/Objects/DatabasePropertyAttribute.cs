@@ -12,29 +12,31 @@ namespace XJK.Objects
     [AttributeUsage(AttributeTargets.Property)]
     public class DatabasePropertyAttribute : LocationInterceptionAspect
     {
-        private readonly object _defValue;
-
-        public DatabasePropertyAttribute(object defValue)
-        {
-            _defValue = defValue;
-        }
-
-        public override bool CompileTimeValidate(LocationInfo locationInfo)
-        {
-            if (_defValue == null && locationInfo.LocationType.IsValueType
-                || _defValue != null && locationInfo.LocationType != _defValue.GetType())
-                throw new TypeInitializationException(locationInfo.Name, null);
-            return base.CompileTimeValidate(locationInfo);
-        }
-
+        public bool AutoSetKey { get; set; }
+        
         public override void OnGetValue(LocationInterceptionArgs args)
         {
             Database db = (Database)args.Instance;
-            args.Value = db.Get(args.LocationName, _defValue);
+            string key = args.LocationName;
+
+            if (db.HasKey(key))
+            {
+                args.Value = db[key];
+            }
+            else
+            {
+                args.ProceedGetValue();
+            }
+
+            if (AutoSetKey && !db.HasKey(key))
+            {
+                db[key] = args.Value;
+            }
         }
 
         public override void OnSetValue(LocationInterceptionArgs args)
         {
+            args.ProceedSetValue();
             Database db = (Database)args.Instance;
             db[args.LocationName] = args.Value;
         }

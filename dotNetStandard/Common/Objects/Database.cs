@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,13 @@ namespace XJK.Objects
 {
     public class Database
     {
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+        protected void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
+        {
+            CollectionChanged?.Invoke(this, args);
+        }
+
         public Database() { }
 
         public Database(string xmlText)
@@ -20,7 +28,7 @@ namespace XJK.Objects
             XmlText = xmlText;
         }
 
-        public readonly DatabaseContent Content = new DatabaseContent();
+        private readonly DatabaseContent Content = new DatabaseContent();
 
         public string XmlText
         {
@@ -42,15 +50,17 @@ namespace XJK.Objects
             }
         }
 
-        public void ClearContent()
-        {
-            Content.Clear();
-        }
-
         public object this[string key]
         {
             get => Content[key];
-            set=> Content[key] = value;
+            set => Content[key] = value;
+        }
+
+        public bool HasKey(string key) => Content.ContainsKey(key);
+
+        public void ClearContent()
+        {
+            Content.Clear();
         }
 
         public T Get<T>(string key, T defValue)
@@ -90,58 +100,5 @@ namespace XJK.Objects
         {
             return new T() { XmlText = File.ReadAllText(filePath) };
         }
-
-
-        public class DatabaseContent : Dictionary<string, object>, IXmlSerializable
-        {
-            public XmlSchema GetSchema()
-            {
-                return null;
-            }
-
-            public void ReadXml(XmlReader reader)
-            {
-                bool wasEmpty = reader.IsEmptyElement;
-                reader.Read();
-
-                if (wasEmpty)
-                    return;
-
-                while (reader.NodeType != XmlNodeType.EndElement)
-                {
-                    reader.MoveToContent();
-                    string key = reader.GetAttribute("Key");
-                    string typeName = reader.GetAttribute("ValueType");
-                    reader.ReadStartElement("Entry");
-                    string valueXml = reader.ReadOuterXml();
-                    reader.ReadEndElement();
-
-                    Type type = Type.GetType(typeName);
-                    var valueSerializer = new XmlSerializer(type);
-                    var value = valueSerializer.Deserialize(new StringReader(valueXml));
-                    this.Add(key, value);
-                }
-                reader.ReadEndElement();
-            }
-
-            public void WriteXml(XmlWriter writer)
-            {
-                foreach (var key in this.Keys)
-                {
-                    var value = this[key];
-                    var valueType = value.GetType();
-                    var valueSerializer = new XmlSerializer(valueType);
-                    var assemblyQualify = valueType.Assembly.GetName().Name != "mscorlib";
-
-                    writer.WriteStartElement("Entry");
-                    writer.WriteAttributeString("Key", key);
-                    writer.WriteAttributeString("ValueType",
-                        assemblyQualify ? valueType.AssemblyQualifiedName : valueType.FullName);
-                    valueSerializer.Serialize(writer, value);
-                    writer.WriteEndElement();
-                }
-            }
-        }
-
     }
 }
