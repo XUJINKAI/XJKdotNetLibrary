@@ -122,10 +122,6 @@
       <Project>{c6f66f18-d8ae-4005-b4a2-9fa05a953417}</Project>
       <Name>PInvoke</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WPF\WPF.csproj">
-      <Project>{E91D5857-D99B-4825-BAE8-5CF06C706A3D}</Project>
-      <Name>WPF</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

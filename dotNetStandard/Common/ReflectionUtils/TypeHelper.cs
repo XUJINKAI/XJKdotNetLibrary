@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XJK
+namespace XJK.ReflectionUtils
 {
     public static class TypeHelper
     {

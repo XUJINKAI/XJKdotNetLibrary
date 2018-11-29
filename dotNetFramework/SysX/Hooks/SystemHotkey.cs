@@ -8,11 +8,10 @@ using System.Threading.Tasks;
 using XJK.Objects;
 using XJK.PInvoke;
 using XJK.SysX.WinMsg;
-using XJK.WPF;
 
 namespace XJK.SysX.Hooks
 {
-    public class SystemHotkey:DisposeBase
+    public class SystemHotkey : DisposeBase
     {
         public WindowEx WindowEx { get; private set; }
         private readonly Dictionary<int, Action> IdActionDict = new Dictionary<int, Action>();
@@ -35,7 +34,7 @@ namespace XJK.SysX.Hooks
         }
 
         public int GetHotkeyId(Modifiers modifiers, VirtualKeys vk) => ((int)modifiers * 256 + (int)vk).GetHashCode();
-        
+
         public int RegisterHotkey(Modifiers modifiers, VirtualKeys vk, Action func)
         {
             int id = GetHotkeyId(modifiers, vk);

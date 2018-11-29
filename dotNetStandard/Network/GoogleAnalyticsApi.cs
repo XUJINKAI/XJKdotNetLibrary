@@ -169,7 +169,7 @@ namespace XJK.Network
             try
             {
                 DetailListener?.Invoke($"CollectGoogleAnalyticsAsync{C.LF}{dict.ToFormatTableString()}");
-                string postStr = dict.ToUrlEncodeString();
+                string postStr = NetHelper.UrlEncode(dict);
                 var result = await NetLegacy.PostAsync(GAURL, postStr);
                 return result != null;
             }
@@ -189,7 +189,7 @@ namespace XJK.Network
                 string batchStr = "";
                 foreach (var dict in batchData)
                 {
-                    batchStr += "\n" + dict.ToUrlEncodeString();
+                    batchStr += "\n" + NetHelper.UrlEncode(dict);
                 }
                 if (batchStr.Length > 1) batchStr = batchStr.Substring(1);
                 var result = await NetLegacy.PostAsync(GABATCHURL, batchStr);

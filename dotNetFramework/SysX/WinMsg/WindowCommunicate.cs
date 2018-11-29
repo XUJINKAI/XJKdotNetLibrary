@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Interop;
 using XJK.Objects;
 using XJK.PInvoke;
-using XJK.WPF;
 
 namespace XJK.SysX.WinMsg
 {
@@ -37,13 +36,6 @@ namespace XJK.SysX.WinMsg
             }
         }
 
-        public int GetMsgId(string msg) => User32.RegisterWindowMessage(msg);
-
-        public int BroadcastMessage(string msgCode, string MsgBody = "") => SendMessage(SpecialWindowHandles.HWND_BROADCAST, GetMsgId(msgCode), MsgBody);
-        public int BroadcastMessage(int msgId, string MsgBody = "") => SendMessage(SpecialWindowHandles.HWND_BROADCAST, msgId, MsgBody);
-        public int SendMessage(IntPtr handle, string msgCode, string MsgBody = "") => SendMessage(handle, GetMsgId(msgCode), MsgBody);
-        public int SendMessage(IntPtr handle, int msgId, string MsgBody = "") { User32.SendMessage(handle, msgId, IntPtr.Zero, MsgBody); return msgId; }
-
         public void RegisterEvent(string msg, WndMsgCommEventHandler action) => RegisterEvent(GetMsgId(msg), action);
         public void RegisterEvent(int msg, WndMsgCommEventHandler action)
         {
@@ -65,5 +57,13 @@ namespace XJK.SysX.WinMsg
                 DelegatesDict[msg] -= action;
             }
         }
+
+
+        public static int GetMsgId(string msg) => User32.RegisterWindowMessage(msg);
+        public static int BroadcastMessage(string msgCode, string MsgBody = "") => SendMessage(SpecialWindowHandles.HWND_BROADCAST, GetMsgId(msgCode), MsgBody);
+        public static int BroadcastMessage(int msgId, string MsgBody = "") => SendMessage(SpecialWindowHandles.HWND_BROADCAST, msgId, MsgBody);
+        public static int SendMessage(IntPtr handle, string msgCode, string MsgBody = "") => SendMessage(handle, GetMsgId(msgCode), MsgBody);
+        public static int SendMessage(IntPtr handle, int msgId, string MsgBody = "") { User32.SendMessage(handle, msgId, IntPtr.Zero, MsgBody); return msgId; }
+
     }
 }

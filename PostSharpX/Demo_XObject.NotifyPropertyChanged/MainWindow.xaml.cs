@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Windows;
 using System.Reflection;
 using XJK.ReflectionUtils;
-using XJK.NotifyPropertyChanged;
 using System.Collections.ObjectModel;
 using XJK;
+using XJK.NotifyPropertyChanged;
 
 namespace NotifyPropertyChangedExample
 {

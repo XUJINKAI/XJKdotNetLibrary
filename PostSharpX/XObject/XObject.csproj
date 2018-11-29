@@ -4,10 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>XJKdotNetLibrary.dotNetStandardEnhancements</AssemblyName>
     <RootNamespace>XJK</RootNamespace>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="6.0.29" />
+    <PackageReference Include="PostSharp" Version="6.0.30" />
+    <PackageReference Include="PostSharp.Patterns.Model" Version="6.0.30" />
   </ItemGroup>
 
   <ItemGroup>

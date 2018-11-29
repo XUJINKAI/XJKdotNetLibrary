@@ -144,17 +144,17 @@
       <Project>{2f20cfe8-a385-4cce-aeb2-1a69f8583047}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NotifyPropertyChanged\NotifyPropertyChanged.csproj">
-      <Project>{d00f22c5-c2c4-4490-a6d5-e6f82c27d57f}</Project>
-      <Name>NotifyPropertyChanged</Name>
+    <ProjectReference Include="..\XObject\XObject.csproj">
+      <Project>{AC96AAA2-E7A0-48CF-B298-E26B3D36CE6F}</Project>
+      <Name>XObject</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="PostSharp">
-      <Version>6.0.29</Version>
+      <Version>6.0.30</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Model">
-      <Version>6.0.29</Version>
+      <Version>6.0.30</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

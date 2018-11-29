@@ -5,11 +5,23 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using XJK.ReflectionUtils;
 
 namespace XJK
 {
     public static partial class TaskHelper
     {
+        public static async Task<object> InvokeAsync(MethodInfo methodInfo, object obj, params object[] parameters)
+        {
+            var invokeResult = methodInfo.Invoke(obj, parameters);
+            if (invokeResult is Task task)
+            {
+                await task;
+                return invokeResult.GetType().GetProperty("Result").GetValue(invokeResult);
+            }
+            return invokeResult;
+        }
+
         public static object ConvertTaskObject(Task<object> task, Type type)
         {
             var convertMethod = typeof(TaskHelper).GetMethod("_ConvertTaskObjectToTaskTHelperFunction");

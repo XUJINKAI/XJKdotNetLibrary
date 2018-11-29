@@ -68,7 +68,7 @@ namespace WpfWinMsgListenerExample
 
         private void BroadcastMsg(object sender, RoutedEventArgs e)
         {
-            msgWin.WndMsg.BroadcastMessage("WpfWinMsgListenerExample_BROADCAST_MSG", Helper.RandomString(20));
+            WindowCommunicate.BroadcastMessage("WpfWinMsgListenerExample_BROADCAST_MSG", Helper.RandomString(20));
         }
     }
 }

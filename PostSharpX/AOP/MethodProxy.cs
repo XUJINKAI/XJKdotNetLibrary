@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using XJK.ReflectionUtils;
 
 namespace XJK.AOP
 {
@@ -134,7 +135,7 @@ namespace XJK.AOP
                 if (targetMethod.ReturnType.IsGenericType)
                 {
                     Type type = targetMethod.ReturnType.GetGenericArguments()[0];
-                    if (task.IsType(typeof(Task<object>)))
+                    if (TypeHelper.IsType(task, typeof(Task<object>)))
                     {
                         result = TaskHelper.ConvertTaskObject((Task<object>)task, type);
                     }
@@ -151,8 +152,8 @@ namespace XJK.AOP
                     result = Task.CompletedTask;
                 }
             }
-            
-            result.AssertType(targetMethod.ReturnType);
+
+            TypeHelper.AssertType(result, targetMethod.ReturnType);
             
             if (IsIInvokeProxy || AfterInvoke != null)
             {
