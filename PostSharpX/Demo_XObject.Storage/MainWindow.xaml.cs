@@ -24,9 +24,11 @@ namespace DB
     {
         public string Name { get; set; } = "XJK";
         public int Age { get; set; } = 10;
+        public DataDictionary<object, object> KeyValuePairs { get; set; } = new DataDictionary<object, object>() { { 1, 2 }, { "a", 3.4 } };
         public DataCollection<object> FavObjects { get; set; } = new DataCollection<object>() { 1, "abc", 2.3 };
         public DataCollection<FavItem> FavItems { get; set; } = new DataCollection<FavItem>() { new FavItem() };
         public SubInfo Info { get; set; } = new SubInfo();
+        public DataCollection<BaseCls> BaseCls { get; set; } = new DataCollection<BaseCls>() { new ClsA(), new ClsB() };
     }
 
     public class  SubInfo: DatabaseObject
@@ -37,6 +39,16 @@ namespace DB
     public class FavItem : DatabaseObject
     {
         public string Movie { get; set; } = "Matrix";
+    }
+
+    public class ClsA : BaseCls { }
+    public class ClsB : BaseCls { }
+    [Serializable]
+    [XmlInclude(typeof(ClsA))]
+    [XmlInclude(typeof(ClsB))]
+    public abstract class BaseCls : NotifyObject
+    {
+
     }
 
     /// <summary>

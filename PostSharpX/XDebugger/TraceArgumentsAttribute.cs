@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace XDebugger
+namespace XJK.XDebugger
 {
     /*
      * https://stackoverflow.com/a/2414053
