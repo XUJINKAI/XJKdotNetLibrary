@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace XJK.Network
+namespace XJK.Network.GA
 {
     public class GoogleAnalyticsApi
     {

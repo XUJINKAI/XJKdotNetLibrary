@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace XJK
+namespace XJK.FileSystem
 {
     public static class FS
     {

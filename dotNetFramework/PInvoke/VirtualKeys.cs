@@ -262,8 +262,10 @@ namespace XJK.PInvoke
         //0xC1-D7 Reserved
         //0xD8-DA Unassigned
         OEM4 = 0xDB,
+        OemOpenBrackets = OEM4,
         OEM5 = 0xDC,
         OEM6 = 0xDD,
+        OemCloseBrackets = OEM6,
         OEM7 = 0xDE,
         OEM8 = 0xDF,
         //0xE0 Reserved
