@@ -6,7 +6,7 @@ namespace XJK.Serializers
 {
     public static class BinarySerialization
     {
-        public static string ToBase64BinaryString(this object obj)
+        public static string ToBase64BinaryString(object obj)
         {
             var formatter = new BinaryFormatter();
             var stream = new MemoryStream();

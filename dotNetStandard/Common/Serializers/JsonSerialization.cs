@@ -8,7 +8,7 @@ namespace XJK.Serializers
 {
     public static class JsonSerialization
     {
-        public static string ToJsonString(this object obj)
+        public static string ToJsonString(object obj)
         {
             using (var memoryStream = new MemoryStream())
             {

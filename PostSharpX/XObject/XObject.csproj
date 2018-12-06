@@ -2,9 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>XJKdotNetLibrary.dotNetStandardEnhancements</AssemblyName>
+    <AssemblyName>XJKdotNetLibrary.XObject</AssemblyName>
     <RootNamespace>XJK</RootNamespace>
     <Platforms>AnyCPU;x64</Platforms>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

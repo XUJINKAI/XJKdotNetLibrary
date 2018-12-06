@@ -20,9 +20,24 @@ namespace XJK
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        public static int RandomInt(int Max) => RandomInt(0, Max);
+
         public static int RandomInt(int Min, int Max)
         {
             return random.Next(Min, Max);
+        }
+
+        public static double RandomDouble(double Max) => RandomDouble(0, Max);
+
+        public static double RandomDouble(double Min, double Max)
+        {
+            return (Max - Min) * random.NextDouble() + Min;
+        }
+
+        public static double RandomDouble(double Min, double Max, int Precision)
+        {
+            double result = RandomDouble(Min, Max);
+            return Math.Round(result, Precision);
         }
     }
 }

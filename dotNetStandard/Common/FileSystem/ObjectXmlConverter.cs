@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using XJK.Serializers;
+using XJK.Xml;
 
 namespace XJK.FileSystem
 {
-    public class ObjectXmlConverter<T> : IObjectFileConverter<T>
+    public class ObjectXmlConverter : IObjectFileConverter
     {
-        public void Convert(T obj, string FilePath)
+        public void Convert<T>(T obj, string FilePath)
         {
             FS.WriteAllText(FilePath, XmlSerialization.ToXmlText(obj));
         }
 
-        public T ConvertBack(string FilePath)
+        public T ConvertBack<T>(string FilePath)
         {
             return XmlSerialization.FromXmlText<T>(FS.ReadAllText(FilePath));
         }

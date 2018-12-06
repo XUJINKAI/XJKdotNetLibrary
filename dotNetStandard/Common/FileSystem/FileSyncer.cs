@@ -20,18 +20,34 @@ namespace XJK.FileSystem
     
     public class FileSyncer<T> : IObjectReference<T> where T : INotifyPropertyChanged, new()
     {
-        public string FilePath { get; private set; }
+        public string FilePath
+        {
+            get
+            {
+                return Path.Combine(Watcher.Path, Watcher.Filter);
+            }
+            set
+            {
+                var dir = Path.GetDirectoryName(value);
+                if (!Directory.Exists(dir)) throw new DirectoryNotFoundException(dir);
+                var file = Path.GetFileName(value);
+                Watcher.Path = dir;
+                Watcher.Filter = file;
+            }
+        }
         public SyncDirectrion Directrion { get; set; } = SyncDirectrion.Sync;
         public bool IsObjectToFile => Directrion == SyncDirectrion.Sync || Directrion == SyncDirectrion.ObjectToFile;
         public bool IsFileToObject => Directrion == SyncDirectrion.Sync || Directrion == SyncDirectrion.FileToObject;
         public int LagSaveFileMilliseconds { get; set; } = 0;
         public int LagParseObjectMilliseconds { get; set; } = 0;
         public event ObjectChangedHandler ObjectChanged;
+        /// <summary>
+        /// return propertyName = null if reset Object
+        /// </summary>
         public event PropertyChangedEventHandler ObjectPropertyChanged;
 
-        public FileSyncer(string FilePath, IObjectFileConverter<T> objectFileConverter)
+        public FileSyncer(string FilePath, IObjectFileConverter objectFileConverter)
         {
-            this.FilePath = FilePath;
             Converter = objectFileConverter;
             Watcher = FileWatcher.WatchFileContent(FilePath);
             Watcher.Changed += Watcher_Changed;
@@ -47,7 +63,7 @@ namespace XJK.FileSystem
 
         private Timer LagSaveFileTimer;
         private Timer LagParseObjectTimer;
-        private IObjectFileConverter<T> Converter;
+        private IObjectFileConverter Converter;
         private FileSystemWatcher Watcher;
         private T _obj;
 
@@ -135,12 +151,12 @@ namespace XJK.FileSystem
 
         public void ForceParseObject()
         {
-            SetObject(Converter.ConvertBack(FilePath));
+            SetObject(Converter.ConvertBack<T>(FilePath));
         }
 
         public static FileSyncer<T> XmlSyncer(string path)
         {
-            return new FileSyncer<T>(path, new ObjectXmlConverter<T>());
+            return new FileSyncer<T>(path, new ObjectXmlConverter());
         }
     }
 }

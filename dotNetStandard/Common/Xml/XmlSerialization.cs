@@ -2,11 +2,11 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace XJK.Serializers
+namespace XJK.Xml
 {
     public static class XmlSerialization
     {
-        public static string ToXmlText<T>(this T o)
+        public static string ToXmlText<T>(T o)
         {
             var serializer = new XmlSerializer(typeof(T));
             using (StringWriter writer = new StringWriter())

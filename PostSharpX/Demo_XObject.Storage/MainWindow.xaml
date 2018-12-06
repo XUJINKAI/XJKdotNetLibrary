@@ -9,8 +9,30 @@
     <Grid>
         <DockPanel>
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                <Button Click="Button_Click_InitConfig">InitConfig</Button>
                 <Button Click="Button_Click_Parse">Parse</Button>
-                <Button Click="Button_Click_Change">Change</Button>
+                <TextBlock>Aggregatable:</TextBlock>
+                <Button Click="Button_Click_CountChilds">CountChilds</Button>
+                <TextBlock>Debugger:</TextBlock>
+                <Button Click="Button_Click_Break">Break</Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <TextBlock>Change:</TextBlock>
+                <Button Click="Button_Click_Change_Property">Property</Button>
+                <Button Click="Button_Click_Change_Object">Object</Button>
+                <Button Click="Button_Click_Change_Object_Property">Object_Property</Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <TextBlock>Collection:</TextBlock>
+                <Button Click="Button_Click_Change_Collection_Item_Property">Property</Button>
+                <Button Click="Button_Click_Change_Collection">Add</Button>
+                <Button Click="Button_Click_Change_Collection_Remove">Remove</Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <TextBlock>Dictionary:</TextBlock>
+                <Button Click="Button_Click_Change_Dictionary_Property">Property</Button>
+                <Button Click="Button_Click_Change_Dictionary">Add</Button>
+                <Button Click="Button_Click_Change_Dictionary_Remove">Remove</Button>
             </StackPanel>
             <TextBox Name="LogBox"></TextBox>
         </DockPanel>

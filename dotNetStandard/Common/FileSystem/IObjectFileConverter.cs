@@ -8,9 +8,9 @@ using XJK.Serializers;
 
 namespace XJK.FileSystem
 {
-    public interface IObjectFileConverter<T>
+    public interface IObjectFileConverter
     {
-        void Convert(T obj, string filePath);
-        T ConvertBack(string filePath);
+        void Convert<T>(T obj, string filePath);
+        T ConvertBack<T>(string filePath);
     }
 }
