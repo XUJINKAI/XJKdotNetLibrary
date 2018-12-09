@@ -44,6 +44,11 @@ namespace XJK.XStorage
             PropertyChanged?.Invoke(this, e);
         }
 
+        public DataCollection(params T[] items) : this()
+        {
+            this.AddRange(items);
+        }
+
         public DataCollection()
         {
             this.CollectionChanged += DataCollection_CollectionChanged;

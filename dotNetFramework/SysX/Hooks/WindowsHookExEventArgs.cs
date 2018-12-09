@@ -22,25 +22,27 @@ namespace XJK.SysX.Hooks
         public bool Handled { get; set; }
         public HookType HookType { get; private set; }
         public int nCode { get; private set; }
-        public int wParam { get; private set; }
-        public int lParam { get; private set; }
+        public IntPtr wParam { get; private set; }
+        public IntPtr lParam { get; private set; }
 #pragma warning restore IDE1006 // 命名样式
 
-        public WindowsHookExEventArgs(HookType type, int code, IntPtr wparam, IntPtr lparam) :
-            this(type, code, wparam.ToInt32(), lparam.ToInt32())
-        { }
-
-        public WindowsHookExEventArgs(HookType type, int code, int wparam, IntPtr lparam) :
-            this(type, code, wparam, lparam.ToInt32())
-        { }
-
-        public WindowsHookExEventArgs(HookType type, int code, int wparam, int lparam)
+        public WindowsHookExEventArgs(HookType type, int code, IntPtr wparam, IntPtr lparam)
         {
             Handled = false;
             HookType = type;
             nCode = code;
             wParam = wparam;
             lParam = lparam;
+        }
+
+        public WindowsHookExEventArgs(HookType type, int code, int wparam, IntPtr lparam) :
+            this(type, code, new IntPtr(wparam), lparam)
+        {
+        }
+
+        public WindowsHookExEventArgs(HookType type, int code, int wparam, int lparam) :
+            this(type, code, new IntPtr(wparam), new IntPtr(lparam))
+        {
         }
 
         public override string ToString()

@@ -36,11 +36,11 @@ namespace XJK.SysX.Hooks
             VirtualKeys vk = (VirtualKeys)@struct.VirtualKeyCode;
             KeyboardState state = KeyboardState.FromCurrentState();
             char? inputChar = null;
-            if (e.wParam == WM.KEYDOWN || e.wParam == WM.SYSKEYDOWN)
+            if (e.wParam.ToInt64() == WM.KEYDOWN || e.wParam.ToInt64() == WM.SYSKEYDOWN)
             {
                 pressType = PressType.KeyDown;
             }
-            else if (e.wParam == WM.KEYUP || e.wParam == WM.SYSKEYUP)
+            else if (e.wParam.ToInt64() == WM.KEYUP || e.wParam.ToInt64() == WM.SYSKEYUP)
             {
                 pressType = PressType.KeyUp;
             }

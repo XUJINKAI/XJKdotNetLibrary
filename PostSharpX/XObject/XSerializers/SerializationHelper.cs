@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using XJK.XStorage;
 using XJK.Xml;
+using PostSharp.Patterns.Model;
 
 namespace XJK.XSerializers
 {
@@ -187,7 +188,10 @@ namespace XJK.XSerializers
                 writer.WriteAttributeString(_TYPE_, SerializableTypeName(type));
                 const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public;
                 var properties = from property in type.GetProperties(bindingFlags)
-                                 where property.CanWrite && !Attribute.IsDefined(property, typeof(XmlIgnoreAttribute))
+                                 where property.CanWrite 
+                                    && !Attribute.IsDefined(property, typeof(XmlIgnoreAttribute))
+                                    && !Attribute.IsDefined(property, typeof(ParentAttribute))
+                                    && !Attribute.IsDefined(property, typeof(ReferenceAttribute))
                                  select property;
                 foreach (var property in properties)
                 {

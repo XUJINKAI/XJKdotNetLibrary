@@ -37,7 +37,7 @@ namespace XJK.SysX.Hooks
             PressType pressType = PressType.None;
             VirtualKeys vk = VirtualKeys.None;
             int click = 0;
-            switch (e.wParam)
+            switch (e.wParam.ToInt64())
             {
                 // left
                 case WM.LBUTTONDOWN:

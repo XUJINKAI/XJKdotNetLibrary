@@ -1,5 +1,18 @@
 # XJKdotNetLibrary
 
+.Net library to make Desktop app easier
+
 https://github.com/XUJINKAI/XJKdotNetLibrary/wiki
 
-Log, Serializers, Conventers, Netword, RPC, Command, Window Message...
+These apps based on this library:
+
+- OneQuick (https://onequick.org/)
+
+- Window Toolkits (https://github.com/XUJINKAI/Windows-Toolkits)
+
+
+## License:
+
+Keep Author info: XUJINKAI, https://xujinkai.net
+
+For commercial use contact author.
