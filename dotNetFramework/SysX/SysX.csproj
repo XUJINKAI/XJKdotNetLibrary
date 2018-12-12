@@ -84,12 +84,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ENV.cs" />
     <Compile Include="Clipboards.cs" />
     <Compile Include="Cmd.cs" />
     <Compile Include="CommandHelper\CommandLineHelper.cs" />
     <Compile Include="CommandHelper\CommandStream.cs" />
     <Compile Include="CommandHelper\ProcessInfoChainStructure.cs" />
-    <Compile Include="ENV.cs" />
     <Compile Include="Device\Monitor.cs" />
     <Compile Include="Device\Mouse.cs" />
     <Compile Include="Device\OS.cs" />

@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
-using XJK.Objects;
 using XJK.PInvoke;
 
 namespace XJK.SysX.WinMsg

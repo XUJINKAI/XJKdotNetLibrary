@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>WpfApp (only .xaml) by XUJINKAI</Name>
+    <Description>Custom Blank WPF App without Window File, by XUJINKAI.</Description>
+    <Icon>WpfApp_ProjectTemplate.ico</Icon>
+    <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>4.6.1</RequiredFrameworkVersion>
+    <SortOrder>10</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>WpfApp</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="ProjectTemplate.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="Properties\AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true">AppConfig.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">App.xaml</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">App.xaml.cs</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

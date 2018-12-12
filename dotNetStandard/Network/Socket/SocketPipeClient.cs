@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using XJK.Serializers;
+using XJK.Logger;
 
 namespace XJK.Network.Socket
 {
@@ -75,8 +75,8 @@ namespace XJK.Network.Socket
 
         public async Task<string> SendString(string str)
         {
-            var response = await SendBytes(str.ConvertBytes());
-            return response.ConvertString();
+            var response = await SendBytes(str.ConvertToBytesArray());
+            return response.ConvertToString();
         }
 
     }

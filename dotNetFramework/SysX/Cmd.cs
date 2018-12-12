@@ -18,7 +18,7 @@ namespace XJK.SysX
     {
         public static string GetRunVerbs(string filename)
         {
-            return (new ProcessStartInfo(filename)).Verbs.Join(", ");
+            return (new ProcessStartInfo(filename)).Verbs.JoinToString(", ");
         }
 
         public static bool IsUrl(string str)

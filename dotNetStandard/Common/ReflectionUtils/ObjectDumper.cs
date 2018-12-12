@@ -42,7 +42,7 @@ namespace XJK.ReflectionUtils
                     }
                     else if (obj.GetType().IsGenericType)
                     {
-                        dw.Add(1, $"   {obj.GetType().GenericTypeArguments.Join(o => o.FullName)}[{count}]");
+                        dw.Add(1, $"   {obj.GetType().GenericTypeArguments.JoinToString(o => o.FullName)}[{count}]");
                     }
                     else
                     {

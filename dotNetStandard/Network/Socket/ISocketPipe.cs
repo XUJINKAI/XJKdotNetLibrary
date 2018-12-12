@@ -16,7 +16,7 @@ namespace XJK.Network.Socket
     public class SocketRequestReceivedEventArgs : EventArgs
     {
         public byte[] RawBytes { get; private set; }
-        public string Message => RawBytes.ConvertString();
+        public string Message => RawBytes.ConvertToString();
 
         private readonly Func<byte[], Task<SocketStatus>> SendResponseFunc;
         private bool ResponseSended = false;
@@ -37,7 +37,7 @@ namespace XJK.Network.Socket
 
         public async Task<SocketStatus> SendResponseAsync(string response)
         {
-            return await SendResponseAsync(response.ConvertBytes());
+            return await SendResponseAsync(response.ConvertToBytesArray());
         }
 
         public async Task Finish()

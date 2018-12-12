@@ -7,7 +7,6 @@ using System.Windows;
 using System.ComponentModel;
 using System.Diagnostics;
 using XJK.PInvoke;
-using XJK.Objects;
 
 namespace XJK.SysX.Hooks
 {

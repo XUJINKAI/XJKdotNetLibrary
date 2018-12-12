@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 
-namespace XJK.Serializers
+namespace XJK
 {
     public static class JsonSerialization
     {

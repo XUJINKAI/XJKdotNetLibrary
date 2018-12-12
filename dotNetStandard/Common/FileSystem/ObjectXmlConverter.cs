@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using XJK.Xml;
 
 namespace XJK.FileSystem
 {

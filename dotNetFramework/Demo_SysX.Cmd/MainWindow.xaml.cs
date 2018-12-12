@@ -34,13 +34,16 @@ namespace SysXCmdRunExample
         public MainWindow()
         {
             InitializeComponent();
-            Log.ListenSystemDiagnosticsLog();
-            Log.TextListener += LogText;
+            var listener = new XJK.Logger.Listener(s =>
+            {
+                LogText(s);
+            })
+            { Registered = true };
             this.Title = ENV.IsAdministrator() ? "Administrator" : "Normal User";
-            this.CommandBox.Text = ENV.ExePath; //"D:\\space space.exe";
+            this.CommandBox.Text = ENV.EntryLocation; //"D:\\space space.exe";
             foreach (var x in Environment.GetCommandLineArgs())
             {
-                LogText(x + C.LF);
+                LogText(x + Environment.NewLine);
             }
         }
 
@@ -137,12 +140,12 @@ namespace SysXCmdRunExample
         {
             string x = CommandBox.Text;
             var tuple = Cmd.SplitCommandArg(x);
-            LogText($"Command :{tuple.Item1}{C.LF}Arg     :{tuple.Item2}{C.LF}");
+            LogText($"Command :{tuple.Item1}{Environment.NewLine}Arg     :{tuple.Item2}{Environment.NewLine}");
         }
 
         private void SetCurrentExePath(object sender, RoutedEventArgs e)
         {
-            CommandBox.Text = ENV.ExePath;
+            CommandBox.Text = ENV.EntryLocation;
         }
 
         private void ClearLog(object sender, RoutedEventArgs e)
@@ -158,7 +161,7 @@ namespace SysXCmdRunExample
 
         private void GetVerbs(object sender, RoutedEventArgs e)
         {
-            Log.Info(Cmd.GetRunVerbs(Command));
+            LogText(Cmd.GetRunVerbs(Command));
         }
     }
 }

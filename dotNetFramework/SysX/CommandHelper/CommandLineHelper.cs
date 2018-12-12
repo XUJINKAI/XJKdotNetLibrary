@@ -71,7 +71,7 @@ namespace XJK.SysX.CommandHelper
             {
                 Args[i] = QuoteMark(Args[i], QuoteRepalce.DoubleQuote);
             }
-            return Args.Join(" ");
+            return Args.JoinToString(" ");
         }
 
     }

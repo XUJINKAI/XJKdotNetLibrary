@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using XJK.Logger;
 
 namespace XJK.Network.GA
 {
@@ -62,7 +63,7 @@ namespace XJK.Network.GA
             }
             if (tag.IsNullOrEmpty())
             {
-                tag = Helper.RandomString(8);
+                tag = RandomGenerator.RandomString(8);
             }
             else
             {
@@ -84,7 +85,7 @@ namespace XJK.Network.GA
                 OnceDictTag = tag;
             }
             Cache.Add(tag, data);
-            DetailListener?.Invoke($"Add [{tag}] {Cache.Count}{data.ToFormatTableString()}{C.LF}");
+            DetailListener?.Invoke($"Add [{tag}] {Cache.Count}{data.ToFormatTableString()}{Environment.NewLine}");
             //if (Cache.Count >= MaxCacheCount) Send();
             return tag;
         }
@@ -97,7 +98,7 @@ namespace XJK.Network.GA
                 OnceDictTag = null;
             }
             var result = Cache.Remove(tag);
-            DetailListener?.Invoke($"Remove [{tag}] {Cache.Count}{C.LF}");
+            DetailListener?.Invoke($"Remove [{tag}] {Cache.Count}{Environment.NewLine}");
             return result;
         }
 
@@ -115,7 +116,7 @@ namespace XJK.Network.GA
                         BadCache.RemoveAt(i);
                     }
                 }
-                DetailListener?.Invoke($"{'='.Dup(60)}{C.LF}TryBadCache remain {BadCacheCountFormat()}");
+                DetailListener?.Invoke($"{'='.Dup(60)}{Environment.NewLine}TryBadCache remain {BadCacheCountFormat()}");
                 Log.Debug($"TryBadCache remain {BadCacheCountFormat()}");
             }
         }
@@ -146,12 +147,12 @@ namespace XJK.Network.GA
                 var result = await _Send(x);
                 if (result)
                 {
-                    DetailListener?.Invoke($"{'='.Dup(60)}{C.LF}Send {x.Count}, remain bad cache {BadCacheCountFormat()}");
+                    DetailListener?.Invoke($"{'='.Dup(60)}{Environment.NewLine}Send {x.Count}, remain bad cache {BadCacheCountFormat()}");
                 }
                 else
                 {
                     BadCache.Add(x);
-                    DetailListener?.Invoke($"{'='.Dup(60)}{C.LF}Not send, Add {x.Count}, bad cache {BadCacheCountFormat()}");
+                    DetailListener?.Invoke($"{'='.Dup(60)}{Environment.NewLine}Not send, Add {x.Count}, bad cache {BadCacheCountFormat()}");
                     Log.Debug($"Analytics Send {x.Count}, remain {BadCacheCountFormat()}");
                 }
             }
@@ -168,14 +169,14 @@ namespace XJK.Network.GA
         {
             try
             {
-                DetailListener?.Invoke($"CollectGoogleAnalyticsAsync{C.LF}{dict.ToFormatTableString()}");
+                DetailListener?.Invoke($"CollectGoogleAnalyticsAsync{Environment.NewLine}{dict.ToFormatTableString()}");
                 string postStr = NetHelper.UrlEncode(dict);
                 var result = await NetLegacy.PostAsync(GAURL, postStr);
                 return result != null;
             }
             catch (Exception e)
             {
-                Log.Error(e, "CollectGoogleAnalyticsAsync");
+                Log.Error(e, true);
                 return false;
             }
         }
@@ -185,7 +186,7 @@ namespace XJK.Network.GA
             try
             {
 
-                DetailListener?.Invoke($"BatchCollectGoogleAnalyticsAsync{C.LF}{batchData.Join(o => o.ToFormatTableString(), C.LF)}");
+                DetailListener?.Invoke($"BatchCollectGoogleAnalyticsAsync{Environment.NewLine}{batchData.JoinToString(o => o.ToFormatTableString(), Environment.NewLine)}");
                 string batchStr = "";
                 foreach (var dict in batchData)
                 {
@@ -197,7 +198,7 @@ namespace XJK.Network.GA
             }
             catch (Exception e)
             {
-                Log.Error(e, "BatchCollectGoogleAnalyticsAsync");
+                Log.Error(e, true);
                 return false;
             }
         }

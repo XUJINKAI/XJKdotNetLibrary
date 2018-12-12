@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using XJK.Logger;
 using static XJK.SysX.CommandHelper.CommandLineHelper;
 
 namespace XJK.SysX.CommandHelper
@@ -245,12 +246,12 @@ namespace XJK.SysX.CommandHelper
                 && (WindowType == WindowType.ConsoleInParent || WindowType == WindowType.ConsoleNoWindow)
                 )
             {
-                conflict += "RunAs Admin confict with ConsoleInParent/ConsoleNoWindow WindowType" + C.LF;
+                conflict += "RunAs Admin confict with ConsoleInParent/ConsoleNoWindow WindowType" + Environment.NewLine;
             }
 
             if (conflict != "")
             {
-                conflict = "ProcessInfoChain Conflict:" + C.LF + conflict;
+                conflict = "ProcessInfoChain Conflict:" + Environment.NewLine + conflict;
                 if (ThrowConflict)
                 {
                     throw new Exception(conflict);
@@ -304,10 +305,10 @@ namespace XJK.SysX.CommandHelper
 
         public override string ToString()
         {
-            return  $"<ProcessInfoChain>{C.LF}" +
-                $"Command : {Command}{C.LF}" +
-                $"Argument: {Args}{C.LF}" +
-                $"ExcuteCommandArgs: {ExcuteCommandArgs.Item1} {ExcuteCommandArgs.Item2}{C.LF}" +
+            return  $"<ProcessInfoChain>{Environment.NewLine}" +
+                $"Command : {Command}{Environment.NewLine}" +
+                $"Argument: {Args}{Environment.NewLine}" +
+                $"ExcuteCommandArgs: {ExcuteCommandArgs.Item1} {ExcuteCommandArgs.Item2}{Environment.NewLine}" +
                 $"{Privilege}, {LaunchType}, {WindowType}";
         }
     }

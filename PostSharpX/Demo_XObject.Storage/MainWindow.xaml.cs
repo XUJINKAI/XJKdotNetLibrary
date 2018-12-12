@@ -20,7 +20,6 @@ using XJK.XStorage;
 using PostSharp.Patterns.Collections;
 using System.Diagnostics;
 using XJK;
-using XJK.Xml;
 
 namespace DB
 {
@@ -50,7 +49,7 @@ namespace DB
             {
                 {123, new DataDictionary<string, FavItem>()
                 {
-                    {"abc", new FavItem(){ Movie = Helper.RandomString(10)} }
+                    {"abc", new FavItem(){ Movie = RandomGenerator.RandomString(10)} }
                 } },
             };
         }
@@ -97,15 +96,15 @@ namespace DB
         // DB
         private void Button_Click_Change_Property(object sender, RoutedEventArgs e)
         {
-            DbConfig.Age = Helper.RandomInt(30);
+            DbConfig.Age = RandomGenerator.RandomInt(30);
         }
         private void Button_Click_Change_Object(object sender, RoutedEventArgs e)
         {
-            DbConfig.SubInfo = new SubInfo() { Height = Helper.RandomDouble(1.7, 1.75, 2) };
+            DbConfig.SubInfo = new SubInfo() { Height = RandomGenerator.RandomDouble(1.7, 1.75, 2) };
         }
         private void Button_Click_Change_Object_Property(object sender, RoutedEventArgs e)
         {
-            DbConfig.SubInfo.Height = Helper.RandomDouble(0, 200);
+            DbConfig.SubInfo.Height = RandomGenerator.RandomDouble(0, 200);
         }
         // Collection
         private void Button_Click_Change_Collection(object sender, RoutedEventArgs e)
@@ -115,41 +114,41 @@ namespace DB
         private void Button_Click_Change_Collection_Item_Property(object sender, RoutedEventArgs e)
         {
             if (DbConfig.DataCollection.Count == 0) return;
-            var idx = Helper.RandomInt(DbConfig.DataCollection.Count);
-            DbConfig.DataCollection[idx].Movie = Helper.RandomString(20);
+            var idx = RandomGenerator.RandomInt(DbConfig.DataCollection.Count);
+            DbConfig.DataCollection[idx].Movie = RandomGenerator.RandomString(20);
         }
         private void Button_Click_Change_Collection_Remove(object sender, RoutedEventArgs e)
         {
             if (DbConfig.DataCollection.Count == 0) return;
-            var idx = Helper.RandomInt(DbConfig.DataCollection.Count);
+            var idx = RandomGenerator.RandomInt(DbConfig.DataCollection.Count);
             var obj = DbConfig.DataCollection[idx];
             DbConfig.DataCollection.RemoveAt(idx);
-            obj.Movie = Helper.RandomString(1000);
+            obj.Movie = RandomGenerator.RandomString(1000);
         }
         // Dictionary
         private void Button_Click_Change_Dictionary(object sender, RoutedEventArgs e)
         {
-            DbConfig.DataDictionary.Add(Helper.RandomString(5), new FavItem() { Movie = Helper.RandomString(5) });
+            DbConfig.DataDictionary.Add(RandomGenerator.RandomString(5), new FavItem() { Movie = RandomGenerator.RandomString(5) });
         }
         private void Button_Click_Change_Dictionary_Property(object sender, RoutedEventArgs e)
         {
             var keys = DbConfig.DataDictionary.Keys;
             if (keys.Count == 0) return;
-            var idx = Helper.RandomInt(keys.Count);
+            var idx = RandomGenerator.RandomInt(keys.Count);
             int i = 0;
             var key = keys.Where(o => i++ == idx).First();
-            DbConfig.DataDictionary[key].Movie = Helper.RandomString(20);
+            DbConfig.DataDictionary[key].Movie = RandomGenerator.RandomString(20);
         }
         private void Button_Click_Change_Dictionary_Remove(object sender, RoutedEventArgs e)
         {
             var keys = DbConfig.DataDictionary.Keys;
             if (keys.Count == 0) return;
-            var idx = Helper.RandomInt(keys.Count);
+            var idx = RandomGenerator.RandomInt(keys.Count);
             int i = 0;
             var key = keys.Where(o => i++ == idx).First();
             var obj = DbConfig.DataDictionary[key];
             DbConfig.DataDictionary.Remove(key);
-            obj.Movie = Helper.RandomString(1000);
+            obj.Movie = RandomGenerator.RandomString(1000);
         }
         // Agg
         private void Button_Click_CountChilds(object sender, RoutedEventArgs e)
@@ -176,7 +175,7 @@ namespace DB
             {
                 {123, new DataDictionary<string, FavItem>()
                 {
-                    {"abc", new FavItem(){ Movie = Helper.RandomString(10)} }
+                    {"abc", new FavItem(){ Movie = RandomGenerator.RandomString(10)} }
                 } },
             };
             Debugger.Break();

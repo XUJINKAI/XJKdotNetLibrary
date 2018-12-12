@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using XJK.Logger;
 
 namespace XJK.FileSystem
 {

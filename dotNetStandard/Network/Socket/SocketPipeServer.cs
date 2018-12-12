@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using XJK;
-using XJK.Serializers;
+using XJK.Logger;
 
 namespace XJK.Network.Socket
 {

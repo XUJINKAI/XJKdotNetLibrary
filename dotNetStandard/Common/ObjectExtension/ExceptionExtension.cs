@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using XJK.ReflectionUtils;
-using XJK.Serializers;
 
 namespace XJK
 {
@@ -33,7 +32,7 @@ namespace XJK
                 if (DumpData && ex.Data.Count > 0)
                 {
                     sb.AppendLine("Data:");
-                    string[] dump = ex.Data.Dump().Split(new string[] { C.LF }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] dump = ex.Data.Dump().Split(new string[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
                     bool firstline = true;
                     foreach (var line in dump)
                     {

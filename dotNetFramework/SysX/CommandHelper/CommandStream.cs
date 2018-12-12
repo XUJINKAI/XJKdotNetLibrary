@@ -20,11 +20,11 @@ namespace XJK.SysX.CommandHelper
         {
             Process.OutputDataReceived += (sender, e) =>
             {
-                ReceiveOutputData?.Invoke(e.Data + C.LF);
+                ReceiveOutputData?.Invoke(e.Data + Environment.NewLine);
             };
             Process.ErrorDataReceived += (sender, e) =>
             {
-                ReceiveErrorData?.Invoke(e.Data + C.LF);
+                ReceiveErrorData?.Invoke(e.Data + Environment.NewLine);
             };
             Receive(output, error);
             Process.BeginOutputReadLine();

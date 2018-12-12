@@ -9,7 +9,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using XJK.XStorage;
-using XJK.Xml;
 using PostSharp.Patterns.Model;
 
 namespace XJK.XSerializers

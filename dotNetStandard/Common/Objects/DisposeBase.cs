@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace XJK.Objects
+namespace XJK
 {
     public abstract class DisposeBase : IDisposable
     {

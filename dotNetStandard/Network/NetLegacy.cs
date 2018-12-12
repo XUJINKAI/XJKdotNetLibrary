@@ -3,6 +3,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Diagnostics;
+using XJK;
+using XJK.Logger;
 
 namespace XJK.Network
 {
@@ -40,7 +42,7 @@ namespace XJK.Network
         {
             if (!Enable)
             {
-                Log.Trace("Download: Enable = false");
+                Trace.WriteLine("Download: Enable = false");
                 return false;
             }
 
@@ -69,7 +71,7 @@ namespace XJK.Network
                 {
                     success = false;
                     exp = ex;
-                    Log.Error(ex, "Download");
+                    Log.Error(ex, true);
                     return false;
                 }
                 finally
@@ -82,11 +84,11 @@ namespace XJK.Network
             }
         }
 
-        public static async Task<string> GetAsync(string url)
+        public static async Task<string> GetAsync(string url, bool includeHeaders = false)
         {
             if (!Enable)
             {
-                Log.Trace("GET: Enable = false");
+                Log.Verbose("GET: Enable = false");
                 return null;
             }
 
@@ -102,13 +104,22 @@ namespace XJK.Network
                 try
                 {
                     result = await client.DownloadStringTaskAsync(url);
+                    if (includeHeaders)
+                    {
+                        var header = new StringBuilder();
+                        for (int i = 0; i < client.ResponseHeaders.Count; i++)
+                        {
+                            header.Append($"{client.ResponseHeaders.GetKey(i)}: {client.ResponseHeaders.GetValues(i).JoinToString(Environment.NewLine)}{Environment.NewLine}");
+                        }
+                        result = header.ToString() + result;
+                    }
                     return result ?? "";
                 }
                 catch (Exception ex)
                 {
                     success = false;
                     exp = ex;
-                    Log.Error(ex, "GET");
+                    Log.Error(ex, true);
                     return null;
                 }
                 finally
@@ -124,7 +135,7 @@ namespace XJK.Network
         {
             if (!Enable)
             {
-                Log.Trace("POST: Enable = false");
+                Log.Verbose("POST: Enable = false");
                 return null;
             }
 
@@ -146,7 +157,7 @@ namespace XJK.Network
                 {
                     success = false;
                     exp = ex;
-                    Log.Error(ex, "POST");
+                    Log.Error(ex, true);
                     return null;
                 }
                 finally

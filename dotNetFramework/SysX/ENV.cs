@@ -4,25 +4,22 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace XJK.SysX
+namespace XJK
 {
     public static class ENV
     {
-        public readonly static string Directory = AppDomain.CurrentDomain.BaseDirectory;
-        public readonly static string ExePath = System.Reflection.Assembly.GetEntryAssembly().Location;
+        public static string EntryLocation => System.Reflection.Assembly.GetEntryAssembly().Location;
+        public static string BaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
 
         public static readonly IntPtr ModuleHandle;
         public static readonly string ModuleHandleHex;
 
-        public static bool IsAdministrator()
-        {
-            WindowsIdentity identity = WindowsIdentity.GetCurrent();
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
-        }
-        
+        private static Mutex mutex;
+        private static bool isNewInstance;
+
         static ENV()
         {
             try
@@ -35,6 +32,26 @@ namespace XJK.SysX
                 ModuleHandle = IntPtr.Zero;
                 ModuleHandleHex = "0x0";
             }
+        }
+
+        public static bool IsNewInstance(string AppId)
+        {
+            if (mutex == null)
+            {
+                mutex = new Mutex(true, AppId, out isNewInstance);
+                return isNewInstance;
+            }
+            else
+            {
+                return isNewInstance;
+            }
+        }
+
+        public static bool IsAdministrator()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 }
