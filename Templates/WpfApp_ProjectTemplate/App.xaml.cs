@@ -14,13 +14,15 @@ namespace $safeprojectname$
     /// </summary>
     public partial class App : Application
     {
+        public static new App Current => Application.Current as App;
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             HandleGlobalExceptions();
             this.ShutdownMode = ShutdownMode.OnMainWindowClose;
-            //(this.MainWindow = new WpfWindow1()).Show();
-            //new DebugWindow1().Show();
+            //(this.MainWindow = new WpfWindow()).Show();
+            //new DebugWindow().Show();
         }
 
         private void HandleGlobalExceptions()

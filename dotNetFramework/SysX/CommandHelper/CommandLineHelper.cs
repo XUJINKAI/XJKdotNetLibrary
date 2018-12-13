@@ -10,14 +10,10 @@ namespace XJK.SysX.CommandHelper
 {
     public static class CommandLineHelper
     {
-        [DllImport("shell32.dll", SetLastError = true)]
-        public static extern IntPtr CommandLineToArgvW(
-            [MarshalAs(UnmanagedType.LPWStr)] string lpCmdLine, out int pNumArgs);
-
         public static string[] CommandLineToArgs(string commandLine)
         {
             if (commandLine == "") return new string[] { };
-            var argv = CommandLineToArgvW(commandLine, out int argc);
+            var argv = PInvoke.Shell32.CommandLineToArgvW(commandLine, out int argc);
             if (argv == IntPtr.Zero)
                 throw new Win32Exception();
             try

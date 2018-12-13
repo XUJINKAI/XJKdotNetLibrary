@@ -105,6 +105,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConfig.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

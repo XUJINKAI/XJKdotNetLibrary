@@ -27,15 +27,15 @@ namespace $rootnamespace$
             InitializeComponent();
             new XJK.Logger.Listener(s => Dispatcher.Invoke(() =>
             {
-                Log(s);
-                LogBox_Scroller.ScrollToEnd();
+                Write(s);
             }))
             { Registered = true };
             AddCommand(ModifierKeys.Control, Key.B, DebuggerBreak);
             AddCommand(ModifierKeys.Control, Key.T, TestFunction);
         }
 
-        private void Log(string s) => LogBox.AppendText(s);
+        private void Write(string s) { LogBox.AppendText(s); LogBox_Scroller.ScrollToEnd(); }
+        private void WriteLine(string s) => Write(s + Environment.NewLine);
 
         private void AddCommand(ModifierKeys modifierKeys, Key key, ExecutedRoutedEventHandler handler)
         {
@@ -66,8 +66,7 @@ namespace $rootnamespace$
 
         private void TestFunction(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("TestFunction");
+            WriteLine("TestFunction");
         }
-
     }
 }
