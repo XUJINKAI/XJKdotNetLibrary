@@ -57,7 +57,7 @@ namespace $rootnamespace$
 
         private void Menu_Exit(object sender, RoutedEventArgs e)
         {
-            App.Current.Shutdown();
+            Application.Current.Shutdown();
         }
     }
 }

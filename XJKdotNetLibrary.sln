@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfWindow_ItemTemplate", "T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugWindow_ItemTemplate", "Templates\DebugWindow_ItemTemplate\DebugWindow_ItemTemplate.csproj", "{45A9DF8B-1DD9-4F36-BD8E-BF61AEAFB624}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugPage_ItemTemplate", "Templates\DebugPage_ItemTemplate\DebugPage_ItemTemplate.csproj", "{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -231,6 +233,18 @@ Global
 		{45A9DF8B-1DD9-4F36-BD8E-BF61AEAFB624}.Release|x64.Build.0 = Release|Any CPU
 		{45A9DF8B-1DD9-4F36-BD8E-BF61AEAFB624}.Release|x86.ActiveCfg = Release|Any CPU
 		{45A9DF8B-1DD9-4F36-BD8E-BF61AEAFB624}.Release|x86.Build.0 = Release|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Debug|x64.Build.0 = Debug|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Debug|x86.Build.0 = Debug|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Release|x64.ActiveCfg = Release|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Release|x64.Build.0 = Release|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Release|x86.ActiveCfg = Release|Any CPU
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -251,6 +265,7 @@ Global
 		{F2449294-8EF4-447E-8614-C3D15D117360} = {D46ED408-098C-429B-B4B6-DE4000FE198C}
 		{E2263888-DFA2-438D-B8E6-540FCFC89EB7} = {D46ED408-098C-429B-B4B6-DE4000FE198C}
 		{45A9DF8B-1DD9-4F36-BD8E-BF61AEAFB624} = {D46ED408-098C-429B-B4B6-DE4000FE198C}
+		{F40AC840-D3E7-4758-9C3C-6DB0D1548B38} = {D46ED408-098C-429B-B4B6-DE4000FE198C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9746469A-2EEC-4AFD-A395-83A538B2C08F}

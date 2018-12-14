@@ -9,11 +9,11 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>{E2263888-DFA2-438D-B8E6-540FCFC89EB7}</ProjectGuid>
+    <ProjectGuid>{F40AC840-D3E7-4758-9C3C-6DB0D1548B38}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WpfMainWindow_ItemTemplate</RootNamespace>
-    <AssemblyName>WpfMainWindow_ItemTemplate</AssemblyName>
+    <RootNamespace>DebugPage_ItemTemplate</RootNamespace>
+    <AssemblyName>DebugPage_ItemTemplate</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
@@ -54,22 +54,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="WpfWindow.xaml.cs">
-      <DependentUpon>WpfWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
+    <None Include="DebugPage.xaml.cs">
+      <DependentUpon>DebugPage.xaml</DependentUpon>
     </None>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="WpfWindow_ItemTemplate.ico" />
+    <None Include="DebugPage_ItemTemplate.ico" />
   </ItemGroup>
   <ItemGroup>
-    <VSTemplate Include="WpfWindow_ItemTemplate.vstemplate">
-      <SubType>Designer</SubType>
-    </VSTemplate>
+    <VSTemplate Include="DebugPage_ItemTemplate.vstemplate" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="WpfWindow.xaml">
+    <None Include="DebugPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </None>

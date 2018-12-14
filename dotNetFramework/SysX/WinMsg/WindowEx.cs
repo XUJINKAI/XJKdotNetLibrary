@@ -16,16 +16,15 @@ namespace XJK.SysX.WinMsg
         public event WndMsgEventHandler MsgHotkey;
         public event WndMsgEventHandler MsgClipboardChanged;
         public event WndMsgPowerBroadcastEventHandler MsgPowerBroadcast;
-        public event WndMsgEventHandler MsgDefault;
         public event WndMsgEventHandler AllMsg;
 
-        private WindowCommunicate _wndMsg;
-        public WindowCommunicate WndMsg
+        private WindowCommunicate _windowCommunicate;
+        public WindowCommunicate WindowCommunicate
         {
             get
             {
-                if (_wndMsg == null) _wndMsg = new WindowCommunicate(this);
-                return _wndMsg;
+                if (_windowCommunicate == null) _windowCommunicate = new WindowCommunicate(this);
+                return _windowCommunicate;
             }
         }
 
@@ -53,19 +52,19 @@ namespace XJK.SysX.WinMsg
                 case WindowsMessages.POWERBROADCAST:
                     MsgPowerBroadcast?.Invoke(this, new WndMsgPowerBroadcastEventArgs(e));
                     break;
-                default:
-                    MsgDefault?.Invoke(this, e);
-                    break;
             }
         }
 
         public WindowEx ShowInvisible(Window closeRelatedWindow)
         {
             ShowInvisible();
-            closeRelatedWindow.Closed += (s, e) =>
+            if (closeRelatedWindow != null)
             {
-                this.Close();
-            };
+                closeRelatedWindow.Closed += (s, e) =>
+                {
+                    this.Close();
+                };
+            }
             return this;
         }
 
@@ -74,8 +73,6 @@ namespace XJK.SysX.WinMsg
             ShowActivated = false;
             ShowInTaskbar = false;
             WindowStyle = WindowStyle.None;
-            AllowsTransparency = true;
-            Opacity = 0;
             Top = int.MinValue;
             Left = int.MinValue;
             Width = 0;
@@ -107,7 +104,7 @@ namespace XJK.SysX.WinMsg
 
         public void RegisterAutoRestart(WndMsgEventHandler shutdownAction, string LaunchParameter = "")
         {
-            MsgDefault += (s, e) =>
+            AllMsg += (s, e) =>
             {
                 if (e.Msg == WindowsMessages.QUERYENDSESSION)
                 {

@@ -36,17 +36,13 @@ namespace $rootnamespace$
 
         private void Write(string s) { LogBox.AppendText(s); LogBox_Scroller.ScrollToEnd(); }
         private void WriteLine(string s) => Write(s + Environment.NewLine);
+        private void LogBox_Clear(object sender, RoutedEventArgs e) => LogBox.Clear();
 
         private void AddCommand(ModifierKeys modifierKeys, Key key, ExecutedRoutedEventHandler handler)
         {
             RoutedCommand Cmd = new RoutedCommand();
             Cmd.InputGestures.Add(new KeyGesture(key, modifierKeys));
             CommandBindings.Add(new CommandBinding(Cmd, handler));
-        }
-
-        private void LogBox_Clear(object sender, RoutedEventArgs e)
-        {
-            LogBox.Clear();
         }
 
         private void AppShutDown(object sender, RoutedEventArgs e)

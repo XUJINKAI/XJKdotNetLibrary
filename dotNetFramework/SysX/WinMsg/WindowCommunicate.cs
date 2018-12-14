@@ -18,12 +18,12 @@ namespace XJK.SysX.WinMsg
         public WindowCommunicate(WindowEx windowEx)
         {
             Window = windowEx;
-            Window.MsgDefault += Window_MsgProc;
+            Window.AllMsg += Window_MsgProc;
         }
 
         protected override void OnDispose()
         {
-            Window.MsgDefault -= Window_MsgProc;
+            Window.AllMsg -= Window_MsgProc;
             Window = null;
         }
 

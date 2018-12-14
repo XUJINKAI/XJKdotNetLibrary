@@ -21,8 +21,8 @@ namespace $safeprojectname$
             base.OnStartup(e);
             HandleGlobalExceptions();
             this.ShutdownMode = ShutdownMode.OnMainWindowClose;
-            //(this.MainWindow = new WpfWindow()).Show();
-            //new DebugWindow().Show();
+            //(this.MainWindow = new WpfWindow1()).Show();
+            //new DebugWindow1().Show();
         }
 
         private void HandleGlobalExceptions()
@@ -42,7 +42,7 @@ namespace $safeprojectname$
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var exp = e.ExceptionObject as Exception;
-            ProcessException("AppDomain.UnhandledException", exp, false);
+            ProcessException("AppDomain.UnhandledException", exp, e.IsTerminating);
         }
 
         private static void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
