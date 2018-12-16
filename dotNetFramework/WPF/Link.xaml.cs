@@ -90,6 +90,7 @@ namespace XJK.WPF
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
+            e.Handled = true;
             bool setCommand = !string.IsNullOrEmpty(RunCommand);
             if (setCommand)
             {

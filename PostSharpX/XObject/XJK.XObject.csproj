@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\dotNetStandard\Common\Common.csproj" />
+    <ProjectReference Include="..\..\dotNetStandard\Common\XJK.Common.csproj" />
   </ItemGroup>
 
 </Project>
