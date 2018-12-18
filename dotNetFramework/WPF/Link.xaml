@@ -9,7 +9,7 @@
         <ControlTemplate>
             <TextBlock>
                 <Hyperlink NavigateUri="{Binding Content, RelativeSource={RelativeSource AncestorType=UserControl}}" RequestNavigate="Hyperlink_RequestNavigate">
-                    <ContentPresenter Content="{Binding Content, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                    <ContentPresenter Content="{Binding Content, RelativeSource={RelativeSource AncestorType=UserControl}}">
                         <ContentPresenter.Resources>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextWrapping" Value="{Binding TextWrapping, RelativeSource={RelativeSource AncestorType=UserControl}}"></Setter>
@@ -26,7 +26,7 @@
             <Style.Triggers>
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Underline}" Value="False"/>
+                        <Condition Binding="{Binding Underline, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False"/>
                         <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="False"/>
                     </MultiDataTrigger.Conditions>
                     <Setter Property="TextBlock.TextDecorations" Value="{x:Null}" />

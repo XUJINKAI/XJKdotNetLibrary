@@ -1,12 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace XJK.ReflectionUtils
 {
     public static class InstancePropertyExtension
     {
-        public static object GetPropertyValue(object Instance, string key)
+        public static IEnumerable<PropertyInfo> GetProperties<T>(this T Instance)
+        {
+            const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public;
+            var properties = from property in typeof(T).GetProperties(bindingFlags)
+                             select property;
+            return properties;
+        }
+
+        public static bool HasAttribute<T>(this PropertyInfo propertyInfo) where T : Attribute
+        {
+            return Attribute.IsDefined(propertyInfo, typeof(T));
+        }
+        
+        public static object GetPropertyValue(this object Instance, string key)
         {
             var property = Instance.GetType().GetProperty(key);
             return property.GetValue(Instance);
@@ -26,7 +41,7 @@ namespace XJK.ReflectionUtils
             }
         }
 
-        public static void SetPropertyValue(object Instance, string key, object value)
+        public static void SetPropertyValue(this object Instance, string key, object value)
         {
             var property = Instance.GetType().GetProperty(key);
             property.SetValue(Instance, value);

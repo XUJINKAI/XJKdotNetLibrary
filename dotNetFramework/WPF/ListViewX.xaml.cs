@@ -23,39 +23,29 @@ namespace XJK.WPF
     /// </summary>
     public partial class ListViewX : ListView
     {
-        //public new IEnumerable ItemsSource
-        //{
-        //    get
-        //    {
-        //        return base.ItemsSource;
-        //    }
-        //    set
-        //    {
-        //        base.ItemsSource = value;
-        //    }
-        //}
+        public event ItemMouseDoubleClickEventHandler ItemMouseDoubleClick;
+
+        public static RoutedCommand FirstItemCommand = new RoutedCommand();
+        public static RoutedCommand LastItemCommand = new RoutedCommand();
+        public static RoutedCommand NextItemCommand = new RoutedCommand();
+        public static RoutedCommand PrevItemCommand = new RoutedCommand();
 
         public ListViewX()
         {
-
-        }
-
-        public void NextItem()
-        {
-            SelectedIndex += 1;
-            if (SelectedIndex < 1)
+            InitializeComponent();
+            this.CommandBindings.AddRange(new Collection<CommandBinding>()
             {
-                SelectedIndex = Items.Count - 1;
-            }
+                new CommandBinding(FirstItemCommand, (sender,e)=>{ SelectedIndex = 0; }),
+                new CommandBinding(LastItemCommand, (sender,e)=>{ SelectedIndex = Items.Count - 1; }),
+                new CommandBinding(NextItemCommand, (sender,e)=>{ SelectedIndex = (SelectedIndex + 1) % Items.Count; }),
+                new CommandBinding(PrevItemCommand, (sender,e)=>{ SelectedIndex = (SelectedIndex - 1 + Items.Count) % Items.Count; }),
+            });
         }
+        
 
-        public void PrevItem()
+        private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            SelectedIndex -= 1;
-            if (SelectedIndex < 0)
-            {
-                SelectedIndex = 0;
-            }
+            ItemMouseDoubleClick?.Invoke(sender, new ItemMouseDoubleClickEventArgs());
         }
 
         private GridViewColumnHeader lastHeaderClicked = null;
@@ -110,5 +100,13 @@ namespace XJK.WPF
             view.Refresh();
         }
 
+        private void GridViewColumnHeader_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if(e.ChangedButton == MouseButton.Right)
+            {
+                //System.Diagnostics.Debugger.Break();
+                //(Resources["GridViewColumnHeader_ContextMenu"] as ContextMenu).IsOpen = true;
+            }
+        }
     }
 }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace XJK.DefaultProperty
 {
-    public static class DefaultPropertyAttributeExtension
+    public static class DefaultPropertyMethods
     {
         public static int WritePropertiesByDefaultValueAttribute(object isntance)
         {

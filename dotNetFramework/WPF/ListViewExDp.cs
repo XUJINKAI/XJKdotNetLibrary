@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace XJK.WPF
 {
-    public static class SortBy
+    public static class ListViewEx
     {
         public static void SetSortBy(this GridViewColumn element, string value)
         {

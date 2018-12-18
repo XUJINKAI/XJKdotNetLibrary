@@ -6,5 +6,17 @@
              xmlns:local="clr-namespace:XJK.WPF"
              mc:Ignorable="d"
              GridViewColumnHeader.Click="GridViewColumnHeaderClicked"
+             GridViewColumnHeader.MouseDown="GridViewColumnHeader_MouseDown"
              d:DesignHeight="300" d:DesignWidth="300">
+    <ListView.InputBindings>
+        <KeyBinding Key="Left" Command="{x:Static local:ListViewX.FirstItemCommand}"></KeyBinding>
+        <KeyBinding Key="Right" Command="{x:Static local:ListViewX.LastItemCommand}"></KeyBinding>
+        <KeyBinding Key="Up" Command="{x:Static local:ListViewX.PrevItemCommand}"></KeyBinding>
+        <KeyBinding Key="Down" Command="{x:Static local:ListViewX.NextItemCommand}"></KeyBinding>
+    </ListView.InputBindings>
+    <ListView.Resources>
+        <Style TargetType="ListViewItem">
+            <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick"/>
+        </Style>
+    </ListView.Resources>
 </ListView>

@@ -185,12 +185,15 @@ namespace XJK.XSerializers
             {
                 writer.WriteAttributeString(_XTYPE_, _DATABASE_);
                 writer.WriteAttributeString(_TYPE_, SerializableTypeName(type));
+                var ignoreTypes = type.GetCustomAttributes(typeof(IgnoreSerializeTypeAttribute))
+                    .Select(att => ((IgnoreSerializeTypeAttribute)att).Type);
                 const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public;
                 var properties = from property in type.GetProperties(bindingFlags)
                                  where property.CanWrite 
                                     && !Attribute.IsDefined(property, typeof(XmlIgnoreAttribute))
                                     && !Attribute.IsDefined(property, typeof(ParentAttribute))
                                     && !Attribute.IsDefined(property, typeof(ReferenceAttribute))
+                                    && !ignoreTypes.Any(t => t.IsAssignableFrom(property.PropertyType))
                                  select property;
                 foreach (var property in properties)
                 {

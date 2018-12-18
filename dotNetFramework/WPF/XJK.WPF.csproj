@@ -88,12 +88,19 @@
     <Compile Include="Converters\EnumToBoolConverter.cs" />
     <Compile Include="Converters\NullToBoolConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="DropDown.xaml.cs">
+      <DependentUpon>DropDown.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DropDownTextEditor.xaml.cs">
+      <DependentUpon>DropDownTextEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extensions\BoolExtension.cs" />
+    <Compile Include="ItemMouseDoubleClickEventArgs.cs" />
     <Compile Include="ListViewX.xaml.cs">
       <DependentUpon>ListViewX.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SortByProperty.cs" />
+    <Compile Include="ListViewExDp.cs" />
     <Compile Include="AutoLinkTextBox.xaml.cs">
       <DependentUpon>AutoLinkTextBox.xaml</DependentUpon>
     </Compile>
@@ -108,6 +115,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="DropDown.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DropDownTextEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ListViewX.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
