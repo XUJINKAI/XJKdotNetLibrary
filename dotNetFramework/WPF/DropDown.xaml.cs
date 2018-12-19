@@ -156,20 +156,28 @@ namespace XJK.WPF
         public static readonly RoutedCommand OpenPanelCommand = new RoutedCommand();
         public static readonly RoutedCommand ClosePanelCommand = new RoutedCommand();
 
+        private void OpenPanelCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            OpenPanel();
+        }
+
+        private void ClosePanelCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            ClosePanel();
+        }
+
+
         public DropDown()
         {
             InitializeComponent();
         }
-        
+
         private void Popup_Opened(object sender, EventArgs e)
         {
             RaiseRoutedEvent(OpenedEvent);
-            if(sender is Popup popup)
+            if (GetTemplateChild("Panel") is ContentPresenter presenter)
             {
-                if(popup.FindName("Panel") is ContentPresenter presenter)
-                {
-                    presenter.Focus();
-                }
+                presenter.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
             }
         }
 
@@ -188,26 +196,16 @@ namespace XJK.WPF
             if (IsOpen) IsOpen = false;
         }
         
-        private void OpenPanelCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            OpenPanel();
-        }
-
-        private void ClosePanelCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            ClosePanel();
-        }
-
         private void Thumb_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             ClosePanel();
         }
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        private void Panel_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (ClickOpen)
+            if(e.Key == Key.Escape)
             {
-                OpenPanel();
+                ClosePanel();
             }
         }
     }

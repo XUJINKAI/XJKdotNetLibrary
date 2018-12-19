@@ -3,88 +3,33 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:XJK.WPF"
-             mc:Ignorable="d" >
+             mc:Ignorable="d">
     <UserControl.Resources>
         <Style TargetType="local:DropDownTextEditor">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="local:DropDownTextEditor">
-                        <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                            <CheckBox IsChecked="{Binding IsOpen, Mode=TwoWay}">
-                                <CheckBox.Template>
-                                    <ControlTemplate>
-                                        <Grid>
-                                            <Grid Cursor="Hand">
-                                                <TextBlock Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"></TextBlock>
-                                                <Border BorderThickness="0,0,0,1" BorderBrush="#FF55A3F3">
-                                                    <TextBlock Name="PlaceHolderTextBlock" Text="{Binding PlaceHolderText}" 
-                                                               Foreground="#CCB2B2B2" Margin="1,1,1,0" Visibility="{Binding PlaceHolderVisibility}"></TextBlock>
-                                                </Border>
-                                            </Grid>
-                                            <Popup AllowsTransparency="True"
-                                                    IsOpen="{Binding IsOpen, Mode=TwoWay}"
-                                                    StaysOpen="False"
-                                                    Height="{Binding DropDownHeight}"
-                                                    Width="{Binding DropDownWidth}"
-                                                    Focusable="False"
-                                                    Placement="Bottom"
-                                                    PopupAnimation="Slide"
-                                                    HorizontalOffset="1"
-                                                    VerticalOffset="1"
-                                                    Opened="Popup_Opened"
-                                                    PreviewKeyDown="Popup_PreviewKeyDown">
-                                                <Border BorderThickness="1" BorderBrush="#ABCEF2">
-                                                    <Grid>
-                                                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                                                            <TextBox Name="EditorTextBox" 
-                                                                         Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" 
-                                                                         TextWrapping="Wrap"
-                                                                         AcceptsReturn="True" 
-                                                                         AcceptsTab="True"></TextBox>
-                                                        </ScrollViewer>
-                                                        <Thumb Background="Wheat" 
-                                                               HorizontalAlignment="Right" 
-                                                               VerticalAlignment="Top" 
-                                                               Margin="0,5,5,0" 
-                                                               PreviewMouseDown="Thumb_PreviewMouseDown"
-                                                               Cursor="Arrow">
-                                                            <Thumb.Template>
-                                                                <ControlTemplate>
-                                                                    <Grid Background="White">
-                                                                        <Path Data="M0,0 L10,10 M0,10 L10,0" Stroke="Gray" StrokeThickness="1"></Path>
-                                                                        <Grid.Resources>
-                                                                            <Style TargetType="Path">
-                                                                                <Style.Triggers>
-                                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                                        <Setter Property="Stroke" Value="Black"></Setter>
-                                                                                        <Setter Property="StrokeThickness" Value="2"></Setter>
-                                                                                    </Trigger>
-                                                                                </Style.Triggers>
-                                                                            </Style>
-                                                                        </Grid.Resources>
-                                                                    </Grid>
-                                                                </ControlTemplate>
-                                                            </Thumb.Template>
-                                                        </Thumb>
-                                                        <Thumb HorizontalAlignment="Right" VerticalAlignment="Bottom" Cursor="SizeNWSE" DragDelta="DropDownThumb_OnDragDelta">
-                                                            <Thumb.Template>
-                                                                <ControlTemplate TargetType="{x:Type Thumb}">
-                                                                    <Grid Background="Transparent">
-                                                                        <Path Data="M0.5,6.5 L6.5,0.5 M6.5,3.5 L3.5,6.5" Stroke="Black" StrokeThickness="1" />
-                                                                    </Grid>
-                                                                </ControlTemplate>
-                                                            </Thumb.Template>
-                                                        </Thumb>
-                                                    </Grid>
-                                                </Border>
-                                            </Popup>
-                                        </Grid>
-                                    </ControlTemplate>
-                                </CheckBox.Template>
-                            </CheckBox>
-                        </Grid>
+                        <local:DropDown>
+                            <Grid Cursor="Hand">
+                                <TextBlock Text="{TemplateBinding Text}"></TextBlock>
+                                <Border BorderThickness="0,0,0,1" BorderBrush="#FF55A3F3">
+                                    <TextBlock Text="{TemplateBinding PlaceHolderText}" 
+                                        Visibility="{Binding PlaceHolderVisibility, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                        Foreground="#CCB2B2B2" Margin="1,1,1,0" ></TextBlock>
+                                </Border>
+                            </Grid>
+                            <local:DropDown.Panel>
+                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                    <TextBox GotFocus="TextBox_GotFocus"
+                                        Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                        TextWrapping="Wrap"
+                                        AcceptsReturn="True" 
+                                        AcceptsTab="True">
+                                    </TextBox>
+                                </ScrollViewer>
+                            </local:DropDown.Panel>
+                        </local:DropDown>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

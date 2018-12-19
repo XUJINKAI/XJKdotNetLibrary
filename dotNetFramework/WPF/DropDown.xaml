@@ -11,79 +11,87 @@
         <CommandBinding Command="local:DropDown.ClosePanelCommand" Executed="ClosePanelCommand_Executed"></CommandBinding>
     </UserControl.CommandBindings>
     <UserControl.Resources>
-        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"></converters:BoolToVisibilityConverter>
+        <converters:BoolConverter x:Key="BoolConverter"></converters:BoolConverter>
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter"></converters:InverseBoolConverter>
         <Style TargetType="local:DropDown">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="local:DropDown">
-                        <Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-                            <CheckBox IsChecked="{Binding IsOpen, Mode=OneWay}" Checked="CheckBox_Checked">
-                                <CheckBox.Template>
-                                    <ControlTemplate>
-                                        <Grid>
-                                            <DockPanel>
-                                                <ContentPresenter Name="ExplicitContent" Content="{Binding Content}"></ContentPresenter>
-                                            </DockPanel>
-                                            <Popup AllowsTransparency="True"
-                                                    IsOpen="{Binding IsOpen, Mode=TwoWay}"
-                                                    StaysOpen="{Binding StayOpen, Mode=TwoWay}"
-                                                    Height="{Binding DropDownHeight}"
-                                                    Width="{Binding DropDownWidth}"
-                                                    Focusable="False"
-                                                    Placement="Bottom"
-                                                    PopupAnimation="Slide"
-                                                    HorizontalOffset="1"
-                                                    VerticalOffset="1"
-                                                    Opened="Popup_Opened"
-                                                    Closed="Popup_Closed">
-                                                <Border BorderThickness="2" BorderBrush="#ABCEF2" Background="White">
-                                                    <Grid>
-                                                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                                                            <ContentPresenter Name="Panel" Content="{Binding Panel}"></ContentPresenter>
-                                                        </ScrollViewer>
-                                                        <Thumb Background="Wheat" 
-                                                               Visibility="{Binding CloseButton, Converter={StaticResource BoolToVisibility}}"
-                                                               HorizontalAlignment="Right" 
-                                                               VerticalAlignment="Top" 
-                                                               Margin="0,5,5,0" 
-                                                               PreviewMouseDown="Thumb_PreviewMouseDown"
-                                                               Cursor="Arrow">
-                                                            <Thumb.Template>
-                                                                <ControlTemplate>
-                                                                    <Grid Background="White">
-                                                                        <Path Data="M0,0 L10,10 M0,10 L10,0" Stroke="Gray" StrokeThickness="1"></Path>
-                                                                        <Grid.Resources>
-                                                                            <Style TargetType="Path">
-                                                                                <Style.Triggers>
-                                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                                        <Setter Property="Stroke" Value="Black"></Setter>
-                                                                                        <Setter Property="StrokeThickness" Value="2"></Setter>
-                                                                                    </Trigger>
-                                                                                </Style.Triggers>
-                                                                            </Style>
-                                                                        </Grid.Resources>
-                                                                    </Grid>
-                                                                </ControlTemplate>
-                                                            </Thumb.Template>
-                                                        </Thumb>
-                                                        <Thumb HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-                                                               Visibility="{Binding CanResize, Converter={StaticResource BoolToVisibility}}"
-                                                               Cursor="SizeNWSE" DragDelta="DropDownThumb_OnDragDelta">
-                                                            <Thumb.Template>
-                                                                <ControlTemplate TargetType="Thumb">
-                                                                    <Grid Background="Transparent">
-                                                                        <Path Data="M0.5,6.5 L6.5,0.5 M6.5,3.5 L3.5,6.5" Stroke="Black" StrokeThickness="1" />
-                                                                    </Grid>
-                                                                </ControlTemplate>
-                                                            </Thumb.Template>
-                                                        </Thumb>
-                                                    </Grid>
-                                                </Border>
-                                            </Popup>
-                                        </Grid>
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                IsChecked="{Binding IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
+                                IsHitTestVisible="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource InverseBoolConverter}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <ContentPresenter/>
                                     </ControlTemplate>
-                                </CheckBox.Template>
-                            </CheckBox>
+                                </ToggleButton.Template>
+                                <Grid>
+                                    <ContentPresenter Margin="{TemplateBinding Padding}"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      RecognizesAccessKey="true" />
+                                </Grid>
+                            </ToggleButton>
+                            
+                            <Popup AllowsTransparency="True"
+                                    IsOpen="{Binding IsChecked, ElementName=ToggleButton}"
+                                    StaysOpen="{TemplateBinding StayOpen}"
+                                    Height="{TemplateBinding DropDownHeight}"
+                                    Width="{TemplateBinding DropDownWidth}"
+                                    Focusable="False"
+                                    Placement="Bottom"
+                                    PopupAnimation="Slide"
+                                    HorizontalOffset="1"
+                                    VerticalOffset="1"
+                                    Opened="Popup_Opened"
+                                    Closed="Popup_Closed">
+                                <Border BorderThickness="2" BorderBrush="#ABCEF2" Background="White">
+                                    <Grid>
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                            <ContentPresenter x:Name="Panel" Content="{TemplateBinding Panel}" PreviewKeyDown="Panel_PreviewKeyDown"></ContentPresenter>
+                                        </ScrollViewer>
+                                        <Thumb Background="Wheat" 
+                                                Visibility="{TemplateBinding CloseButton, Converter={StaticResource BoolConverter}}"
+                                                HorizontalAlignment="Right" 
+                                                VerticalAlignment="Top" 
+                                                Margin="0,5,5,0" 
+                                                PreviewMouseDown="Thumb_PreviewMouseDown"
+                                                Cursor="Arrow">
+                                            <Thumb.Template>
+                                                <ControlTemplate>
+                                                    <Grid Background="White">
+                                                        <Path Data="M0,0 L10,10 M0,10 L10,0" Stroke="Gray" StrokeThickness="1"></Path>
+                                                        <Grid.Resources>
+                                                            <Style TargetType="Path">
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Stroke" Value="Black"></Setter>
+                                                                        <Setter Property="StrokeThickness" Value="2"></Setter>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Grid.Resources>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                        <Thumb HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                                                               Visibility="{TemplateBinding CanResize, Converter={StaticResource BoolConverter}}"
+                                                               Cursor="SizeNWSE" DragDelta="DropDownThumb_OnDragDelta">
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="Thumb">
+                                                    <Grid Background="Transparent">
+                                                        <Path Data="M0.5,6.5 L6.5,0.5 M6.5,3.5 L3.5,6.5" Stroke="Black" StrokeThickness="1" />
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                    </Grid>
+                                </Border>
+                            </Popup>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>

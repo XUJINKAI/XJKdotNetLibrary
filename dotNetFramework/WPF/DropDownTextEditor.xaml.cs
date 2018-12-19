@@ -11,6 +11,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -21,6 +22,7 @@ namespace XJK.WPF
     /// <summary>
     /// UserControl1.xaml 的交互逻辑
     /// </summary>
+    [ContentProperty(nameof(Text))]
     public partial class DropDownTextEditor : UserControl, INotifyPropertyChanged
     {
         public string Text
@@ -28,20 +30,15 @@ namespace XJK.WPF
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
-        public static readonly DependencyProperty TextProperty =DependencyProperty.Register("Text", typeof(string), typeof(DropDownTextEditor)
-            , new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
-
-
-
-        public bool IsOpen
-        {
-            get { return (bool)GetValue(IsOpenProperty); }
-            set { SetValue(IsOpenProperty, value); }
-        }
-        public static readonly DependencyProperty IsOpenProperty = DependencyProperty.Register("IsOpen", typeof(bool), typeof(DropDownTextEditor), new UIPropertyMetadata(false, (sender, e) =>
-        {
-
-        }));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(DropDownTextEditor)
+            , new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (sender, e) =>
+            {
+                if(sender is DropDownTextEditor editor)
+                {
+                    editor.OnPropertyChanged(nameof(PlaceHolderVisibility));
+                }
+            }));
+        
 
         public string PlaceHolderText
         {
@@ -84,12 +81,6 @@ namespace XJK.WPF
             }
         }
 
-        protected override void OnContentChanged(object oldContent, object newContent)
-        {
-            base.OnContentChanged(oldContent, newContent);
-            OnPropertyChanged(nameof(PlaceHolderVisibility));
-        }
-
 
         private void DropDownThumb_OnDragDelta(object sender, DragDeltaEventArgs e)
         {
@@ -107,38 +98,13 @@ namespace XJK.WPF
         {
             InitializeComponent();
         }
-
-        public void OpenPanel()
+        
+        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            IsOpen = true;
-        }
-
-        public void ClosePanel()
-        {
-            if (IsOpen) IsOpen = false;
-        }
-
-        private void Popup_Opened(object sender, EventArgs e)
-        {
-            if (sender is Popup popup)
-                if (popup.FindName("EditorTextBox") is TextBox textBox)
-                {
-                    textBox.CaretIndex = textBox.Text.Length;
-                    textBox.Focus();
-                }
-        }
-
-        private void Popup_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape)
+            if (sender is TextBox textBox)
             {
-                ClosePanel();
+                textBox.CaretIndex = textBox.Text.Length;
             }
-        }
-
-        private void Thumb_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            ClosePanel();
         }
     }
 }
