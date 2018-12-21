@@ -83,12 +83,38 @@ namespace XJK.XSerializers
                 try
                 {
                     string key = element.Attribute(_KEY_).Value;
-                    var value = ParseXmlRecursive(element, ParseErrors);
-                    obj.GetType().GetProperty(key).SetValue(obj, value);
+                    var newValue = ParseXmlRecursive(element, ParseErrors);
+                    var property = obj.GetType().GetProperty(key);
+                    var valueXType = element.Attribute(_XTYPE_);
+                    var oldValue = property.GetValue(obj);
+                    if (oldValue == null)
+                    {
+                        property.SetValue(obj, newValue);
+                    }
+                    else
+                    {
+                        switch (valueXType?.Value)
+                        {
+                            case _DATABASE_:
+                                WriteDatabaseProperty(oldValue, element.Elements(), ParseErrors);
+                                break;
+                            case _COLLECTION_:
+                                oldValue.GetType().GetMethod("Clear").Invoke(oldValue, null);
+                                WritDataCollection(oldValue, element.Elements(), ParseErrors);
+                                break;
+                            case _DICTIONARY_:
+                                oldValue.GetType().GetMethod("Clear").Invoke(oldValue, null);
+                                WritDataDictionary(oldValue, element.Elements(), ParseErrors);
+                                break;
+                            default:
+                                property.SetValue(obj, newValue);
+                                break;
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
-                    ParseErrors?.Append($"{ex.Message}{Environment.NewLine}{element.ToString()}{Environment.NewLine}");
+                    ParseErrors?.Append($"{ex.GetFullMessage()}{Environment.NewLine}{element.ToString()}{Environment.NewLine}");
                 }
             }
         }
@@ -189,7 +215,11 @@ namespace XJK.XSerializers
                     .Select(att => ((IgnoreSerializeTypeAttribute)att).Type);
                 const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public;
                 var properties = from property in type.GetProperties(bindingFlags)
-                                 where property.CanWrite 
+                                 where (property.CanWrite 
+                                        || Attribute.IsDefined(property.PropertyType, typeof(XmlDataPropertyAttribute))
+                                        || Attribute.IsDefined(property.PropertyType, typeof(XmlDataCollectionAttribute))
+                                        || Attribute.IsDefined(property.PropertyType, typeof(XmlDataDictionaryAttribute))
+                                        )
                                     && !Attribute.IsDefined(property, typeof(XmlIgnoreAttribute))
                                     && !Attribute.IsDefined(property, typeof(ParentAttribute))
                                     && !Attribute.IsDefined(property, typeof(ReferenceAttribute))

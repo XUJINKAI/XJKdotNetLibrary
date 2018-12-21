@@ -17,7 +17,6 @@ using XJK.NotifyProperty;
 using PostSharp.Patterns.Model;
 using System.ComponentModel;
 using XJK.XStorage;
-using PostSharp.Patterns.Collections;
 using System.Diagnostics;
 using XJK;
 
@@ -26,11 +25,10 @@ namespace DB
     [Aggregatable]
     public class DbConfig : DatabaseObject
     {
-        public int Age { get; set; }
-        [Child] public SubInfo SubInfo { get; set; }
-        [Child] public DataCollection<FavItem> DataCollection { get; set; }
-        [Child] public DataDictionary<string, FavItem> DataDictionary { get; set; }
-        [Child] public DataDictionary<int, DataDictionary<string, FavItem>> DictDictionary { get; set; }
+        [DefaultValue(0)] public int Age { get; set; }
+        [Child] public SubInfo SubInfo { get; }
+        [Child] public DataCollection<FavItem> DataCollection { get;  }
+        [Child] public DataDictionary<string, FavItem> DataDictionary { get; }
 
         public DbConfig()
         {
@@ -38,19 +36,12 @@ namespace DB
             SubInfo = new SubInfo();
             DataCollection = new DataCollection<FavItem>()
             {
-                new FavItem()
+                //new FavItem()
             };
             DataDictionary = new DataDictionary<string, FavItem>()
             {
-                { "A", new FavItem() },
-                { "B", new FavItem() },
-            };
-            DictDictionary = new DataDictionary<int, DataDictionary<string, FavItem>>()
-            {
-                {123, new DataDictionary<string, FavItem>()
-                {
-                    {"abc", new FavItem(){ Movie = RandomGenerator.RandomString(10)} }
-                } },
+                //{ "A", new FavItem() },
+                //{ "B", new FavItem() },
             };
         }
     }
@@ -85,6 +76,17 @@ namespace DB
             LogBox.Text = DbConfig.GetXmlData();
             Title = $"{counter++}: {e.GetNestedPropertyName()}, on {DateTime.Now}";
         }
+
+        private void Button_Click_InitConfig(object sender, RoutedEventArgs e)
+        {
+            DbConfig = new DbConfig();
+            DbConfig.PropertyChanged += DbConfig_PropertyChanged;
+            LogBox.Text = DbConfig.GetXmlData();
+        }
+        private void Button_Click_Refresh(object sender, RoutedEventArgs e)
+        {
+            LogBox.Text = DbConfig.GetXmlData();
+        }
         private void Button_Click_Parse(object sender, RoutedEventArgs e)
         {
             DbConfig.SetByXml(LogBox.Text);
@@ -97,10 +99,6 @@ namespace DB
         private void Button_Click_Change_Property(object sender, RoutedEventArgs e)
         {
             DbConfig.Age = RandomGenerator.RandomInt(30);
-        }
-        private void Button_Click_Change_Object(object sender, RoutedEventArgs e)
-        {
-            DbConfig.SubInfo = new SubInfo() { Height = RandomGenerator.RandomDouble(1.7, 1.75, 2) };
         }
         private void Button_Click_Change_Object_Property(object sender, RoutedEventArgs e)
         {
@@ -156,28 +154,8 @@ namespace DB
             Title = $"Children.Count: {PostSharp.Post.Cast<DbConfig, IAggregatable>(DbConfig).GetChildren().Count}";
         }
 
-        private void Button_Click_InitConfig(object sender, RoutedEventArgs e)
-        {
-            DbConfig = new DbConfig()
-            {
-                SubInfo = new SubInfo(),
-                DataCollection = new DataCollection<FavItem>(),
-                DataDictionary = new DataDictionary<string, FavItem>(),
-                DictDictionary = new DataDictionary<int, DataDictionary<string, FavItem>>(),
-            };
-            DbConfig.PropertyChanged += DbConfig_PropertyChanged;
-            LogBox.Text = DbConfig.GetXmlData();
-        }
-
         private void Button_Click_Break(object sender, RoutedEventArgs e)
         {
-            DbConfig.DictDictionary = new DataDictionary<int, DataDictionary<string, FavItem>>()
-            {
-                {123, new DataDictionary<string, FavItem>()
-                {
-                    {"abc", new FavItem(){ Movie = RandomGenerator.RandomString(10)} }
-                } },
-            };
             Debugger.Break();
         }
     }

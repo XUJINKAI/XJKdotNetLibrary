@@ -100,10 +100,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="PostSharp">
-      <Version>6.0.30</Version>
+      <Version>6.0.32</Version>
     </PackageReference>
     <PackageReference Include="PostSharp.Patterns.Model">
-      <Version>6.0.30</Version>
+      <Version>6.0.32</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

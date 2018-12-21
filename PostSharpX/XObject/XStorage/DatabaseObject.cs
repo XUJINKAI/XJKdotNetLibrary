@@ -24,6 +24,11 @@ namespace XJK.XStorage
     [XmlDataProperty]
     public class DatabaseObject : NotifyXmlObject
     {
+        public DatabaseObject()
+        {
+            //TODO find readonly xmldata to notify property changed
+        }
+
         public static T Parse<T>(string xml) where T : DatabaseObject, new()
         {
             T result = new T();

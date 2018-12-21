@@ -165,6 +165,7 @@ namespace XJK.XStorage
         {
             var keys = Content.Keys.ToList();
             Content.Clear();
+            HandlerDict.Clear();
             OnCollectionChanged(null, keys);
         }
 

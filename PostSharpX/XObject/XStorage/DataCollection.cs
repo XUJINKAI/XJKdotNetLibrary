@@ -55,6 +55,10 @@ namespace XJK.XStorage
 
         protected void DataCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if(e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                HandlerDict.Clear();
+            }
             if (e.NewItems != null)
             {
                 foreach (object item in e.NewItems)

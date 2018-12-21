@@ -11,6 +11,7 @@
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                 <Button Click="Button_Click_InitConfig">InitConfig</Button>
                 <Button Click="Button_Click_Parse">Parse</Button>
+                <Button Click="Button_Click_Refresh">Refresh</Button>
                 <TextBlock>Aggregatable:</TextBlock>
                 <Button Click="Button_Click_CountChilds">CountChilds</Button>
                 <TextBlock>Debugger:</TextBlock>
@@ -19,7 +20,6 @@
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                 <TextBlock>Change:</TextBlock>
                 <Button Click="Button_Click_Change_Property">Property</Button>
-                <Button Click="Button_Click_Change_Object">Object</Button>
                 <Button Click="Button_Click_Change_Object_Property">Object_Property</Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
