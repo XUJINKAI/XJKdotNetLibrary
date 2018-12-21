@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>XJK.WPF</RootNamespace>
-    <AssemblyName>XJKdotNetLibrary.WPF</AssemblyName>
+    <AssemblyName>XJK.WPF</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

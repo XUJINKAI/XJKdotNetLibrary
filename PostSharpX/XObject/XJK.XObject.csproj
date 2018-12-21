@@ -1,16 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>XJKdotNetLibrary.XObject</AssemblyName>
+    <Platforms>AnyCPU;x64</Platforms>
+    <LangVersion>7.2</LangVersion>
     <RootNamespace>XJK</RootNamespace>
-    <Platforms>AnyCPU;x64;x86</Platforms>
-    <LangVersion>7.1</LangVersion>
+    <AssemblyName>XJK.XObject</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="6.0.30" />
-    <PackageReference Include="PostSharp.Patterns.Model" Version="6.0.30" />
+    <PackageReference Include="PostSharp" Version="6.0.32" />
+    <PackageReference Include="PostSharp.Patterns.Model" Version="6.0.32" />
   </ItemGroup>
 
   <ItemGroup>

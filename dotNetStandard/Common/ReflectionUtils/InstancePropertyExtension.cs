@@ -44,6 +44,7 @@ namespace XJK.ReflectionUtils
         public static void SetPropertyValue(this object Instance, string key, object value)
         {
             var property = Instance.GetType().GetProperty(key);
+            if (!property.CanWrite) throw new ArgumentException($"[SetPropertyValue] property {property.Name} cannot write.");
             property.SetValue(Instance, value);
         }
 

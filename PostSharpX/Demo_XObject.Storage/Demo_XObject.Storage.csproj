@@ -107,13 +107,13 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\dotNetStandard\Common\Common.csproj">
-      <Project>{2f20cfe8-a385-4cce-aeb2-1a69f8583047}</Project>
-      <Name>Common</Name>
+    <ProjectReference Include="..\..\dotNetStandard\Common\XJK.Common.csproj">
+      <Project>{18b2a6e9-2a31-450a-aa90-170b6c76e91e}</Project>
+      <Name>XJK.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XObject\XObject.csproj">
-      <Project>{ac96aaa2-e7a0-48cf-b298-e26b3d36ce6f}</Project>
-      <Name>XObject</Name>
+    <ProjectReference Include="..\XObject\XJK.XObject.csproj">
+      <Project>{be182fdc-6451-42d2-836c-3994eac2aeff}</Project>
+      <Name>XJK.XObject</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

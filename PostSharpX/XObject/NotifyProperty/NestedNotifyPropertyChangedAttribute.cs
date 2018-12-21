@@ -34,9 +34,11 @@ namespace XJK.NotifyProperty
     {
         private Dictionary<object, PropertyChangedEventHandler> HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
 
+#pragma warning disable CS0067
         [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore)]
         public event PropertyChangedEventHandler PropertyChanged;
-        
+#pragma warning restore
+
         [ImportMember(nameof(OnPropertyChanged), IsRequired = true, Order = ImportMemberOrder.BeforeIntroductions)]
         public Action<PropertyChangedEventArgs> OnPropertyChangedMethod;
 

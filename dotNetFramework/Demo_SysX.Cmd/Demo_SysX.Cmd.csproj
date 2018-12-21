@@ -136,17 +136,21 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\dotNetFramework\SysX\SysX.csproj">
-      <Project>{bfabdd52-f228-490d-a7cf-c019df252d5b}</Project>
-      <Name>SysX</Name>
+    <ProjectReference Include="..\..\dotNetStandard\Common\XJK.Common.csproj">
+      <Project>{18b2a6e9-2a31-450a-aa90-170b6c76e91e}</Project>
+      <Name>XJK.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\dotNetStandard\Common\Common.csproj">
-      <Project>{2f20cfe8-a385-4cce-aeb2-1a69f8583047}</Project>
-      <Name>Common</Name>
+    <ProjectReference Include="..\PInvoke\XJK.PInvoke.csproj">
+      <Project>{c6f66f18-d8ae-4005-b4a2-9fa05a953417}</Project>
+      <Name>XJK.PInvoke</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WPF\WPF.csproj">
-      <Project>{e91d5857-d99b-4825-bae8-5cf06c706a3d}</Project>
-      <Name>WPF</Name>
+    <ProjectReference Include="..\SysX\XJK.SysX.csproj">
+      <Project>{9ce7c93b-5368-416b-bf14-ed237f813f14}</Project>
+      <Name>XJK.SysX</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WPF\XJK.WPF.csproj">
+      <Project>{f3eebc10-8f02-44a2-94be-278c744dff82}</Project>
+      <Name>XJK.WPF</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

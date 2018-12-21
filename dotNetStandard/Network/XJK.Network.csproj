@@ -1,15 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>XJKdotNetLibrary.Network</AssemblyName>
-    <RootNamespace>XJK.Network</RootNamespace>
     <Platforms>AnyCPU;x64;x86</Platforms>
     <LangVersion>7.2</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <AssemblyName>XJK.Network</AssemblyName>
+    <RootNamespace>XJK.Network</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

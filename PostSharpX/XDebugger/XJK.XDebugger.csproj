@@ -1,15 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>AnyCPU;x64</Platforms>
     <LangVersion>7.2</LangVersion>
     <AssemblyName>XJK.XDebugger</AssemblyName>
     <RootNamespace>XJK.XDebugger</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="6.0.29" />
+    <PackageReference Include="PostSharp" Version="6.0.32" />
   </ItemGroup>
 
 </Project>

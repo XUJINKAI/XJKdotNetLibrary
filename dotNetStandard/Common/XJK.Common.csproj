@@ -1,22 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>XJK</RootNamespace>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
     <Platforms>AnyCPU;x64;x86</Platforms>
-    <AssemblyName>XJKdotNetLibrary.Common</AssemblyName>
     <LangVersion>7.2</LangVersion>
+    <RootNamespace>XJK</RootNamespace>
+    <AssemblyName>XJK.Common</AssemblyName>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="ObjectExtension\ve-CD8.tmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="WindowsBase">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\WindowsBase.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+  
 </Project>
