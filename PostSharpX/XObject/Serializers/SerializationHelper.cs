@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,10 +9,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using XJK.XStorage;
 using PostSharp.Patterns.Model;
 
-namespace XJK.XSerializers
+namespace XJK.XObject.Serializers
 {
     public static class SerializationHelper
     {
@@ -43,21 +43,21 @@ namespace XJK.XSerializers
             {
                 Type databaseType = GetTypeByAttribute(element);
                 var obj = Activator.CreateInstance(databaseType);
-                WriteDatabaseProperty(obj, element.Elements(), ParseErrors);
+                ParseToProperties(obj, element.Elements(), ParseErrors);
                 return obj;
             }
             else if (element.Attribute(_XTYPE_)?.Value == _COLLECTION_)
             {
                 Type collectionType = GetTypeByAttribute(element);
                 var obj = Activator.CreateInstance(collectionType);
-                WritDataCollection(obj, element.Elements(), ParseErrors);
+                ParseToCollection(obj, element.Elements(), ParseErrors);
                 return obj;
             }
             else if (element.Attribute(_XTYPE_)?.Value == _DICTIONARY_)
             {
                 Type dictType = GetTypeByAttribute(element);
                 var obj = Activator.CreateInstance(dictType);
-                WritDataDictionary(obj, element.Elements(), ParseErrors);
+                ParseToDictionary(obj, element.Elements(), ParseErrors);
                 return obj;
             }
             else
@@ -76,7 +76,7 @@ namespace XJK.XSerializers
             }
         }
 
-        public static void WriteDatabaseProperty(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
+        public static void ParseToProperties(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
         {
             foreach (var element in elements)
             {
@@ -96,15 +96,15 @@ namespace XJK.XSerializers
                         switch (valueXType?.Value)
                         {
                             case _DATABASE_:
-                                WriteDatabaseProperty(oldValue, element.Elements(), ParseErrors);
+                                ParseToProperties(oldValue, element.Elements(), ParseErrors);
                                 break;
                             case _COLLECTION_:
                                 oldValue.GetType().GetMethod("Clear").Invoke(oldValue, null);
-                                WritDataCollection(oldValue, element.Elements(), ParseErrors);
+                                ParseToCollection(oldValue, element.Elements(), ParseErrors);
                                 break;
                             case _DICTIONARY_:
                                 oldValue.GetType().GetMethod("Clear").Invoke(oldValue, null);
-                                WritDataDictionary(oldValue, element.Elements(), ParseErrors);
+                                ParseToDictionary(oldValue, element.Elements(), ParseErrors);
                                 break;
                             default:
                                 property.SetValue(obj, newValue);
@@ -119,7 +119,7 @@ namespace XJK.XSerializers
             }
         }
 
-        public static void WritDataCollection(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
+        public static void ParseToCollection(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
         {
             foreach (var element in elements)
             {
@@ -138,7 +138,7 @@ namespace XJK.XSerializers
             }
         }
 
-        public static void WritDataDictionary(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
+        public static void ParseToDictionary(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
         {
             foreach (var element in elements)
             {
@@ -188,7 +188,7 @@ namespace XJK.XSerializers
 
         // writer
 
-        public static string GetXmlText(object obj, string RootName = "Root")
+        public static string GetObjectXmlText(object obj, string RootName = "Root")
         {
             StringWriter stringWriter = new StringWriter();
             XmlWriter writer = XmlWriter.Create(stringWriter, new XmlWriterSettings()
@@ -198,73 +198,81 @@ namespace XJK.XSerializers
                 IndentChars = "    ",
             });
             writer.WriteStartElement(RootName);
-            WriteXmlRecursive(writer, obj);
+            WriteObjectToXmlWriterRecursive(writer, obj);
             writer.WriteEndElement();
             writer.Flush();
             return stringWriter.ToString();
         }
 
-        public static void WriteXmlRecursive(XmlWriter writer, object obj)
+        public static void WriteObjectToXmlWriterRecursive(XmlWriter writer, object obj)
         {
             Type type = obj.GetType();
-            if (Attribute.IsDefined(type, typeof(XmlDataPropertyAttribute)))
+            if (type.GetCustomAttribute(typeof(IExXmlSerializationAttribute)) is IExXmlSerializationAttribute exAttribute)
             {
-                writer.WriteAttributeString(_XTYPE_, _DATABASE_);
-                writer.WriteAttributeString(_TYPE_, SerializableTypeName(type));
-                var ignoreTypes = type.GetCustomAttributes(typeof(IgnoreSerializeTypeAttribute))
-                    .Select(att => ((IgnoreSerializeTypeAttribute)att).Type);
-                const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public;
-                var properties = from property in type.GetProperties(bindingFlags)
-                                 where (property.CanWrite 
-                                        || Attribute.IsDefined(property.PropertyType, typeof(XmlDataPropertyAttribute))
-                                        || Attribute.IsDefined(property.PropertyType, typeof(XmlDataCollectionAttribute))
-                                        || Attribute.IsDefined(property.PropertyType, typeof(XmlDataDictionaryAttribute))
-                                        )
-                                    && !Attribute.IsDefined(property, typeof(XmlIgnoreAttribute))
-                                    && !Attribute.IsDefined(property, typeof(ParentAttribute))
-                                    && !Attribute.IsDefined(property, typeof(ReferenceAttribute))
-                                    && !ignoreTypes.Any(t => t.IsAssignableFrom(property.PropertyType))
-                                 select property;
-                foreach (var property in properties)
+                switch(exAttribute.ExXmlType)
                 {
-                    string key = property.Name;
-                    object value = property.GetValue(obj);
-                    if (value == null) continue;
-                    writer.WriteStartElement(_ENTRY_);
-                    writer.WriteAttributeString(_KEY_, key);
-                    WriteXmlRecursive(writer, value);
-                    writer.WriteEndElement();
+                    case ExXmlType.Database:
+                        WriteXmlDataProperties(writer, obj, type);
+                        break;
+                    case ExXmlType.Collection:
+                        WriteXmlDataCollection(writer, obj, type);
+                        break;
+                    case ExXmlType.Dictionary:
+                        WriteXmlDataDictionary(writer, obj, type);
+                        break;
                 }
-            }
-            else if (Attribute.IsDefined(type, typeof(XmlDataCollectionAttribute)))
-            {
-                writer.WriteAttributeString(_XTYPE_, _COLLECTION_);
-                if (type.GetGenericTypeDefinition() != typeof(DataCollection<>))
-                    writer.WriteAttributeString(_TYPE_, SerializableTypeName(type.GetGenericTypeDefinition()));
-                Type genericType = type.GetGenericArguments().First();
-                writer.WriteAttributeString(_TITEM_, SerializableTypeName(genericType));
-                MethodInfo method = typeof(SerializationHelper).GetMethod(nameof(WriteCollectionXml)).MakeGenericMethod(genericType);
-                method.Invoke(null, new object[] { writer, obj });
-            }
-            else if (Attribute.IsDefined(type, typeof(XmlDataDictionaryAttribute)))
-            {
-                writer.WriteAttributeString(_XTYPE_, _DICTIONARY_);
-                if (type.GetGenericTypeDefinition() != typeof(DataDictionary<,>))
-                    writer.WriteAttributeString(_TYPE_, SerializableTypeName(type.GetGenericTypeDefinition()));
-                Type TKeyType = type.GetGenericArguments()[0];
-                Type TValueType = type.GetGenericArguments()[1];
-                writer.WriteAttributeString(_TKEY_, SerializableTypeName(TKeyType));
-                writer.WriteAttributeString(_TVALUE_, SerializableTypeName(TValueType));
-                MethodInfo method = typeof(SerializationHelper).GetMethod(nameof(WriteDictionaryXml)).MakeGenericMethod(TKeyType, TValueType);
-                method.Invoke(null, new object[] { writer, obj });
             }
             else
             {
                 var Serializer = new XmlSerializer(type);
-                var valueType = obj.GetType();
-                writer.WriteAttributeString(_TYPE_, SerializableTypeName(valueType));
+                writer.WriteAttributeString(_TYPE_, SerializableTypeName(type));
                 Serializer.Serialize(writer, obj);
             }
+        }
+
+        private static void WriteXmlDataProperties(XmlWriter writer, object obj, Type type)
+        {
+            writer.WriteAttributeString(_XTYPE_, _DATABASE_);
+            writer.WriteAttributeString(_TYPE_, SerializableTypeName(type));
+            var properties = XConfig.Select_XmlSerializableProperties(type);
+            foreach (var property in properties)
+            {
+                object value = property.GetValue(obj);
+                if (value == null) continue;
+                if (property.GetCustomAttribute(typeof(DefaultValueAttribute)) is DefaultValueAttribute defValueAttr)
+                {
+                    if (defValueAttr.Value.Equals(value)) continue;
+                }
+                string key = property.Name;
+                writer.WriteStartElement(_ENTRY_);
+                writer.WriteAttributeString(_KEY_, key);
+                WriteObjectToXmlWriterRecursive(writer, value);
+                writer.WriteEndElement();
+            }
+        }
+
+        private static void WriteXmlDataCollection(XmlWriter writer, object obj, Type type)
+        {
+            writer.WriteAttributeString(_XTYPE_, _COLLECTION_);
+            if (type.GetGenericTypeDefinition() != typeof(DataCollection<>))
+                writer.WriteAttributeString(_TYPE_, SerializableTypeName(type.GetGenericTypeDefinition()));
+            Type genericType = type.GetGenericArguments().First();
+            writer.WriteAttributeString(_TITEM_, SerializableTypeName(genericType));
+            MethodInfo method = typeof(SerializationHelper).GetMethod(nameof(WriteCollectionXml)).MakeGenericMethod(genericType);
+            method.Invoke(null, new object[] { writer, obj });
+        }
+
+        private static void WriteXmlDataDictionary(XmlWriter writer, object obj, Type type)
+        {
+            writer.WriteAttributeString(_XTYPE_, _DICTIONARY_);
+            if (type.GetGenericTypeDefinition() != typeof(DataDictionary<,>))
+                writer.WriteAttributeString(_TYPE_, SerializableTypeName(type.GetGenericTypeDefinition()));
+            Type TKeyType = type.GetGenericArguments()[0];
+            Type TValueType = type.GetGenericArguments()[1];
+            writer.WriteAttributeString(_TKEY_, SerializableTypeName(TKeyType));
+            writer.WriteAttributeString(_TVALUE_, SerializableTypeName(TValueType));
+            MethodInfo method = typeof(SerializationHelper).GetMethod(nameof(WriteDictionaryXml)).MakeGenericMethod(TKeyType, TValueType);
+            method.Invoke(null, new object[] { writer, obj });
         }
 
         public static void WriteCollectionXml<T>(XmlWriter writer, ICollection<T> dataCollection)
@@ -272,7 +280,7 @@ namespace XJK.XSerializers
             foreach (var item in dataCollection)
             {
                 writer.WriteStartElement(_ITEM_);
-                WriteXmlRecursive(writer, item);
+                WriteObjectToXmlWriterRecursive(writer, item);
                 writer.WriteEndElement();
             }
         }
@@ -283,10 +291,10 @@ namespace XJK.XSerializers
             {
                 writer.WriteStartElement(_Pair_);
                 writer.WriteStartElement(_KEY_);
-                WriteXmlRecursive(writer, item.Key);
+                WriteObjectToXmlWriterRecursive(writer, item.Key);
                 writer.WriteEndElement();
                 writer.WriteStartElement(_VALUE_);
-                WriteXmlRecursive(writer, item.Value);
+                WriteObjectToXmlWriterRecursive(writer, item.Value);
                 writer.WriteEndElement();
                 writer.WriteEndElement();
             }

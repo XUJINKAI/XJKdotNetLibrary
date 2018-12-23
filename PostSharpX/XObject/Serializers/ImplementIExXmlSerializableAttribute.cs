@@ -7,23 +7,25 @@ using PostSharp.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace XJK.XSerializers
+namespace XJK.XObject.Serializers
 {
-    [AspectTypeDependency(AspectDependencyAction.Conflict, typeof(XmlDataCollectionAttribute))]
-    [AspectTypeDependency(AspectDependencyAction.Conflict, typeof(XmlDataDictionaryAttribute))]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(NotifyPropertyChangedAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(IExXmlSerializationAttribute))]
     [IntroduceInterface(typeof(IXmlSerializable), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
-    [IntroduceInterface(typeof(IXmlParseData), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
+    [IntroduceInterface(typeof(IExXmlSerializable), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
     [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Strict, PersistMetaData = true, AllowMultiple = false, TargetTypeAttributes = MulticastAttributes.UserGenerated)]
     [PSerializable]
-    public class XmlDataPropertyAttribute : InstanceLevelAspect, IXmlSerializable, IXmlParseData
+    public class ImplementIExXmlSerializableAttribute : InstanceLevelAspect, IXmlSerializable, IExXmlSerializable
     {
+        // IExXmlSerializable
+
         [XmlIgnore]
         [IgnoreAutoChangeNotification]
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrIgnore)]
@@ -32,7 +34,7 @@ namespace XJK.XSerializers
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrIgnore)]
         public string GetXmlData()
         {
-            return SerializationHelper.GetXmlText(Instance);
+            return SerializationHelper.GetObjectXmlText(Instance);
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrIgnore)]
@@ -43,25 +45,41 @@ namespace XJK.XSerializers
             ReadXml(reader);
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail)]
+        // IXmlSerializable
+
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrIgnore)]
         public XmlSchema GetSchema()
         {
             return null;
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrIgnore)]
         public void ReadXml(XmlReader reader)
         {
             var root = XElement.Load(reader);
             StringBuilder stringBuilder = new StringBuilder();
-            SerializationHelper.WriteDatabaseProperty(Instance, root.Elements(), stringBuilder);
+            if(Instance.GetType().GetCustomAttribute(typeof(IExXmlSerializationAttribute)) is IExXmlSerializationAttribute exXmlSerialization)
+            {
+                switch (exXmlSerialization.ExXmlType)
+                {
+                    case ExXmlType.Database:
+                        SerializationHelper.ParseToProperties(Instance, root.Elements(), stringBuilder);
+                        break;
+                    case ExXmlType.Collection:
+                        SerializationHelper.ParseToCollection(Instance, root.Elements(), stringBuilder);
+                        break;
+                    case ExXmlType.Dictionary:
+                        SerializationHelper.ParseToDictionary(Instance, root.Elements(), stringBuilder);
+                        break;
+                }
+            }
             ParseError = stringBuilder.ToString();
         }
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrFail)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrIgnore)]
         public void WriteXml(XmlWriter writer)
         {
-            SerializationHelper.WriteXmlRecursive(writer, Instance);
+            SerializationHelper.WriteObjectToXmlWriterRecursive(writer, Instance);
         }
 
     }

@@ -2,8 +2,9 @@
 using PostSharp.Patterns.Model;
 using System;
 using System.ComponentModel;
+using XJK.XObject.NotifyProperty;
 
-namespace XJK.NotifyProperty
+namespace XJK.XObject
 {
     [NotifyPropertyChanged]
     [NestedNotifyPropertyChanged]

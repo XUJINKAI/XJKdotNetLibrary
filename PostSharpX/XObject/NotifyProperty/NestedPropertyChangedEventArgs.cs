@@ -2,7 +2,7 @@
 using System.Collections;
 using System.ComponentModel;
 
-namespace XJK.NotifyProperty
+namespace XJK.XObject.NotifyProperty
 {
     public class NestedPropertyChangedEventArgs : PropertyChangedEventArgs
     {

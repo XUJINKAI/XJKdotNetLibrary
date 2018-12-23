@@ -108,6 +108,7 @@
     <Compile Include="Link.xaml.cs">
       <DependentUpon>Link.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VisualTreeExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PInvoke\XJK.PInvoke.csproj">

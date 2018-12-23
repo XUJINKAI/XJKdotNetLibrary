@@ -55,12 +55,12 @@ namespace XJK.SysX.WinMsg
             }
         }
 
-        public WindowEx ShowInvisible(Window closeRelatedWindow)
+        public WindowEx ShowInvisible(Window RelatedWindow)
         {
             ShowInvisible();
-            if (closeRelatedWindow != null)
+            if (RelatedWindow != null)
             {
-                closeRelatedWindow.Closed += (s, e) =>
+                RelatedWindow.Closed += (s, e) =>
                 {
                     this.Close();
                 };

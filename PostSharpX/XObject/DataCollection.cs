@@ -14,29 +14,71 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using XJK.NotifyProperty;
-using XJK.XSerializers;
+using XJK.XObject.DefaultProperty;
+using XJK.XObject.NotifyProperty;
+using XJK.XObject.Serializers;
 
-namespace XJK.XStorage
+namespace XJK.XObject
 {
     /// <summary>
     /// Aggregatable, Observable, Serializable
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [XmlDataCollection]
     [Serializable]
-    public class DataCollection<T> : AdvisableCollection<T>, IXmlSerializable, INotifyPropertyChanged, IXmlParseData
+    [IExXmlSerialization(ExXmlType.Collection)]
+    [ImplementIExXmlSerializable]
+    public class DataCollection<T> : AdvisableCollection<T>, INotifyPropertyChanged, IXmlSerializable, IExXmlSerializable, IDefaultProperty
     {
+        #region Virtual Interface
+
+        [XmlIgnore]
+        [IgnoreAutoChangeNotification]
+        public virtual string ParseError => throw new NotImplementedException();
+
+        public virtual XmlSchema GetSchema()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual string GetXmlData()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void ReadXml(XmlReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void SetByXml(string xml)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void WriteXml(XmlWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual object GetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual object ResetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResetAllPropertiesDefaultValue(ValueDefaultType filterType = (ValueDefaultType)(-1))
+        {
+            this.Clear();
+        }
+
+        #endregion
+
         public new event PropertyChangedEventHandler PropertyChanged;
         private readonly Dictionary<object, PropertyChangedEventHandler> HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
-
-        public virtual XmlSchema GetSchema() { return null; }
-        public virtual void ReadXml(XmlReader reader) { }
-        public virtual void WriteXml(XmlWriter writer) { }
-        [XmlIgnore]
-        public virtual string ParseError { get; }
-        public virtual string GetXmlData() { return null; }
-        public virtual void SetByXml(string xml) { }
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {

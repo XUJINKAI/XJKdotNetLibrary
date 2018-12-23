@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace XJK.XSerializers
+namespace XJK.XObject.Serializers
 {
-    public interface IXmlParseData
+    public interface IExXmlSerializable
     {
         string ParseError { get; }
         string GetXmlData();

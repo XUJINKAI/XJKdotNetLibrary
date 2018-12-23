@@ -99,13 +99,19 @@ namespace XJK.WPF
             ICollectionView view = CollectionViewSource.GetDefaultView(ItemsSource ?? Items);
             view.Refresh();
         }
-
-        private void GridViewColumnHeader_MouseDown(object sender, MouseButtonEventArgs e)
+        
+        private void ListView_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(e.ChangedButton == MouseButton.Right)
+            this.Focus();
+        }
+
+        private void ListView_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
+            var parent = r.VisualHit.FindVisualTreeParent(typeof(ListViewItem), this);
+            if (parent == null)
             {
-                //System.Diagnostics.Debugger.Break();
-                //(Resources["GridViewColumnHeader_ContextMenu"] as ContextMenu).IsOpen = true;
+                this.UnselectAll();
             }
         }
     }

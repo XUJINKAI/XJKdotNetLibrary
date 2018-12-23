@@ -14,10 +14,11 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using XJK.NotifyProperty;
-using XJK.XSerializers;
+using XJK.XObject.DefaultProperty;
+using XJK.XObject.NotifyProperty;
+using XJK.XObject.Serializers;
 
-namespace XJK.XStorage
+namespace XJK.XObject
 {
     /// <summary>
     /// Aggregatable, Observable, Serializable
@@ -25,10 +26,60 @@ namespace XJK.XStorage
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
     [Serializable]
-    [XmlDataDictionary]
-    public class DataDictionary<TKey, TValue> : NotifyXmlObject, IQueryInterface, IAggregatable, IAttachable
-        , IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable
+    [IExXmlSerialization(ExXmlType.Dictionary)]
+    [ImplementIExXmlSerializable]
+    public class DataDictionary<TKey, TValue> : NotifyObject, INotifyPropertyChanged, IXmlSerializable, IExXmlSerializable, IDefaultProperty,
+        IQueryInterface, IAggregatable, IAttachable,
+        IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable
     {
+        #region Virtual Interface
+
+        [XmlIgnore]
+        [IgnoreAutoChangeNotification]
+        public virtual string ParseError => throw new NotImplementedException();
+
+        public virtual XmlSchema GetSchema()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual string GetXmlData()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void ReadXml(XmlReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void SetByXml(string xml)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void WriteXml(XmlWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual object GetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual object ResetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResetAllPropertiesDefaultValue(ValueDefaultType filterType = (ValueDefaultType)(-1))
+        {
+            this.Clear();
+        }
+
+        #endregion
+
         public event EventHandler ParentChanged;
         public event EventHandler<AncestorChangedEventArgs> AncestorChanged;
         public RelationshipKind ParentRelationship => RelationshipKind.ParentSurrogate;

@@ -8,33 +8,54 @@
         Title="MainWindow" Height="800" Width="800">
     <Grid>
         <DockPanel>
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <StackPanel>
+                <TextBlock>Object: Aggregatable, Observable, Serializable, DefaultValue Enhancement</TextBlock>
+            </StackPanel>
+            <StackPanel>
                 <Button Click="Button_Click_InitConfig">InitConfig</Button>
-                <Button Click="Button_Click_Parse">Parse</Button>
-                <Button Click="Button_Click_Refresh">Refresh</Button>
-                <TextBlock>Aggregatable:</TextBlock>
-                <Button Click="Button_Click_CountChilds">CountChilds</Button>
                 <TextBlock>Debugger:</TextBlock>
                 <Button Click="Button_Click_Break">Break</Button>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <StackPanel>
+                <TextBlock>Xml:</TextBlock>
+                <Button Click="Button_Click_Refresh">Serialization</Button>
+                <Button Click="Button_Click_Parse">Deserialization</Button>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock>Aggregatable:</TextBlock>
+                <Button Click="Button_Click_CountChilds">CountChilds</Button>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock></TextBlock>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock>Properties:</TextBlock>
+                <Button Click="Button_Click_Reset">Reset</Button>
+            </StackPanel>
+            <StackPanel>
                 <TextBlock>Change:</TextBlock>
                 <Button Click="Button_Click_Change_Property">Property</Button>
                 <Button Click="Button_Click_Change_Object_Property">Object_Property</Button>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <StackPanel>
                 <TextBlock>Collection:</TextBlock>
                 <Button Click="Button_Click_Change_Collection_Item_Property">Property</Button>
                 <Button Click="Button_Click_Change_Collection">Add</Button>
                 <Button Click="Button_Click_Change_Collection_Remove">Remove</Button>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <StackPanel>
                 <TextBlock>Dictionary:</TextBlock>
                 <Button Click="Button_Click_Change_Dictionary_Property">Property</Button>
                 <Button Click="Button_Click_Change_Dictionary">Add</Button>
                 <Button Click="Button_Click_Change_Dictionary_Remove">Remove</Button>
             </StackPanel>
             <TextBox Name="LogBox"></TextBox>
+            <DockPanel.Resources>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Orientation" Value="Horizontal"></Setter>
+                    <Setter Property="DockPanel.Dock" Value="Top"></Setter>
+                </Style>
+            </DockPanel.Resources>
         </DockPanel>
     </Grid>
 </Window>

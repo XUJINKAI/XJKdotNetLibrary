@@ -11,11 +11,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace XJK.NotifyProperty
+namespace XJK.XObject.NotifyProperty
 {
     /// <summary>
     /// 订阅 Property 的 PropertyChanged
@@ -32,6 +33,7 @@ namespace XJK.NotifyProperty
     [PSerializable]
     public class NestedNotifyPropertyChangedAttribute : InstanceLevelAspect, INotifyPropertyChanged
     {
+        [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
         private Dictionary<object, PropertyChangedEventHandler> HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
 
 #pragma warning disable CS0067
@@ -44,6 +46,21 @@ namespace XJK.NotifyProperty
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, Visibility = Visibility.Family)]
         public void OnPropertyChanged(PropertyChangedEventArgs arg) => OnPropertyChangedMethod(arg);
+
+        [OnInstanceConstructedAdvice]
+        public void ReadOnlyProperty_NotifyPropertyChanged()
+        {
+            var properties = XConfig.Select_NotifyProperties(Instance.GetType(), false);
+            foreach (var property in properties)
+            {
+                if (property.GetValue(Instance) is INotifyPropertyChanged notifyPropertyChanged)
+                {
+                    notifyPropertyChanged.PropertyChanged += MakeNestedPropertyChangedHandler(property.Name);
+                }
+            }
+        }
+
+        private IEnumerable<PropertyInfo> SelectINotifyPropertyChanged(Type type) => XConfig.Select_NotifyProperties(type, true);
 
         [OnLocationSetValueAdvice, MethodPointcut(nameof(SelectINotifyPropertyChanged))]
         public void OnSetProperty_INotifyPropertyChanged(LocationInterceptionArgs args)
@@ -74,18 +91,6 @@ namespace XJK.NotifyProperty
             {
                 OnPropertyChanged(new NestedPropertyChangedEventArgs(PropertyName, e));
             };
-        }
-        
-        // Selector
-        private IEnumerable<PropertyInfo> SelectINotifyPropertyChanged(Type type)
-        {
-            const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public;
-            return from property in type.GetProperties(bindingFlags)
-                   where property.CanWrite
-                        && !IsDefined(property, typeof(IgnoreAutoChangeNotificationAttribute))
-                        && !IsDefined(property, typeof(ParentAttribute))
-                        && !IsDefined(property, typeof(ReferenceAttribute))
-                   select property;
         }
     }
 }

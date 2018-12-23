@@ -13,36 +13,36 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
-using XJK.NotifyProperty;
 using PostSharp.Patterns.Model;
 using System.ComponentModel;
-using XJK.XStorage;
 using System.Diagnostics;
 using XJK;
+using XJK.XObject;
+using XJK.XObject.DefaultProperty;
+using XJK.XObject.NotifyProperty;
 
 namespace DB
 {
     [Aggregatable]
     public class DbConfig : DatabaseObject
     {
-        [DefaultValue(0)] public int Age { get; set; }
+        [DefaultValueByMethod(nameof(ResetCountMethod))]
+        public int ResetCount { get; set; }
+
+        [DefaultValue("XJK")]
+        public string Name { get; set; }
+
         [Child] public SubInfo SubInfo { get; }
-        [Child] public DataCollection<FavItem> DataCollection { get;  }
+        [Child] public DataCollection<FavItem> DataCollection { get; }
         [Child] public DataDictionary<string, FavItem> DataDictionary { get; }
+
+        public int ResetCountMethod() => ResetCount + 1;
 
         public DbConfig()
         {
-            Age = 10;
             SubInfo = new SubInfo();
-            DataCollection = new DataCollection<FavItem>()
-            {
-                //new FavItem()
-            };
-            DataDictionary = new DataDictionary<string, FavItem>()
-            {
-                //{ "A", new FavItem() },
-                //{ "B", new FavItem() },
-            };
+            DataCollection = new DataCollection<FavItem>();
+            DataDictionary = new DataDictionary<string, FavItem>();
         }
     }
 
@@ -77,11 +77,16 @@ namespace DB
             Title = $"{counter++}: {e.GetNestedPropertyName()}, on {DateTime.Now}";
         }
 
+        // Config
         private void Button_Click_InitConfig(object sender, RoutedEventArgs e)
         {
             DbConfig = new DbConfig();
             DbConfig.PropertyChanged += DbConfig_PropertyChanged;
             LogBox.Text = DbConfig.GetXmlData();
+        }
+        private void Button_Click_Reset(object sender, RoutedEventArgs e)
+        {
+            DbConfig.ResetAllPropertiesDefaultValue();
         }
         private void Button_Click_Refresh(object sender, RoutedEventArgs e)
         {
@@ -98,7 +103,7 @@ namespace DB
         // DB
         private void Button_Click_Change_Property(object sender, RoutedEventArgs e)
         {
-            DbConfig.Age = RandomGenerator.RandomInt(30);
+            DbConfig.Name = RandomGenerator.RandomString(5);
         }
         private void Button_Click_Change_Object_Property(object sender, RoutedEventArgs e)
         {

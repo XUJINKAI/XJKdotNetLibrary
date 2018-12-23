@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:XJK.WPF"
              mc:Ignorable="d"
              GridViewColumnHeader.Click="GridViewColumnHeaderClicked"
-             GridViewColumnHeader.MouseDown="GridViewColumnHeader_MouseDown"
+             PreviewMouseDown="ListView_PreviewMouseDown"
+             MouseDown="ListView_MouseDown"
              d:DesignHeight="300" d:DesignWidth="300">
     <ListView.InputBindings>
         <KeyBinding Key="Left" Command="{x:Static local:ListViewX.FirstItemCommand}"></KeyBinding>
