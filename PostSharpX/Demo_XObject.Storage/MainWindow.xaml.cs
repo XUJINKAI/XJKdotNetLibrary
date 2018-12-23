@@ -23,7 +23,6 @@ using XJK.XObject.NotifyProperty;
 
 namespace DB
 {
-    [Aggregatable]
     public class DbConfig : DatabaseObject
     {
         [DefaultValueByMethod(nameof(ResetCountMethod))]
@@ -32,30 +31,31 @@ namespace DB
         [DefaultValue("XJK")]
         public string Name { get; set; }
 
-        [Child] public SubInfo SubInfo { get; }
-        [Child] public DataCollection<FavItem> DataCollection { get; }
-        [Child] public DataDictionary<string, FavItem> DataDictionary { get; }
+        [Child]
+        [DefaultValueNewInstance]
+        public SubInfo SubInfo { get; set; }
+
+        [Child]
+        [DefaultValueNewInstance]
+        public DataCollection<FavItem> DataCollection { get; set; }
+
+        [Child]
+        [DefaultValueNewInstance]
+        public DataDictionary<string, FavItem> DataDictionary { get; set; }
 
         public int ResetCountMethod() => ResetCount + 1;
-
-        public DbConfig()
-        {
-            SubInfo = new SubInfo();
-            DataCollection = new DataCollection<FavItem>();
-            DataDictionary = new DataDictionary<string, FavItem>();
-        }
     }
-
-    [Aggregatable]
+    
     public class SubInfo : DatabaseObject
     {
-        public double Height { get; set; } = 1.75;
+        [DefaultValue(1.75)]
+        public double Height { get; set; }
     }
-
-    [Aggregatable]
+    
     public class FavItem : DatabaseObject
     {
-        public string Movie { get; set; } = "Matrix";
+        [DefaultValue("Matrix")]
+        public string Movie { get; set; }
     }
     
     /// <summary>
@@ -75,6 +75,7 @@ namespace DB
         {
             LogBox.Text = DbConfig.GetXmlData();
             Title = $"{counter++}: {e.GetNestedPropertyName()}, on {DateTime.Now}";
+            Trace.WriteLine($"NestedPropertyName: {e.GetNestedPropertyName()}");
         }
 
         // Config

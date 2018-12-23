@@ -1,4 +1,5 @@
-﻿using PostSharp.Patterns.Model;
+﻿using PostSharp.Extensibility;
+using PostSharp.Patterns.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,25 +25,18 @@ namespace XJK.XObject
     /// </summary>
     [Serializable]
     [IExXmlSerialization(ExXmlType.Database)]
-    [ImplementIDefaultProperty]
     [ImplementIExXmlSerializable]
+    [ImplementIDefaultProperty]
+    [Aggregatable(AttributeInheritance = MulticastInheritance.Multicast)]
     public class DatabaseObject : NotifyObject, IXmlSerializable, IExXmlSerializable, IDefaultProperty
     {
+        //IExXmlSerializable
+
         [XmlIgnore]
         [IgnoreAutoChangeNotification]
         public virtual string ParseError => throw new NotImplementedException();
 
-        public virtual XmlSchema GetSchema()
-        {
-            throw new NotImplementedException();
-        }
-
         public virtual string GetXmlData()
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void ReadXml(XmlReader reader)
         {
             throw new NotImplementedException();
         }
@@ -52,12 +46,26 @@ namespace XJK.XObject
             throw new NotImplementedException();
         }
 
+        // IXmlSerializable
+
+        public virtual XmlSchema GetSchema()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void ReadXml(XmlReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual void WriteXml(XmlWriter writer)
         {
             throw new NotImplementedException();
         }
 
-        public virtual object GetPropertyDefaultValue(string PropertyName, out ValueDefaultType defaultValueType)
+        // IDefaultProperty
+
+        public virtual object GetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType)
         {
             throw new NotImplementedException();
         }
@@ -71,5 +79,6 @@ namespace XJK.XObject
         {
             throw new NotImplementedException();
         }
+
     }
 }

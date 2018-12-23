@@ -11,6 +11,9 @@ namespace XJK.XObject.DefaultProperty
         NoAttribute = 1,
         ValueAttribute = 2,
         MethodAttribute = 4,
-        All = ~0,
+        NewInstanceAttribute = 8,
+
+        All = ~None,
+        HasAttribute = ~NoAttribute,
     }
 }

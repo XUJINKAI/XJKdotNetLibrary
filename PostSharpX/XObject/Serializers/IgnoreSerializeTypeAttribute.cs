@@ -4,7 +4,7 @@ using System.Text;
 
 namespace XJK.XObject.Serializers
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
     public class IgnoreSerializeTypeAttribute : Attribute
     {
         public Type Type { get; private set; }

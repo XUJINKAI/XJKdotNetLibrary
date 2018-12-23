@@ -16,8 +16,6 @@ using System.Xml.Serialization;
 
 namespace XJK.XObject.Serializers
 {
-    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(NotifyPropertyChangedAttribute))]
-    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(IExXmlSerializationAttribute))]
     [IntroduceInterface(typeof(IXmlSerializable), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
     [IntroduceInterface(typeof(IExXmlSerializable), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
     [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Strict, PersistMetaData = true, AllowMultiple = false, TargetTypeAttributes = MulticastAttributes.UserGenerated)]

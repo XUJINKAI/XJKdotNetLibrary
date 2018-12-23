@@ -6,7 +6,7 @@ using System.Text;
 
 namespace XJK.XObject.Serializers
 {
-    [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Strict, PersistMetaData = true, AllowMultiple = false, TargetTypeAttributes = MulticastAttributes.UserGenerated)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     [Serializable]
     public class IExXmlSerializationAttribute : Attribute
     {

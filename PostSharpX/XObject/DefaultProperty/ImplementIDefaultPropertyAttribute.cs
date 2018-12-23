@@ -1,24 +1,25 @@
 ﻿using PostSharp.Aspects;
 using PostSharp.Aspects.Advices;
+using PostSharp.Aspects.Dependencies;
+using PostSharp.Extensibility;
+using PostSharp.Patterns.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using XJK.XObject.NotifyProperty;
 
 namespace XJK.XObject.DefaultProperty
 {
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(AggregatableAttribute))]
     [IntroduceInterface(typeof(IDefaultProperty), AncestorOverrideAction = InterfaceOverrideAction.Ignore, OverrideAction = InterfaceOverrideAction.Ignore)]
+    [MulticastAttributeUsage(Inheritance = MulticastInheritance.Multicast)]
     [Serializable]
     public class ImplementIDefaultPropertyAttribute : InstanceLevelAspect, IDefaultProperty
     {
         new IDefaultProperty Instance
         {
             get => base.Instance as IDefaultProperty;
-        }
-
-        [OnInstanceConstructedAdvice]
-        public void InitializeProperties()
-        {
-            Instance.ResetAllPropertiesDefaultValue(ValueDefaultType.ValueAttribute | ValueDefaultType.MethodAttribute);
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrIgnore)]
@@ -38,7 +39,7 @@ namespace XJK.XObject.DefaultProperty
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrIgnore)]
         public void ResetAllPropertiesDefaultValue(ValueDefaultType overrideType = ValueDefaultType.All)
         {
-            var properties = XConfig.Select_DefaultProperties(Instance.GetType());
+            var properties = XConfig.Select_ResetAllDefaultProperties(Instance.GetType());
             foreach (var property in properties)
             {
                 if (property.CanWrite)
@@ -55,5 +56,12 @@ namespace XJK.XObject.DefaultProperty
                 }
             }
         }
+
+        [OnInstanceConstructedAdvice]
+        public void InitializeProperties()
+        {
+            Instance.ResetAllPropertiesDefaultValue();
+        }
+
     }
 }

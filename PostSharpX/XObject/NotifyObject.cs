@@ -2,10 +2,14 @@
 using PostSharp.Patterns.Model;
 using System;
 using System.ComponentModel;
+using XJK.XObject.DefaultProperty;
 using XJK.XObject.NotifyProperty;
 
 namespace XJK.XObject
 {
+    /// <summary>
+    /// INotifyPropertyChanged, IDefaultProperty
+    /// </summary>
     [NotifyPropertyChanged]
     [NestedNotifyPropertyChanged]
     public abstract class NotifyObject : INotifyPropertyChanged

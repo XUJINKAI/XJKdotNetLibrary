@@ -35,8 +35,23 @@ namespace XJK.XObject.DefaultProperty
                 var method = instance.GetType().GetMethod(methodAttr.MethodName);
                 return method.Invoke(instance, null);
             }
-            defaultValueType = ValueDefaultType.None;
-            return Activator.CreateInstance(property.PropertyType);
+            if (property.GetCustomAttribute(typeof(DefaultValueNewInstanceAttribute)) is DefaultValueNewInstanceAttribute)
+            {
+                defaultValueType = ValueDefaultType.NewInstanceAttribute;
+                return GetDefault(property.PropertyType);
+            }
+            defaultValueType = ValueDefaultType.NoAttribute;
+            if (property.PropertyType.IsValueType)
+            {
+                return GetDefault(property.PropertyType);
+            }
+            return null;
+        }
+
+        private static object GetDefault(Type type)
+        {
+            if (type == typeof(string)) return "";
+            return Activator.CreateInstance(type);
         }
     }
 }
