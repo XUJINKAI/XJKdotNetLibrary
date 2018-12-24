@@ -27,7 +27,6 @@ namespace XJK.XObject
     [IExXmlSerialization(ExXmlType.Database)]
     [ImplementIExXmlSerializable]
     [ImplementIDefaultProperty]
-    [Aggregatable(AttributeInheritance = MulticastInheritance.Multicast)]
     public class DatabaseObject : NotifyObject, IXmlSerializable, IExXmlSerializable, IDefaultProperty
     {
         //IExXmlSerializable

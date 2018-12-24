@@ -3,6 +3,7 @@ using PostSharp.Aspects.Advices;
 using PostSharp.Aspects.Dependencies;
 using PostSharp.Extensibility;
 using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ using System.Xml.Serialization;
 
 namespace XJK.XObject.Serializers
 {
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(NotifyPropertyChangedAttribute))]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(NotifyProperty.NestedNotifyPropertyChangedAttribute))]
     [IntroduceInterface(typeof(IXmlSerializable), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
     [IntroduceInterface(typeof(IExXmlSerializable), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
     [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Strict, PersistMetaData = true, AllowMultiple = false, TargetTypeAttributes = MulticastAttributes.UserGenerated)]
@@ -23,7 +26,7 @@ namespace XJK.XObject.Serializers
     public class ImplementIExXmlSerializableAttribute : InstanceLevelAspect, IXmlSerializable, IExXmlSerializable
     {
         // IExXmlSerializable
-
+        
         [XmlIgnore]
         [IgnoreAutoChangeNotification]
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrIgnore)]

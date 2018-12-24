@@ -2,11 +2,13 @@
 using PostSharp.Patterns.Collections.Advices;
 using PostSharp.Patterns.DynamicAdvising;
 using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -29,11 +31,12 @@ namespace XJK.XObject
     [IExXmlSerialization(ExXmlType.Dictionary)]
     [ImplementIExXmlSerializable]
     public class DataDictionary<TKey, TValue> : NotifyObject, INotifyPropertyChanged, IXmlSerializable, IExXmlSerializable, IDefaultProperty,
-        IQueryInterface, IAggregatable, IAttachable,
+        IQueryInterface, IAggregatable, IAttachable, IRecordable, IRecordableCallback,
         IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable
     {
         #region Virtual Interface
 
+        [NotRecorded]
         [XmlIgnore]
         [IgnoreAutoChangeNotification]
         public virtual string ParseError => throw new NotImplementedException();
@@ -83,6 +86,7 @@ namespace XJK.XObject
         public event EventHandler ParentChanged;
         public event EventHandler<AncestorChangedEventArgs> AncestorChanged;
         public RelationshipKind ParentRelationship => RelationshipKind.ParentSurrogate;
+        [NotRecorded]
         [XmlIgnore]
         [IgnoreAutoChangeNotification]
         public object Parent
@@ -107,7 +111,9 @@ namespace XJK.XObject
         }
 
         private object _parent;
+        [NotRecorded]
         private readonly AdvisableDictionary<TKey, TValue> Content = new AdvisableDictionary<TKey, TValue>();
+        [NotRecorded]
         private readonly Dictionary<TKey, PropertyChangedEventHandler> HandlerDict = new Dictionary<TKey, PropertyChangedEventHandler>();
 
         private void Aggregatable_ParentChanged(object sender, EventArgs e)
@@ -276,6 +282,36 @@ namespace XJK.XObject
                 visitor(item, new ChildInfo("Item", item.GetType(), new RelationshipInfo(RelationshipKind.ChildOrParentSurrogate)), state);
             }
             return true;
+        }
+        
+        [XmlIgnore]
+        [SafeForDependencyAnalysis]
+        [IgnoreAutoChangeNotification]
+        public Recorder Recorder
+        {
+            get => _recorder;
+            set
+            {
+                _recorder = value;
+            }
+        }
+        private Recorder _recorder;
+
+        
+        public bool HasRecorder(bool autoAttach)
+        {
+            Trace.TraceWarning("XJK.DataDictionary is not work well with IRecordable.");
+            return Recorder != null;
+        }
+
+        public void OnReplaying(ReplayKind kind, ReplayContext context)
+        {
+            
+        }
+
+        public void OnReplayed(ReplayKind kind, ReplayContext context)
+        {
+            
         }
     }
 }

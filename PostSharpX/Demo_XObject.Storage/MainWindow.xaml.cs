@@ -20,38 +20,45 @@ using XJK;
 using XJK.XObject;
 using XJK.XObject.DefaultProperty;
 using XJK.XObject.NotifyProperty;
+using PostSharp.Patterns.Recording;
 
 namespace DB
 {
+    [Aggregatable]
+    [Recordable]
     public class DbConfig : DatabaseObject
     {
         [DefaultValueByMethod(nameof(ResetCountMethod))]
         public int ResetCount { get; set; }
-
+        
         [DefaultValue("XJK")]
         public string Name { get; set; }
-
+        
         [Child]
         [DefaultValueNewInstance]
         public SubInfo SubInfo { get; set; }
-
+        
         [Child]
         [DefaultValueNewInstance]
         public DataCollection<FavItem> DataCollection { get; set; }
-
+        
         [Child]
         [DefaultValueNewInstance]
         public DataDictionary<string, FavItem> DataDictionary { get; set; }
 
         public int ResetCountMethod() => ResetCount + 1;
     }
-    
+
+    [Aggregatable]
+    [Recordable]
     public class SubInfo : DatabaseObject
     {
         [DefaultValue(1.75)]
         public double Height { get; set; }
     }
-    
+
+    [Aggregatable]
+    [Recordable]
     public class FavItem : DatabaseObject
     {
         [DefaultValue("Matrix")]

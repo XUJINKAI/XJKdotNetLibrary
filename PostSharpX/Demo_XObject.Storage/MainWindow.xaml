@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DB"
+        xmlns:ps="clr-namespace:PostSharp.Patterns.Model.Controls;assembly=PostSharp.Patterns.Xaml"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="800">
     <Grid>
@@ -24,6 +25,11 @@
             <StackPanel>
                 <TextBlock>Aggregatable:</TextBlock>
                 <Button Click="Button_Click_CountChilds">CountChilds</Button>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock>Recordable:</TextBlock>
+                <ps:UndoButton></ps:UndoButton>
+                <ps:RedoButton></ps:RedoButton>
             </StackPanel>
             <StackPanel>
                 <TextBlock></TextBlock>

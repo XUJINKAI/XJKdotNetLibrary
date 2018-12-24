@@ -4,6 +4,7 @@ using PostSharp.Aspects.Dependencies;
 using PostSharp.Constraints.Internals;
 using PostSharp.Extensibility;
 using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using PostSharp.Reflection;
 using PostSharp.Serialization;
 using System;
@@ -26,6 +27,7 @@ namespace XJK.XObject.NotifyProperty
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, "Threading")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, "Validation")]
     [AspectRoleDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, "Caching")]
+    [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(RecordableAttribute))]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(AggregatableAttribute))]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(NotifyPropertyChangedAttribute))]
     [HasConstraint]

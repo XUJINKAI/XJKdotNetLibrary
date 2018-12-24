@@ -105,6 +105,9 @@
     <PackageReference Include="PostSharp.Patterns.Model">
       <Version>6.0.32</Version>
     </PackageReference>
+    <PackageReference Include="PostSharp.Patterns.Xaml">
+      <Version>6.0.32</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\dotNetStandard\Common\XJK.Common.csproj">
