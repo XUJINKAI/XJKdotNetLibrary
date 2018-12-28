@@ -81,7 +81,8 @@ namespace DB
         // Collection
         private void Button_Click_Change_Collection(object sender, RoutedEventArgs e)
         {
-            database.SubDatabase.Collection.Add(new SubInstance() { Field = RandomGuid() });
+            var item = new SubInstance() { Field = RandomGuid() };
+            database.SubDatabase.Collection.Add(item);
         }
         private void Button_Click_Change_Collection_Item_Property(object sender, RoutedEventArgs e)
         {
@@ -140,6 +141,5 @@ namespace DB
         {
             Debugger.Break();
         }
-
     }
 }

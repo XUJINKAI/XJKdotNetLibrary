@@ -27,7 +27,7 @@ namespace XJK.XObject
     [IExXmlSerialization(ExXmlType.Database)]
     [ImplementIExXmlSerializable]
     [ImplementIDefaultProperty]
-    public class DatabaseObject : NotifyObject, IXmlSerializable, IExXmlSerializable, IDefaultProperty
+    public abstract class DatabaseObject : NotifyObject, IXmlSerializable, IExXmlSerializable, IDefaultProperty
     {
         //IExXmlSerializable
 

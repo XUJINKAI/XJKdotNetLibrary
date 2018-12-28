@@ -30,9 +30,8 @@ namespace XJK.XObject.NotifyProperty
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(RecordableAttribute))]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(AggregatableAttribute))]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(NotifyPropertyChangedAttribute))]
-    [HasConstraint]
     [IntroduceInterface(typeof(INotifyPropertyChanged), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
-    [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Strict, PersistMetaData = true, AllowMultiple = false, TargetTypeAttributes = MulticastAttributes.UserGenerated)]
+    [HasConstraint]
     [PSerializable]
     public class NestedNotifyPropertyChangedAttribute : InstanceLevelAspect, INotifyPropertyChanged
     {
@@ -58,7 +57,8 @@ namespace XJK.XObject.NotifyProperty
             {
                 if (property.GetValue(Instance) is INotifyPropertyChanged notifyPropertyChanged)
                 {
-                    notifyPropertyChanged.PropertyChanged += MakeNestedPropertyChangedHandler(property.Name);
+                    var handler = MakeNestedPropertyChangedHandler(property.Name);
+                    notifyPropertyChanged.PropertyChanged += handler;
                 }
             }
         }
