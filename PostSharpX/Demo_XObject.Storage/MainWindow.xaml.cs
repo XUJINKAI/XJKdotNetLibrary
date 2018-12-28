@@ -20,57 +20,18 @@ using XJK;
 using XJK.XObject;
 using XJK.XObject.DefaultProperty;
 using XJK.XObject.NotifyProperty;
+using XJK.XObject_Test;
 using PostSharp.Patterns.Recording;
+using static XJK.RandomGenerator;
 
 namespace DB
 {
-    [Aggregatable]
-    [Recordable]
-    public class DbConfig : DatabaseObject
-    {
-        [DefaultValueByMethod(nameof(ResetCountMethod))]
-        public int ResetCount { get; set; }
-        
-        [DefaultValue("XJK")]
-        public string Name { get; set; }
-        
-        [Child]
-        [DefaultValueNewInstance]
-        public SubInfo SubInfo { get; set; }
-        
-        [Child]
-        [DefaultValueNewInstance]
-        public DataCollection<FavItem> DataCollection { get; set; }
-        
-        [Child]
-        [DefaultValueNewInstance]
-        public DataDictionary<string, FavItem> DataDictionary { get; set; }
-
-        public int ResetCountMethod() => ResetCount + 1;
-    }
-
-    [Aggregatable]
-    [Recordable]
-    public class SubInfo : DatabaseObject
-    {
-        [DefaultValue(1.75)]
-        public double Height { get; set; }
-    }
-
-    [Aggregatable]
-    [Recordable]
-    public class FavItem : DatabaseObject
-    {
-        [DefaultValue("Matrix")]
-        public string Movie { get; set; }
-    }
-    
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
     public partial class MainWindow : Window
     {
-        DbConfig DbConfig;
+        Database database;
 
         public MainWindow()
         {
@@ -80,7 +41,7 @@ namespace DB
         private int counter = 1;
         private void DbConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            LogBox.Text = DbConfig.GetXmlData();
+            LogBox.Text = database.GetXmlData();
             Title = $"{counter++}: {e.GetNestedPropertyName()}, on {DateTime.Now}";
             Trace.WriteLine($"NestedPropertyName: {e.GetNestedPropertyName()}");
         }
@@ -88,88 +49,97 @@ namespace DB
         // Config
         private void Button_Click_InitConfig(object sender, RoutedEventArgs e)
         {
-            DbConfig = new DbConfig();
-            DbConfig.PropertyChanged += DbConfig_PropertyChanged;
-            LogBox.Text = DbConfig.GetXmlData();
+            database = new Database();
+            database.PropertyChanged += DbConfig_PropertyChanged;
+            LogBox.Text = database.GetXmlData();
         }
         private void Button_Click_Reset(object sender, RoutedEventArgs e)
         {
-            DbConfig.ResetAllPropertiesDefaultValue();
+            database.ResetAllPropertiesDefaultValue();
         }
         private void Button_Click_Refresh(object sender, RoutedEventArgs e)
         {
-            LogBox.Text = DbConfig.GetXmlData();
+            LogBox.Text = database.GetXmlData();
         }
         private void Button_Click_Parse(object sender, RoutedEventArgs e)
         {
-            DbConfig.SetByXml(LogBox.Text);
-            if(DbConfig.ParseError.IsNotNullOrEmpty())
+            database.SetByXml(LogBox.Text);
+            if(database.ParseError.IsNotNullOrEmpty())
             {
-                MessageBox.Show(DbConfig.ParseError);
+                MessageBox.Show(database.ParseError);
             }
         }
         // DB
         private void Button_Click_Change_Property(object sender, RoutedEventArgs e)
         {
-            DbConfig.Name = RandomGenerator.RandomString(5);
+            database.DefaultValue_String = RandomString(5);
         }
         private void Button_Click_Change_Object_Property(object sender, RoutedEventArgs e)
         {
-            DbConfig.SubInfo.Height = RandomGenerator.RandomDouble(0, 200);
+            database.DefaultValueNewInstance_Instance.Field = RandomGuid();
         }
         // Collection
         private void Button_Click_Change_Collection(object sender, RoutedEventArgs e)
         {
-            DbConfig.DataCollection.Add(new FavItem());
+            database.SubDatabase.Collection.Add(new SubInstance() { Field = RandomGuid() });
         }
         private void Button_Click_Change_Collection_Item_Property(object sender, RoutedEventArgs e)
         {
-            if (DbConfig.DataCollection.Count == 0) return;
-            var idx = RandomGenerator.RandomInt(DbConfig.DataCollection.Count);
-            DbConfig.DataCollection[idx].Movie = RandomGenerator.RandomString(20);
+            if (database.SubDatabase.Collection.Count == 0) return;
+            var idx = RandomInt(database.SubDatabase.Collection.Count);
+            database.SubDatabase.Collection[idx].Field = RandomString(20);
         }
         private void Button_Click_Change_Collection_Remove(object sender, RoutedEventArgs e)
         {
-            if (DbConfig.DataCollection.Count == 0) return;
-            var idx = RandomGenerator.RandomInt(DbConfig.DataCollection.Count);
-            var obj = DbConfig.DataCollection[idx];
-            DbConfig.DataCollection.RemoveAt(idx);
-            obj.Movie = RandomGenerator.RandomString(1000);
+            if (database.SubDatabase.Collection.Count == 0) return;
+            var idx = RandomInt(database.SubDatabase.Collection.Count);
+            var obj = database.SubDatabase.Collection[idx];
+            database.SubDatabase.Collection.RemoveAt(idx);
+            obj.Field = RandomString(1000);
+        }
+        private void Button_Click_Change_Collection_Clear(object sender, RoutedEventArgs e)
+        {
+            database.SubDatabase.Collection.Clear();
         }
         // Dictionary
         private void Button_Click_Change_Dictionary(object sender, RoutedEventArgs e)
         {
-            DbConfig.DataDictionary.Add(RandomGenerator.RandomString(5), new FavItem() { Movie = RandomGenerator.RandomString(5) });
+            database.SubDatabase.Dictionary.Add(RandomString(5), new SubInstance() { Field = RandomString(5) });
         }
         private void Button_Click_Change_Dictionary_Property(object sender, RoutedEventArgs e)
         {
-            var keys = DbConfig.DataDictionary.Keys;
+            var keys = database.SubDatabase.Dictionary.Keys;
             if (keys.Count == 0) return;
-            var idx = RandomGenerator.RandomInt(keys.Count);
+            var idx = RandomInt(keys.Count);
             int i = 0;
             var key = keys.Where(o => i++ == idx).First();
-            DbConfig.DataDictionary[key].Movie = RandomGenerator.RandomString(20);
+            database.SubDatabase.Dictionary[key].Field = RandomString(20);
         }
         private void Button_Click_Change_Dictionary_Remove(object sender, RoutedEventArgs e)
         {
-            var keys = DbConfig.DataDictionary.Keys;
+            var keys = database.SubDatabase.Dictionary.Keys;
             if (keys.Count == 0) return;
-            var idx = RandomGenerator.RandomInt(keys.Count);
+            var idx = RandomInt(keys.Count);
             int i = 0;
             var key = keys.Where(o => i++ == idx).First();
-            var obj = DbConfig.DataDictionary[key];
-            DbConfig.DataDictionary.Remove(key);
-            obj.Movie = RandomGenerator.RandomString(1000);
+            var obj = database.SubDatabase.Dictionary[key];
+            database.SubDatabase.Dictionary.Remove(key);
+            obj.Field = RandomString(1000);
+        }
+        private void Button_Click_Change_Dictionary_Clear(object sender, RoutedEventArgs e)
+        {
+            database.SubDatabase.Dictionary.Clear();
         }
         // Agg
         private void Button_Click_CountChilds(object sender, RoutedEventArgs e)
         {
-            Title = $"Children.Count: {PostSharp.Post.Cast<DbConfig, IAggregatable>(DbConfig).GetChildren().Count}";
+            Title = $"Children.Count: {database.AsIAggregatable().GetChildren().Count}";
         }
 
         private void Button_Click_Break(object sender, RoutedEventArgs e)
         {
             Debugger.Break();
         }
+
     }
 }

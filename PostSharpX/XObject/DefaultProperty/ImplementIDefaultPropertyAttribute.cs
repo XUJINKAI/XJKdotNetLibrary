@@ -60,7 +60,7 @@ namespace XJK.XObject.DefaultProperty
         [OnInstanceConstructedAdvice]
         public void InitializeProperties()
         {
-            Instance.ResetAllPropertiesDefaultValue();
+            Instance.ResetAllPropertiesDefaultValue(ValueDefaultType.HasAttribute);
         }
 
     }

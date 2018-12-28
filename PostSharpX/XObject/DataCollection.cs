@@ -1,5 +1,6 @@
 ﻿using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -70,15 +71,23 @@ namespace XJK.XObject
             throw new NotImplementedException();
         }
 
-        public void ResetAllPropertiesDefaultValue(ValueDefaultType filterType = (ValueDefaultType)(-1))
+        public virtual void ResetAllPropertiesDefaultValue(ValueDefaultType filterType = (ValueDefaultType)(-1))
         {
-            this.Clear();
+            Clear();
         }
 
         #endregion
 
+        public new void Clear()
+        {
+            if (Count > 0)
+            {
+                RemoveRange(0, Count);
+            }
+        }
+
         public new event PropertyChangedEventHandler PropertyChanged;
-        private readonly Dictionary<object, PropertyChangedEventHandler> HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
+        [Reference] private readonly Dictionary<object, PropertyChangedEventHandler> HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {

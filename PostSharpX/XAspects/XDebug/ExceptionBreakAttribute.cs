@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using PostSharp.Aspects;
 
-namespace XJK.XDebugger
+namespace XJK.XAspects.XDebug
 {
     [Conditional("DEBUG")]
     public class ExceptionBreakAttribute : OnExceptionAspect

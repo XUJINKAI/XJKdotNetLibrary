@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace XJK.XDebugger
+namespace XJK.XAspects.XDebug
 {
     public class ImportDumpAttribute
     {

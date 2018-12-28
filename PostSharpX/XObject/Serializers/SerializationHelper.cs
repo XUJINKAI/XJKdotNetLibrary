@@ -30,14 +30,110 @@ namespace XJK.XObject.Serializers
         internal const string _VALUE_ = "Value";
 
         // reader
-
-        public static T ParseXml<T>(string xml, StringBuilder ParseErrors) where T : class
+        
+        public static void ParseXmlToObject(object obj, ExXmlType exXmlType, IEnumerable<XElement> elements, StringBuilder ParseErrors)
         {
-            var root = XElement.Load(xml);
-            return (T)ParseXmlRecursive(root, ParseErrors);
+            switch (exXmlType)
+            {
+                case ExXmlType.Database:
+                    ParseToProperties(obj, elements, ParseErrors);
+                    break;
+                case ExXmlType.Collection:
+                    ParseToCollection(obj, elements, ParseErrors);
+                    break;
+                case ExXmlType.Dictionary:
+                    ParseToDictionary(obj, elements, ParseErrors);
+                    break;
+            }
         }
 
-        public static object ParseXmlRecursive(XElement element, StringBuilder ParseErrors)
+        private static void ParseToProperties(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
+        {
+            foreach (var element in elements)
+            {
+                try
+                {
+                    string key = element.Attribute(_KEY_).Value;
+                    var property = obj.GetType().GetProperty(key);
+                    var oldValue = property.GetValue(obj);
+                    if (oldValue == null)
+                    {
+                        var newValue = ParseXmlRecursive(element, ParseErrors);
+                        property.SetValue(obj, newValue);
+                    }
+                    else
+                    {
+                        var valueXType = element.Attribute(_XTYPE_);
+                        switch (valueXType?.Value)
+                        {
+                            case _DATABASE_:
+                                ParseToProperties(oldValue, element.Elements(), ParseErrors);
+                                break;
+                            case _COLLECTION_:
+                                oldValue.GetType().GetMethod("Clear").Invoke(oldValue, null);
+                                ParseToCollection(oldValue, element.Elements(), ParseErrors);
+                                break;
+                            case _DICTIONARY_:
+                                oldValue.GetType().GetMethod("Clear").Invoke(oldValue, null);
+                                ParseToDictionary(oldValue, element.Elements(), ParseErrors);
+                                break;
+                            default:
+                                var newValue = ParseXmlRecursive(element, ParseErrors);
+                                property.SetValue(obj, newValue);
+                                break;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ParseErrors?.Append($"{ex.GetFullMessage()}{Environment.NewLine}{element.ToString()}{Environment.NewLine}");
+                }
+            }
+        }
+
+        private static void ParseToCollection(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
+        {
+            foreach (var element in elements)
+            {
+                try
+                {
+                    if (element.Name != _ITEM_) throw new Exception($"Item.Name '{element.Name}' supposed to be {_ITEM_}.");
+                    var value = ParseXmlRecursive(element, ParseErrors);
+                    var itemtype = GetTypeByAttribute(element);
+                    var method = obj.GetType().GetMethod("Add", new Type[] { itemtype });
+                    method.Invoke(obj, new object[] { value });
+                }
+                catch (Exception ex)
+                {
+                    ParseErrors?.Append($"{ex.Message}{Environment.NewLine}{element.ToString()}{Environment.NewLine}");
+                }
+            }
+        }
+
+        private static void ParseToDictionary(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
+        {
+            foreach (var element in elements)
+            {
+                try
+                {
+                    if (element.Name != _Pair_) throw new Exception($"Item.Name '{element.Name}' supposed to be {_Pair_}.");
+                    var KeyElement = element.Element(_KEY_);
+                    var ValueElement = element.Element(_VALUE_);
+                    var key = ParseXmlRecursive(KeyElement, ParseErrors);
+                    var value = ParseXmlRecursive(ValueElement, ParseErrors);
+                    var keyType = GetTypeByAttribute(KeyElement);
+                    var valueType = GetTypeByAttribute(ValueElement);
+                    var method = obj.GetType().GetMethod("Add", new Type[] { keyType, valueType });
+                    method.Invoke(obj, new object[] { key, value });
+                }
+                catch (Exception ex)
+                {
+                    ParseErrors?.Append($"{ex.Message}{Environment.NewLine}{element.ToString()}{Environment.NewLine}");
+                }
+            }
+        }
+
+        private static object ParseXmlRecursive(XElement element, StringBuilder ParseErrors)
         {
             if (element.Attribute(_XTYPE_)?.Value == _DATABASE_)
             {
@@ -76,92 +172,7 @@ namespace XJK.XObject.Serializers
             }
         }
 
-        public static void ParseToProperties(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
-        {
-            foreach (var element in elements)
-            {
-                try
-                {
-                    string key = element.Attribute(_KEY_).Value;
-                    var newValue = ParseXmlRecursive(element, ParseErrors);
-                    var property = obj.GetType().GetProperty(key);
-                    var valueXType = element.Attribute(_XTYPE_);
-                    var oldValue = property.GetValue(obj);
-                    if (oldValue == null)
-                    {
-                        property.SetValue(obj, newValue);
-                    }
-                    else
-                    {
-                        switch (valueXType?.Value)
-                        {
-                            case _DATABASE_:
-                                ParseToProperties(oldValue, element.Elements(), ParseErrors);
-                                break;
-                            case _COLLECTION_:
-                                oldValue.GetType().GetMethod("Clear").Invoke(oldValue, null);
-                                ParseToCollection(oldValue, element.Elements(), ParseErrors);
-                                break;
-                            case _DICTIONARY_:
-                                oldValue.GetType().GetMethod("Clear").Invoke(oldValue, null);
-                                ParseToDictionary(oldValue, element.Elements(), ParseErrors);
-                                break;
-                            default:
-                                property.SetValue(obj, newValue);
-                                break;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ParseErrors?.Append($"{ex.GetFullMessage()}{Environment.NewLine}{element.ToString()}{Environment.NewLine}");
-                }
-            }
-        }
-
-        public static void ParseToCollection(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
-        {
-            foreach (var element in elements)
-            {
-                try
-                {
-                    if (element.Name != _ITEM_) throw new Exception($"Item.Name '{element.Name}' supposed to be {_ITEM_}.");
-                    var value = ParseXmlRecursive(element, ParseErrors);
-                    var itemtype = GetTypeByAttribute(element);
-                    var method = obj.GetType().GetMethod("Add", new Type[] { itemtype });
-                    method.Invoke(obj, new object[] { value });
-                }
-                catch (Exception ex)
-                {
-                    ParseErrors?.Append($"{ex.Message}{Environment.NewLine}{element.ToString()}{Environment.NewLine}");
-                }
-            }
-        }
-
-        public static void ParseToDictionary(object obj, IEnumerable<XElement> elements, StringBuilder ParseErrors)
-        {
-            foreach (var element in elements)
-            {
-                try
-                {
-                    if (element.Name != _Pair_) throw new Exception($"Item.Name '{element.Name}' supposed to be {_Pair_}.");
-                    var KeyElement = element.Element(_KEY_);
-                    var ValueElement = element.Element(_VALUE_);
-                    var key = ParseXmlRecursive(KeyElement, ParseErrors);
-                    var value = ParseXmlRecursive(ValueElement, ParseErrors);
-                    var keyType = GetTypeByAttribute(KeyElement);
-                    var valueType = GetTypeByAttribute(ValueElement);
-                    var method = obj.GetType().GetMethod("Add", new Type[] { keyType, valueType });
-                    method.Invoke(obj, new object[] { key, value });
-                }
-                catch (Exception ex)
-                {
-                    ParseErrors?.Append($"{ex.Message}{Environment.NewLine}{element.ToString()}{Environment.NewLine}");
-                }
-            }
-        }
-
-        public static Type GetTypeByAttribute(XElement element)
+        private static Type GetTypeByAttribute(XElement element)
         {
             var type = element.Attribute(_TYPE_);
             if (type == null)

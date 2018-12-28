@@ -7,6 +7,7 @@ using PostSharp.Patterns.Recording;
 using PostSharp.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -61,20 +62,17 @@ namespace XJK.XObject.Serializers
             StringBuilder stringBuilder = new StringBuilder();
             if(Instance.GetType().GetCustomAttribute(typeof(IExXmlSerializationAttribute)) is IExXmlSerializationAttribute exXmlSerialization)
             {
-                switch (exXmlSerialization.ExXmlType)
-                {
-                    case ExXmlType.Database:
-                        SerializationHelper.ParseToProperties(Instance, root.Elements(), stringBuilder);
-                        break;
-                    case ExXmlType.Collection:
-                        SerializationHelper.ParseToCollection(Instance, root.Elements(), stringBuilder);
-                        break;
-                    case ExXmlType.Dictionary:
-                        SerializationHelper.ParseToDictionary(Instance, root.Elements(), stringBuilder);
-                        break;
-                }
+                SerializationHelper.ParseXmlToObject(Instance, exXmlSerialization.ExXmlType, root.Elements(), stringBuilder);
+            }
+            else
+            {
+                stringBuilder.Append($"[ImplementIExXmlSerializableAttribute] Type {Instance.GetType().Name} has NO IExXmlSerializationAttribute.");
             }
             ParseError = stringBuilder.ToString();
+            if (!string.IsNullOrEmpty(ParseError))
+            {
+                Trace.TraceError(ParseError);
+            }
         }
 
         [IntroduceMember(OverrideAction = MemberOverrideAction.OverrideOrIgnore)]

@@ -9,7 +9,7 @@ namespace XJK
     {
         private static Random random = new Random();
 
-        public static string RandomGuid() => new Guid().ToString();
+        public static string RandomGuid() => Guid.NewGuid().ToString();
 
         public static string RandomString(int length, string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
         {

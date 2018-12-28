@@ -6,6 +6,20 @@ namespace XJK.FileSystem
 {
     public static class FS
     {
+        public static bool IsValidPath(string path, out string FullPath)
+        {
+            try
+            {
+                FullPath = Path.GetFullPath(path);
+                return true;
+            }
+            catch
+            {
+                FullPath = null;
+                return false;
+            }
+        }
+        
         public static string CreateFolder(string folder)
         {
             if (!Directory.Exists(folder))

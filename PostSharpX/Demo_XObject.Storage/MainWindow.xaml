@@ -48,12 +48,14 @@
                 <Button Click="Button_Click_Change_Collection_Item_Property">Property</Button>
                 <Button Click="Button_Click_Change_Collection">Add</Button>
                 <Button Click="Button_Click_Change_Collection_Remove">Remove</Button>
+                <Button Click="Button_Click_Change_Collection_Clear">Clear</Button>
             </StackPanel>
             <StackPanel>
                 <TextBlock>Dictionary:</TextBlock>
                 <Button Click="Button_Click_Change_Dictionary_Property">Property</Button>
                 <Button Click="Button_Click_Change_Dictionary">Add</Button>
                 <Button Click="Button_Click_Change_Dictionary_Remove">Remove</Button>
+                <Button Click="Button_Click_Change_Dictionary_Clear">Clear</Button>
             </StackPanel>
             <TextBox Name="LogBox"></TextBox>
             <DockPanel.Resources>
