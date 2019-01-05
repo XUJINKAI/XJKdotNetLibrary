@@ -18,6 +18,21 @@ namespace XJK
             else return null;
         }
 
+        public static T RandomSelect<T>(this IEnumerable<T> list)
+        {
+            var count = list.Count();
+            if (count == 0) return default;
+            if (count == 1) return list.First();
+            var idx = RandomGenerator.RandomInt(count);
+            var enumerator = list.GetEnumerator();
+            enumerator.MoveNext();
+            for (int i = 0; i < idx - 1; i++)
+            {
+                enumerator.MoveNext();
+            }
+            return enumerator.Current;
+        }
+
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             if (source == null) throw new ArgumentNullException("source");

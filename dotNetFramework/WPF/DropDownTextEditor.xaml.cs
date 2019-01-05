@@ -23,7 +23,7 @@ namespace XJK.WPF
     /// UserControl1.xaml 的交互逻辑
     /// </summary>
     [ContentProperty(nameof(Text))]
-    public partial class DropDownTextEditor : UserControl, INotifyPropertyChanged
+    public partial class DropDownTextEditor : INotifyPropertyChanged
     {
         public string Text
         {
@@ -105,6 +105,21 @@ namespace XJK.WPF
             {
                 textBox.CaretIndex = textBox.Text.Length;
             }
+        }
+
+        private void DropDown_Open(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DropDown_Closed(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ClearText(object sender, RoutedEventArgs e)
+        {
+            Text = "";
         }
     }
 }

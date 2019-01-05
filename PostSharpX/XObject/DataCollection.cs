@@ -29,69 +29,21 @@ namespace XJK.XObject
     [IExXmlSerialization(ExXmlType.Collection)]
     [ImplementIExXmlSerializable]
     public class DataCollection<T> : AdvisableCollection<T>, INotifyPropertyChanged, IXmlSerializable, IExXmlSerializable, IDefaultProperty
+        ,ICollection<T>, IList<T>, ICollection, IList
     {
-        #region Virtual Interface
-
-        [XmlIgnore]
-        [IgnoreAutoChangeNotification]
-        public virtual string ParseError => throw new NotImplementedException();
-
-        public virtual XmlSchema GetSchema()
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual string GetXmlData()
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void ReadXml(XmlReader reader)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void SetByXml(string xml)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void WriteXml(XmlWriter writer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual object GetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual object ResetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void ResetAllPropertiesDefaultValue(ValueDefaultType filterType = (ValueDefaultType)(-1))
-        {
-            Clear();
-        }
-
-        #endregion
-
-        public new void Clear()
-        {
-            if (Count > 0)
-            {
-                RemoveRange(0, Count);
-            }
-        }
-
         public new event PropertyChangedEventHandler PropertyChanged;
+        [XmlIgnore] [IgnoreAutoChangeNotification] public virtual string ParseError => throw new NotImplementedException();
+
         [Reference] private readonly Dictionary<object, PropertyChangedEventHandler> HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        // Fix Clear bug
+        public new void Clear() { while (this.Count > 0) this.RemoveAt(0); }
+        void ICollection<T>.Clear() { Clear(); }
+        void IList.Clear() { Clear(); }
+        
+        public DataCollection()
         {
-            PropertyChanged?.Invoke(this, e);
+            this.CollectionChanged += DataCollection_CollectionChanged;
         }
 
         public DataCollection(params T[] items) : this()
@@ -99,15 +51,13 @@ namespace XJK.XObject
             this.AddRange(items);
         }
 
-        public DataCollection()
-        {
-            this.CollectionChanged += DataCollection_CollectionChanged;
-        }
-
         protected void DataCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if(e.Action == NotifyCollectionChangedAction.Reset)
+            int addCount = e.NewItems?.Count ?? 0;
+            int removeCount = e.OldItems?.Count ?? 0;
+            if (e.Action == NotifyCollectionChangedAction.Reset)
             {
+                removeCount = HandlerDict.Count;
                 HandlerDict.Clear();
             }
             if (e.NewItems != null)
@@ -135,25 +85,19 @@ namespace XJK.XObject
                     }
                 }
             }
-            OnPropertyChanged(new PropertyChangedEventArgs($"(+{e.NewItems?.Count ?? 0},-{e.OldItems?.Count ?? 0})"));
+            OnPropertyChanged(new PropertyChangedEventArgs($"({(addCount > 0 ? $"+{addCount}" : "")}{(removeCount > 0 ? $"-{removeCount}" : "")})"));
         }
 
-        private PropertyChangedEventHandler MakeNestedPropertyChangedHandler(long id)
-        {
-            return (sender, e) =>
-            {
-                OnPropertyChanged(new NestedPropertyChangedEventArgs($"[{id}]", e));
-            };
-        }
-        
-        // enhance
+        public virtual XmlSchema GetSchema() => throw new NotImplementedException();
+        public virtual string GetXmlData() => throw new NotImplementedException();
+        public virtual void ReadXml(XmlReader reader) => throw new NotImplementedException();
+        public virtual void SetByXml(string xml) => throw new NotImplementedException();
+        public virtual void WriteXml(XmlWriter writer) => throw new NotImplementedException();
+        public object GetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType) => throw new NotImplementedException();
+        public object ResetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType) => throw new NotImplementedException();
+        public void ResetAllPropertiesDefaultValue(ValueDefaultType filterType = (ValueDefaultType)(-1)) => Clear();
 
-        public void ForEach(Action<T> action)
-        {
-            foreach (var x in this)
-            {
-                action(x);
-            }
-        }
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
+        private PropertyChangedEventHandler MakeNestedPropertyChangedHandler(long id) => (sender, e) => OnPropertyChanged(new NestedPropertyChangedEventArgs($"[{id}]", e));
     }
 }

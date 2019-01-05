@@ -14,8 +14,8 @@ namespace XJK
         public static string EntryLocation => System.Reflection.Assembly.GetEntryAssembly().Location;
         public static string BaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
 
-        public static readonly IntPtr ModuleHandle;
-        public static readonly string ModuleHandleHex;
+        public static IntPtr ModuleHandle { get; }
+        public static string ModuleHandleHex { get; }
 
         private static Mutex mutex;
         private static bool isNewInstance;

@@ -38,30 +38,23 @@ namespace XJK.Logger
             _writer(content);
         }
 
-        private void AddWithMeta(string content)
+        private void AddWithMeta(string content, LogLevel? level)
         {
             var id = string.IsNullOrEmpty(Id) ? "" : $"[{Id}]";
-            var lines = $"{id}[{DateTime.Now.ToString(DateTimeFormat)}]{content}";
-            if (Trace.IndentLevel > 0)
-            {
-                string prefix = ('-' + ' '.Dup(Trace.IndentSize - 1)).Dup(Trace.IndentLevel);
-                string indent = ' '.Dup(Trace.IndentLevel * Trace.IndentSize);
-                if (prefix.Length != indent.Length) Debugger.Break();
-                lines = prefix + lines.Replace("\n", "\n" + indent);
-            }
-            _writer(lines + Environment.NewLine);
+            var lines = $"{id}{LogHelper.ImplementMessage(content, level, DateTimeFormat)}";
+            _writer(LogHelper.ImplementIndent(lines) + Environment.NewLine);
         }
 
         #region Write
 
         public override void Write(object o)
         {
-            Add(Log.GetMessage(o));
+            Add(LogHelper.GetMessage(o));
         }
 
         public override void Write(object o, string category)
         {
-            Add($"{category}: {Log.GetMessage(o)}");
+            Add($"{category}: {LogHelper.GetMessage(o)}");
         }
 
         public override void Write(string message)
@@ -80,22 +73,22 @@ namespace XJK.Logger
 
         public override void WriteLine(object o)
         {
-            AddWithMeta(Log.GetMessage(o));
+            AddWithMeta(LogHelper.GetMessage(o), null);
         }
 
         public override void WriteLine(object o, string category)
         {
-            AddWithMeta($"{category}: {Log.GetMessage(o)}");
+            AddWithMeta($"{category}: {LogHelper.GetMessage(o)}", null);
         }
 
         public override void WriteLine(string message)
         {
-            AddWithMeta(message);
+            AddWithMeta(message, null);
         }
 
         public override void WriteLine(string message, string category)
         {
-            AddWithMeta($"{category}: {message}");
+            AddWithMeta($"{category}: {message}", null);
         }
 
         #endregion
@@ -104,12 +97,12 @@ namespace XJK.Logger
 
         public override void Fail(string message)
         {
-            AddWithMeta(message);
+            AddWithMeta(message, LogLevel.Error);
         }
 
         public override void Fail(string message, string detailMessage)
         {
-            AddWithMeta($"{message}{Environment.NewLine}{detailMessage}");
+            AddWithMeta($"{message}{Environment.NewLine}{detailMessage}", LogLevel.Error);
         }
 
         #endregion
@@ -132,16 +125,16 @@ namespace XJK.Logger
             switch (eventType)
             {
                 case TraceEventType.Error:
-                    Log.Error(message, false);
+                    AddWithMeta(message, LogLevel.Error);
                     break;
                 case TraceEventType.Warning:
-                    Log.Warning(message, false);
+                    AddWithMeta(message, LogLevel.Warn);
                     break;
                 case TraceEventType.Information:
-                    Log.Info(message, false);
+                    AddWithMeta(message, LogLevel.Info);
                     break;
                 default:
-                    Log.Verbose($"TraceEventType: {eventType}{Environment.NewLine}{message}");
+                    AddWithMeta($"[TraceEventType:{eventType}] {message}", null);
                     break;
             }
         }

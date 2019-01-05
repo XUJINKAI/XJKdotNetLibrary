@@ -17,12 +17,16 @@ using PostSharp.Patterns.Model;
 using System.ComponentModel;
 using System.Diagnostics;
 using XJK;
+using XJK.ReflectionUtils;
 using XJK.XObject;
 using XJK.XObject.DefaultProperty;
 using XJK.XObject.NotifyProperty;
 using XJK.XObject_Test;
 using PostSharp.Patterns.Recording;
 using static XJK.RandomGenerator;
+using PostSharp.Patterns.Collections;
+using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace DB
 {
@@ -37,7 +41,7 @@ namespace DB
         {
             InitializeComponent();
         }
-        
+
         private int counter = 1;
         private void DbConfig_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -64,7 +68,7 @@ namespace DB
         private void Button_Click_Parse(object sender, RoutedEventArgs e)
         {
             database.SetByXml(LogBox.Text);
-            if(database.ParseError.IsNotNullOrEmpty())
+            if (database.ParseError.IsNotNullOrEmpty())
             {
                 MessageBox.Show(database.ParseError);
             }
@@ -131,10 +135,15 @@ namespace DB
         {
             database.SubDatabase.Dictionary.Clear();
         }
-        // Agg
+        // Agg, rec
         private void Button_Click_CountChilds(object sender, RoutedEventArgs e)
         {
             Title = $"Children.Count: {database.AsIAggregatable().GetChildren().Count}";
+        }
+
+        private void Record_Clear(object sender, RoutedEventArgs e)
+        {
+            RecordingServices.DefaultRecorder.Clear();
         }
 
         private void Button_Click_Break(object sender, RoutedEventArgs e)

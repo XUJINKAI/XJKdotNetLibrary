@@ -103,5 +103,11 @@ namespace XJK.WPF
             }
             RaiseEvent(new RoutedEventArgs(ClickEvent));
         }
+
+
+        private void CopyText(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(Content as string);
+        }
     }
 }

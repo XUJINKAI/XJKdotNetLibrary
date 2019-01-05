@@ -28,12 +28,12 @@ namespace XJK.SysX.WinMsg
             }
         }
 
-        private SystemHotkey _systemHotkey;
-        public SystemHotkey SystemHotkey
+        private SystemHotkeyHook _systemHotkey;
+        public SystemHotkeyHook SystemHotkey
         {
             get
             {
-                if (_systemHotkey == null) _systemHotkey = new SystemHotkey(this);
+                if (_systemHotkey == null) _systemHotkey = new SystemHotkeyHook(this);
                 return _systemHotkey;
             }
         }

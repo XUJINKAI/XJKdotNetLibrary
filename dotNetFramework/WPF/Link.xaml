@@ -8,6 +8,11 @@
     <UserControl.Template>
         <ControlTemplate>
             <TextBlock>
+                <TextBlock.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Copy Text" Click="CopyText"></MenuItem>
+                    </ContextMenu>
+                </TextBlock.ContextMenu>
                 <Hyperlink NavigateUri="{Binding Content, RelativeSource={RelativeSource AncestorType=UserControl}}" RequestNavigate="Hyperlink_RequestNavigate">
                     <ContentPresenter Content="{Binding Content, RelativeSource={RelativeSource AncestorType=UserControl}}">
                         <ContentPresenter.Resources>

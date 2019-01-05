@@ -11,6 +11,12 @@ namespace XJK.PInvoke
         public static char ToChar(this VirtualKeys vk) => (char)vk;
         public static int ToInt(this VirtualKeys vk) => (int)vk;
 
+        public static bool IsMouse(this VirtualKeys vk)
+        {
+            return vk == VirtualKeys.LeftButton || vk == VirtualKeys.Right || vk == VirtualKeys.MiddleButton
+                || vk == VirtualKeys.ExtraButton1 || vk == VirtualKeys.ExtraButton2;
+        }
+
         public static bool IsModifiers(this VirtualKeys vk)
         {
             return vk == VirtualKeys.Control || vk == VirtualKeys.LeftControl || vk == VirtualKeys.RightControl
@@ -19,10 +25,32 @@ namespace XJK.PInvoke
                 || vk == VirtualKeys.LeftWindows || vk == VirtualKeys.RightWindows;
         }
 
-        public static bool IsMouse(this VirtualKeys vk)
+        public static Modifiers ToModifiers(this VirtualKeys vk)
         {
-            return vk == VirtualKeys.LeftButton || vk == VirtualKeys.Right || vk == VirtualKeys.MiddleButton
-                || vk == VirtualKeys.ExtraButton1 || vk == VirtualKeys.ExtraButton2;
+            switch (vk)
+            {
+                case VirtualKeys.Control:
+                case VirtualKeys.LeftControl:
+                case VirtualKeys.RightControl:
+                    return Modifiers.CONTROL;
+
+                case VirtualKeys.Shift:
+                case VirtualKeys.LeftShift:
+                case VirtualKeys.RightShift:
+                    return Modifiers.SHIFT;
+
+                case VirtualKeys.Menu:
+                case VirtualKeys.LeftMenu:
+                case VirtualKeys.RightMenu:
+                    return Modifiers.ALT;
+                    
+                case VirtualKeys.LeftWindows:
+                case VirtualKeys.RightWindows:
+                    return Modifiers.WIN;
+
+                default:
+                    return Modifiers.None;
+            }
         }
     }
 
@@ -49,6 +77,7 @@ namespace XJK.PInvoke
         Tab = 0x09,
         //0x0A-0B Reserved
         Clear = 0x0C,
+        Enter = Return,
         Return = 0x0D,
         //0x0E-0F
         Shift = 0x10,

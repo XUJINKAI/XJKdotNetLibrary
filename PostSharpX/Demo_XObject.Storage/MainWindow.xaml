@@ -30,6 +30,7 @@
                 <TextBlock>Recordable:</TextBlock>
                 <ps:UndoButton></ps:UndoButton>
                 <ps:RedoButton></ps:RedoButton>
+                <Button Click="Record_Clear">Clear</Button>
             </StackPanel>
             <StackPanel>
                 <TextBlock></TextBlock>

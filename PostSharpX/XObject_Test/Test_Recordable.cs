@@ -85,5 +85,12 @@ namespace XJK.XObject_Test
             RecordingServices.DefaultRecorder.Redo();
             Assert.AreEqual(1, databae.SubDatabase.Collection.Count);
         }
+
+        [TestMethod]
+        public void Test_ClearCollection()
+        {
+            databae.SubDatabase.Collection.Add(new SubInstance());
+            databae.SubDatabase.Collection.Clear();
+        }
     }
 }

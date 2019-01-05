@@ -19,4 +19,28 @@ namespace XJK.SysX.Hooks
         RightButtonDoubleClick = 0x2001,
         MiddleButtonDoubleClick = 0x2002,
     }
+
+    public static class PressTypeExtension
+    {
+        /// <summary>
+        /// KeyDown or KeyUp
+        /// </summary>
+        /// <param name="pressType"></param>
+        /// <returns></returns>
+        public static bool IsKeyEvent(this PressType pressType)
+        {
+            return pressType == PressType.KeyDown || pressType == PressType.KeyUp;
+        }
+
+        public static bool IsWheelEvent(this PressType pressType)
+        {
+            return pressType == PressType.WheelDown || pressType == PressType.WheelUp
+                || pressType == PressType.WheelLeft || pressType == PressType.WheelRight; ;
+        }
+
+        public static bool IsDoubleClickEvent(this PressType pressType)
+        {
+            return pressType == PressType.LeftButtonDoubleClick || pressType == PressType.RightButtonDoubleClick || pressType == PressType.MiddleButtonDoubleClick;
+        }
+    }
 }

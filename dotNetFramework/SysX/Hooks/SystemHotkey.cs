@@ -10,12 +10,12 @@ using XJK.SysX.WinMsg;
 
 namespace XJK.SysX.Hooks
 {
-    public class SystemHotkey : DisposeBase
+    public class SystemHotkeyHook : DisposeBase
     {
         public WindowEx WindowEx { get; private set; }
         private readonly Dictionary<int, Action> IdActionDict = new Dictionary<int, Action>();
 
-        public SystemHotkey(WindowEx windowEx)
+        public SystemHotkeyHook(WindowEx windowEx)
         {
             WindowEx = windowEx;
             WindowEx.MsgHotkey += Window_MsgHotkey;

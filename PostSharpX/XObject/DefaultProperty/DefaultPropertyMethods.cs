@@ -53,5 +53,25 @@ namespace XJK.XObject.DefaultProperty
             if (type == typeof(string)) return "";
             return Activator.CreateInstance(type);
         }
+
+        public static void ResetInstaceAllPropertiesByDefaultValue(this object Instance, ValueDefaultType overrideType = ValueDefaultType.All)
+        {
+            var properties = XConfig.Select_ResetAllDefaultProperties(Instance.GetType());
+            foreach (var property in properties)
+            {
+                if (property.CanWrite)
+                {
+                    var value = Instance.GetPropertyDefaultValueEx(property, out var type);
+                    if (overrideType.HasFlag(type))
+                    {
+                        property.SetValue(Instance, value);
+                    }
+                }
+                else if (property.CanRead && property.GetValue(Instance) is IDefaultProperty propertyInstance)
+                {
+                    propertyInstance.ResetAllPropertiesDefaultValue(overrideType);
+                }
+            }
+        }
     }
 }
