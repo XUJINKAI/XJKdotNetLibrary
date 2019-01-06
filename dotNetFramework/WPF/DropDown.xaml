@@ -18,14 +18,14 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="local:DropDown">
                         <Grid>
-                            <ToggleButton x:Name="ToggleButton"
-                                IsChecked="{Binding IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" 
-                                IsHitTestVisible="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource InverseBoolConverter}}">
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="ToggleButton">
+                            <CheckBox x:Name="ToggleButton"
+                                      IsEnabled="{Binding IsOpen, ElementName=Popup, Converter={StaticResource InverseBoolConverter}}"
+                                      IsChecked="{Binding IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <CheckBox.Template>
+                                    <ControlTemplate TargetType="CheckBox">
                                         <ContentPresenter/>
                                     </ControlTemplate>
-                                </ToggleButton.Template>
+                                </CheckBox.Template>
                                 <Grid>
                                     <ContentPresenter Margin="{TemplateBinding Padding}"
                                       Content="{TemplateBinding Content}"
@@ -34,25 +34,24 @@
                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       RecognizesAccessKey="true" />
                                 </Grid>
-                            </ToggleButton>
+                            </CheckBox>
                             
-                            <Popup AllowsTransparency="True"
-                                    IsOpen="{Binding IsChecked, ElementName=ToggleButton}"
+                            <Popup x:Name="Popup"
+                                    AllowsTransparency="True"
+                                    IsOpen="{Binding IsChecked, ElementName=ToggleButton, Mode=TwoWay}"
                                     StaysOpen="{TemplateBinding StayOpen}"
                                     Height="{TemplateBinding DropDownHeight}"
                                     Width="{TemplateBinding DropDownWidth}"
                                     Focusable="False"
                                     Placement="Bottom"
-                                    PopupAnimation="Slide"
+                                    PopupAnimation="None"
                                     HorizontalOffset="1"
                                     VerticalOffset="1"
                                     Opened="Popup_Opened"
                                     Closed="Popup_Closed">
                                 <Border BorderThickness="2" BorderBrush="#ABCEF2" Background="White">
                                     <Grid>
-                                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                                            <ContentPresenter x:Name="Panel" Content="{TemplateBinding Panel}" PreviewKeyDown="Panel_PreviewKeyDown"></ContentPresenter>
-                                        </ScrollViewer>
+                                        <ContentPresenter x:Name="Panel" Content="{TemplateBinding Panel}" PreviewKeyDown="Panel_PreviewKeyDown"></ContentPresenter>
                                         <Thumb Background="Wheat" 
                                                 Visibility="{TemplateBinding CloseButton, Converter={StaticResource BoolConverter}}"
                                                 HorizontalAlignment="Right" 

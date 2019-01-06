@@ -10,35 +10,87 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles.xaml"></ResourceDictionary>
+                
                 <ResourceDictionary>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="HorizontalAlignment" Value="Left"></Setter>
-                        <Setter Property="FontFamily" Value="{Binding FontFamily}"></Setter>
-                        <Setter Property="FontSize" Value="{Binding FontSize}"></Setter>
-                        <Setter Property="FontStretch" Value="{Binding FontStretch}"></Setter>
-                        <Setter Property="FontStyle" Value="{Binding FontStyle}"></Setter>
-                        <Setter Property="FontWeight" Value="{Binding FontWeight}"></Setter>
-                    </Style>
-                    <Style TargetType="local:PlaceHolderTextBlock">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate>
-                                    <Grid Cursor="{TemplateBinding Cursor}">
-                                        <Border BorderThickness="0,0,0,1" BorderBrush="{StaticResource DefaultColor}" HorizontalAlignment="Left">
-                                            <Grid>
-                                                <TextBlock Text="{Binding Text, RelativeSource={RelativeSource Mode=TemplatedParent}}" Padding="{StaticResource BorderContentPadding}"></TextBlock>
-                                                <TextBlock Text="{Binding PlaceHolderText, RelativeSource={RelativeSource Mode=TemplatedParent}}" 
-                                                    Visibility="{Binding PlaceHolderVisibility, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                                    Foreground="{StaticResource DisableColor}" Padding="{StaticResource BorderContentPadding}"></TextBlock>
-                                            </Grid>
-                                        </Border>
-                                    </Grid>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
+                    <Style x:Key="ContentGrid" TargetType="Grid">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding AllowHover, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True">
+                                <Setter Property="Cursor" Value="Hand"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
                     </Style>
                 </ResourceDictionary>
+                
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
+    
+    <UserControl.Template>
+        <ControlTemplate>
+            <Grid x:Name="Grid" Style="{StaticResource ContentGrid}">
+                
+                <Grid.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="FontFamily" Value="{Binding FontFamily, RelativeSource={RelativeSource Mode=TemplatedParent}}"></Setter>
+                        <Setter Property="FontSize" Value="{Binding FontSize, RelativeSource={RelativeSource Mode=TemplatedParent}}"></Setter>
+                        <Setter Property="FontStretch" Value="{Binding FontStretch, RelativeSource={RelativeSource Mode=TemplatedParent}}"></Setter>
+                        <Setter Property="FontStyle" Value="{Binding FontStyle, RelativeSource={RelativeSource Mode=TemplatedParent}}"></Setter>
+                        <Setter Property="FontWeight" Value="{Binding FontWeight, RelativeSource={RelativeSource Mode=TemplatedParent}}"></Setter>
+                        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource Mode=TemplatedParent}}"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=HoverCoditionCheckBox}" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource HoverColor}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Foreground, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="{x:Null}">
+                                <Setter Property="Foreground" Value="Black"></Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                    <Style TargetType="Border">
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                        <Setter Property="BorderBrush" Value="{Binding BorderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}"></Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding BorderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="{x:Null}">
+                                <Setter Property="BorderBrush" Value="{StaticResource DefaultColor}"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsChecked, ElementName=HoverCoditionCheckBox}" Value="True">
+                                <Setter Property="BorderBrush" Value="{StaticResource HoverColor}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Resources>
+                
+                <CheckBox x:Name="HoverCoditionCheckBox" Visibility="Collapsed">
+                    <CheckBox.Style>
+                        <Style TargetType="CheckBox">
+                            <Setter Property="IsChecked" Value="False"/>
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding AllowHover, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True"></Condition>
+                                        <Condition Binding="{Binding IsMouseOver, ElementName=Grid}" Value="True"></Condition>
+                                    </MultiDataTrigger.Conditions>
+                                    <MultiDataTrigger.Setters>
+                                        <Setter Property="IsChecked" Value="True"/>
+                                    </MultiDataTrigger.Setters>
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </CheckBox.Style>
+                </CheckBox>
+                
+                <Border>
+                    <Grid>
+                        <TextBlock Text="{Binding Text, RelativeSource={RelativeSource Mode=TemplatedParent}}" 
+                                   Padding="{StaticResource BorderContentPadding}"></TextBlock>
+                        <TextBlock Text="{Binding PlaceHolderText, RelativeSource={RelativeSource Mode=TemplatedParent}}" 
+                                   Visibility="{Binding PlaceHolderVisibility, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                   Foreground="{StaticResource DisableColor}" 
+                                   Padding="{StaticResource BorderContentPadding}"></TextBlock>
+                    </Grid>
+                </Border>
+            </Grid>
+        </ControlTemplate>
+    </UserControl.Template>
 </UserControl>

@@ -4,6 +4,7 @@
     
     <SolidColorBrush x:Key="DefaultColor" Color="#FF55A3F3"></SolidColorBrush>
     <SolidColorBrush x:Key="DisableColor" Color="#CCB2B2B2"></SolidColorBrush>
+    <SolidColorBrush x:Key="HoverColor" Color="Red"></SolidColorBrush>
     <Thickness x:Key="BorderContentPadding" Bottom="3" Left="2" Right="2" Top="6"></Thickness>
     
 </ResourceDictionary>

@@ -26,12 +26,14 @@ namespace XJK.XObject_Test
         [DefaultValue(DefaultValue_String_Def)] public string DefaultValue_String { get; set; }
         [DefaultValueByMethod(nameof(DefaultValueByMethod_String_Def))] public string DefaultValueByMethod_String { get; set; }
         [Child] [DefaultValueNewInstance] public SubInstance DefaultValueNewInstance_Instance { get; set; }
+        [Child] public SubInstanceBase SubInstanceBase { get; set; }
         [Child] public NoCtorInstance NoCtorInstance { get; }
 
         [Child] public SubDatabase SubDatabase { get; }
 
         public Database()
         {
+            SubInstanceBase = new SubInstance();
             SubDatabase = new SubDatabase();
             NoCtorInstance = new NoCtorInstance(1);
         }
@@ -76,11 +78,18 @@ namespace XJK.XObject_Test
 
     [Aggregatable]
     [Recordable]
-    public class SubInstance : NotifyObject
+    public class SubInstance : SubInstanceBase
     {
         [DefaultValue("")] public string Field { get; set; }
     }
 
+    [Aggregatable]
+    [Recordable]
+    public class SubInstanceBase : NotifyObject
+    {
+        [DefaultValue("")] public string BaseField { get; set; }
+    }
+    
     [Aggregatable]
     [Recordable]
     public class NoCtorInstance : DatabaseObject

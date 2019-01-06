@@ -10,35 +10,32 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles.xaml"></ResourceDictionary>
                 <ResourceDictionary>
-                    <Style TargetType="local:DropDownTextEditor">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="local:DropDownTextEditor">
-                                    <local:DropDown Opened="DropDown_Open" Closed="DropDown_Closed">
-                                        <local:PlaceHolderTextBlock Cursor="Hand" Text="{TemplateBinding Text}" PlaceHolderText="Click to edit...  ">
-                                            <UserControl.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="Clear" Click="ClearText"></MenuItem>
-                                                </ContextMenu>
-                                            </UserControl.ContextMenu>
-                                        </local:PlaceHolderTextBlock>
-                                        <local:DropDown.Panel>
-                                            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                                                <TextBox GotFocus="TextBox_GotFocus"
-                                                    Text="{Binding Text, UpdateSourceTrigger=LostFocus, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                                    TextWrapping="Wrap"
-                                                    AcceptsReturn="True" 
-                                                    AcceptsTab="True">
-                                                </TextBox>
-                                            </ScrollViewer>
-                                        </local:DropDown.Panel>
-                                    </local:DropDown>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
+                    
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
+    <UserControl.Template>
+        <ControlTemplate TargetType="local:DropDownTextEditor">
+            <local:DropDown Opened="DropDown_Open" Closed="DropDown_Closed">
+                <local:PlaceHolderTextBlock Cursor="Hand" Text="{TemplateBinding Text}" PlaceHolderText="Click to edit...  ">
+                    <UserControl.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Clear" Click="ClearText"></MenuItem>
+                        </ContextMenu>
+                    </UserControl.ContextMenu>
+                </local:PlaceHolderTextBlock>
+                <local:DropDown.Panel>
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                        <TextBox GotFocus="TextBox_GotFocus"
+                                Text="{Binding Text, UpdateSourceTrigger=LostFocus, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                TextWrapping="Wrap"
+                                AcceptsReturn="True" 
+                                AcceptsTab="True">
+                        </TextBox>
+                    </ScrollViewer>
+                </local:DropDown.Panel>
+            </local:DropDown>
+        </ControlTemplate>
+    </UserControl.Template>
 </UserControl>

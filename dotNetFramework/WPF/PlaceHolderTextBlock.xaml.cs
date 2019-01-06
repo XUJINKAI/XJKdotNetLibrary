@@ -26,13 +26,25 @@ namespace XJK.WPF
 
         public Visibility PlaceHolderVisibility => string.IsNullOrWhiteSpace(Text) ? Visibility.Visible : Visibility.Hidden;
 
+
+
+        public bool AllowHover
+        {
+            get { return (bool)GetValue(AllowHoverProperty); }
+            set { SetValue(AllowHoverProperty, value); }
+        }
+        public static readonly DependencyProperty AllowHoverProperty =
+            DependencyProperty.Register("AllowHover", typeof(bool), typeof(PlaceHolderTextBlock), new PropertyMetadata(false));
+
+
+
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(PlaceHolderTextBlock)
-            , new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (sender, e) =>
+            , new FrameworkPropertyMetadata(null, (sender, e) =>
             {
                 var @this = (PlaceHolderTextBlock)sender;
                 @this.OnPropertyChanged(nameof(PlaceHolderVisibility));
