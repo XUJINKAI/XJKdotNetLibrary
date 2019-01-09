@@ -1,8 +1,4 @@
-﻿using PostSharp.Patterns.Collections;
-using PostSharp.Patterns.Collections.Advices;
-using PostSharp.Patterns.DynamicAdvising;
-using PostSharp.Patterns.Model;
-using PostSharp.Patterns.Recording;
+﻿using PostSharp.Patterns.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,124 +19,48 @@ using XJK.XObject.Serializers;
 namespace XJK.XObject
 {
     /// <summary>
-    /// Aggregatable, Observable, Serializable
+    /// Auto Notify, XML Serializable
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
     [Serializable]
     [IExXmlSerialization(ExXmlType.Dictionary)]
     [ImplementIExXmlSerializable]
-    public class DataDictionary<TKey, TValue> : NotifyObject, INotifyPropertyChanged, IXmlSerializable, IExXmlSerializable, IDefaultProperty,
-        IQueryInterface, IAggregatable, IAttachable, IRecordable, IRecordableCallback,
-        IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable
+    public class DataDictionary<TKey, TValue> : 
+        IDictionary<TKey, TValue>, ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey,TValue>>
+        , ICollection,IDictionary, IEnumerable
+        , INotifyPropertyChanged, INotifyCollectionChanged
+        , IXmlSerializable, IExXmlSerializable, IDefaultProperty
     {
-        #region Virtual Interface
+        [XmlIgnore] private readonly Dictionary<TKey, TValue> Content = new Dictionary<TKey, TValue>();
+        [XmlIgnore] private readonly Dictionary<TKey, PropertyChangedEventHandler> HandlerDict = new Dictionary<TKey, PropertyChangedEventHandler>();
+        [XmlIgnore] public virtual string ParseError => throw new NotImplementedException();
 
-        [NotRecorded]
-        [XmlIgnore]
-        [IgnoreAutoChangeNotification]
-        public virtual string ParseError => throw new NotImplementedException();
+        public event PropertyChangedEventHandler PropertyChanged;
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        public virtual XmlSchema GetSchema()
+        public ICollection<TKey> Keys => Content.Keys;
+        public ICollection<TValue> Values => Content.Values;
+        public int Count => Content.Count;
+        public bool IsReadOnly => false;
+        public bool IsSynchronized => true;
+        public object SyncRoot => Content;
+        public bool IsFixedSize => false;
+        ICollection IDictionary.Keys => Content.Keys;
+        ICollection IDictionary.Values => Content.Values;
+        public object this[object key]
         {
-            throw new NotImplementedException();
-        }
-
-        public virtual string GetXmlData()
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void ReadXml(XmlReader reader)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void SetByXml(string xml)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual void WriteXml(XmlWriter writer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual object GetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual object ResetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ResetAllPropertiesDefaultValue(ValueDefaultType filterType = (ValueDefaultType)(-1))
-        {
-            this.Clear();
-        }
-
-        #endregion
-
-        public event EventHandler ParentChanged;
-        public event EventHandler<AncestorChangedEventArgs> AncestorChanged;
-        public RelationshipKind ParentRelationship => RelationshipKind.ParentSurrogate;
-        [NotRecorded]
-        [XmlIgnore]
-        [IgnoreAutoChangeNotification]
-        public object Parent
-        {
-            get => _parent;
-            set
+            get => Content[(TKey)key]; set
             {
-                if (_parent == value) return;
-                if (_parent is IAggregatable oldaggregatable)
+                var tkey = (TKey)key;
+                var tvalue = (TValue)value;
+                if (ContainsKey(tkey))
                 {
-                    oldaggregatable.ParentChanged -= Aggregatable_ParentChanged;
-                    oldaggregatable.AncestorChanged -= Aggregatable_AncestorChanged;
+                    Remove(tkey);
                 }
-                _parent = value;
-                if (_parent is IAggregatable aggregatable)
-                {
-                    aggregatable.ParentChanged += Aggregatable_ParentChanged;
-                    aggregatable.AncestorChanged += Aggregatable_AncestorChanged;
-                }
-                ParentChanged?.Invoke(this, new EventArgs());
+                Add(tkey, tvalue);
             }
         }
-
-        private object _parent;
-        [NotRecorded]
-        private readonly AdvisableDictionary<TKey, TValue> Content = new AdvisableDictionary<TKey, TValue>();
-        [NotRecorded]
-        private readonly Dictionary<TKey, PropertyChangedEventHandler> HandlerDict = new Dictionary<TKey, PropertyChangedEventHandler>();
-
-        private void Aggregatable_ParentChanged(object sender, EventArgs e)
-        {
-            AncestorChanged?.Invoke(this, new AncestorChangedEventArgs((_parent as IAggregatable).Parent));
-        }
-
-        private void Aggregatable_AncestorChanged(object sender, AncestorChangedEventArgs e)
-        {
-            AncestorChanged?.Invoke(this, e);
-        }
-
-        private PropertyChangedEventHandler MakeNestedPropertyChangedHandler(TKey key)
-        {
-            return (sender, e) =>
-            {
-                OnPropertyChanged(new NestedPropertyChangedEventArgs($"[{key}]", e));
-            };
-        }
-        private void OnCollectionChanged(List<TKey> newKeys, List<TKey> oldKeys)
-        {
-            OnPropertyChanged(new PropertyChangedEventArgs($"(+{newKeys?.Count ?? 0},-{oldKeys?.Count ?? 0})"));
-        }
-
-
-        #region Override
-
         public TValue this[TKey key]
         {
             get => Content[key]; set
@@ -153,90 +73,102 @@ namespace XJK.XObject
             }
         }
 
-        [SafeForDependencyAnalysis] public ICollection<TKey> Keys => Content.Keys;
-        [SafeForDependencyAnalysis] public ICollection<TValue> Values => Content.Values;
-        [SafeForDependencyAnalysis] public int Count => Content.Count;
-        public bool IsReadOnly => false;
+        private void NotifyCollectionAddItems(List<KeyValuePair<TKey,TValue>> items)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs($"(+{items.Count})"));
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items));
+        }
+        private void NotifyCollectionRemoveItems(List<KeyValuePair<TKey, TValue>> items)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs($"(-{items.Count})"));
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items));
+        }
+        private void NotifyCollectionReplace(KeyValuePair<TKey, TValue> newitem, KeyValuePair<TKey, TValue> olditem)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs($"[{newitem.Key}"));
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace
+                , new List<KeyValuePair<TKey, TValue>>() { newitem }, new List<KeyValuePair<TKey, TValue>>() { olditem }));
+        }
+        private void NotifyCollectionReset()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs($"(clear)"));
+            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        protected void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
+
+        private PropertyChangedEventHandler MakeNestedPropertyChangedHandler(TKey key)
+        {
+            return (sender, e) =>
+            {
+                OnPropertyChanged(new NestedPropertyChangedEventArgs($"[{key}]", e));
+            };
+        }
+        protected void ItemInstallNotifyHandler(TKey key, TValue value)
+        {
+            if (value is INotifyPropertyChanged notify)
+            {
+                var handler = MakeNestedPropertyChangedHandler(key);
+                notify.PropertyChanged += handler;
+                HandlerDict.Add(key, handler);
+            }
+        }
+        protected void ItemRemoveNotifyHandler(TKey key, TValue value)
+        {
+            if (value is INotifyPropertyChanged notify)
+            {
+                var handler = HandlerDict[key];
+                notify.PropertyChanged -= handler;
+                HandlerDict.Remove(key);
+            }
+        }
+
+        protected void OnAddItem(TKey key, TValue value)
+        {
+            Content.Add(key, value);
+            ItemInstallNotifyHandler(key, value);
+            NotifyCollectionAddItems(new List<KeyValuePair<TKey, TValue>>() { new KeyValuePair<TKey, TValue>(key, value) });
+        }
+        protected void OnAddItems(List<KeyValuePair<TKey, TValue>> items)
+        {
+            items.ForEach(item =>
+            {
+                Content.Add(item.Key, item.Value);
+                ItemInstallNotifyHandler(item.Key, item.Value);
+            });
+            NotifyCollectionAddItems(items);
+        }
+        protected bool OnRemoveItem(TKey key)
+        {
+            if(Content.TryGetValue(key, out var value))
+            {
+                Content.Remove(key);
+                ItemRemoveNotifyHandler(key, value);
+                NotifyCollectionRemoveItems(new List<KeyValuePair<TKey, TValue>>() { new KeyValuePair<TKey, TValue>(key, value) });
+                return true;
+            }
+            return false;
+        }
+        protected void OnResetCollection()
+        {
+            foreach(var item in Content)
+            {
+                ItemRemoveNotifyHandler(item.Key, item.Value);
+            }
+            Content.Clear();
+            NotifyCollectionReset();
+        }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => Content.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => Content.GetEnumerator();
         public bool ContainsKey(TKey key) => Content.ContainsKey(key);
         public bool Contains(KeyValuePair<TKey, TValue> item) => Content.ContainsKey(item.Key) && Content[item.Key].Equals(item.Value);
-
-        public void Add(TKey key, TValue value)
-        {
-            Content.Add(key, value);
-            if (value is INotifyPropertyChanged notifyPropertyChanged)
-            {
-                var handler = MakeNestedPropertyChangedHandler(key);
-                notifyPropertyChanged.PropertyChanged += handler;
-                HandlerDict.Add(key, handler);
-            }
-            OnCollectionChanged(new List<TKey>() { key }, null);
-        }
-
-        public void Add(KeyValuePair<TKey, TValue> item)
-        {
-            Content.Add(item.Key, item.Value);
-            if (item.Value is INotifyPropertyChanged notifyPropertyChanged)
-            {
-                var handler = MakeNestedPropertyChangedHandler(item.Key);
-                notifyPropertyChanged.PropertyChanged += handler;
-                HandlerDict.Add(item.Key, handler);
-            }
-            OnCollectionChanged(new List<TKey>() { item.Key }, null);
-        }
-
-        public bool Remove(TKey key)
-        {
-            if (!ContainsKey(key)) return false;
-            var value = this[key];
-            if (value is INotifyPropertyChanged notifyPropertyChanged)
-            {
-                var handler = HandlerDict[key];
-                notifyPropertyChanged.PropertyChanged -= handler;
-                HandlerDict.Remove(key);
-            }
-            Content.Remove(key);
-            OnCollectionChanged(null, new List<TKey>() { key });
-            return true;
-        }
-
-        public bool Remove(KeyValuePair<TKey, TValue> item)
-        {
-            if (!ContainsKey(item.Key)) return false;
-            if (!this[item.Key].Equals(item.Value)) return false;
-            var value = this[item.Key];
-            if (value is INotifyPropertyChanged notifyPropertyChanged)
-            {
-                var handler = HandlerDict[item.Key];
-                notifyPropertyChanged.PropertyChanged -= handler;
-                HandlerDict.Remove(item.Key);
-            }
-            Content.Remove(item.Key);
-            OnCollectionChanged(null, new List<TKey>() { item.Key });
-            return true;
-        }
-
-        public void Clear()
-        {
-            var keys = Content.Keys.ToList();
-            Content.Clear();
-            HandlerDict.Clear();
-            OnCollectionChanged(null, keys);
-        }
-
-        public bool TryGetValue(TKey key, out TValue value)
-        {
-            if (this.ContainsKey(key))
-            {
-                value = this[key];
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
+        public void Add(TKey key, TValue value) => OnAddItem(key, value);
+        public void Add(KeyValuePair<TKey, TValue> item) => OnAddItem(item.Key, item.Value);
+        public bool Remove(TKey key) => OnRemoveItem(key);
+        public bool Remove(KeyValuePair<TKey, TValue> item) => OnRemoveItem(item.Key);
+        public void Clear() => OnResetCollection();
+        public bool TryGetValue(TKey key, out TValue value) => Content.TryGetValue(key, out value);
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
             if (array == null)
@@ -245,73 +177,40 @@ namespace XJK.XObject
                 throw new ArgumentException();
             ((ICollection<KeyValuePair<TKey, TValue>>)this).CopyTo(kvArray, arrayIndex);
         }
+        
 
-        #endregion
+        public virtual XmlSchema GetSchema() => throw new NotImplementedException();
+        public virtual string GetXmlData() => throw new NotImplementedException();
+        public virtual void ReadXml(XmlReader reader) => throw new NotImplementedException();
+        public virtual void SetByXml(string xml) => throw new NotImplementedException();
+        public virtual void WriteXml(XmlWriter writer) => throw new NotImplementedException();
+        public object GetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType) => throw new NotImplementedException();
+        public object ResetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType) => throw new NotImplementedException();
+        public void ResetAllPropertiesDefaultValue(ValueDefaultType filterType = (ValueDefaultType)(-1)) => Clear();
 
-        public T QueryInterface<T>() where T : class
-        {
-            var t = this as T;
-            return t;
-        }
-
-        public bool AttachToParent(RelationshipInfo relationshipInfo, IAttacher attacher, object attacherState)
-        {
-            Parent = (attacherState as AggregatableAttribute)?.Instance;
-            foreach (var item in Content)
-            {
-                attacher.AttachChild(attacherState, item, new ChildInfo("Item", item.GetType(), relationshipInfo));
-            }
-            return true;
-        }
-
-        public bool DetachFromParent()
-        {
-            Parent = null;
-            return true;
-        }
-
-        public void OnDeserialization(object caller)
+        public void CopyTo(Array array, int index)
         {
             throw new NotImplementedException();
         }
 
-        public virtual bool VisitChildren(ChildVisitor visitor, ChildVisitorOptions options = ChildVisitorOptions.None, object state = null)
+        public void Add(object key, object value)
         {
-            foreach (var item in Content)
-            {
-                visitor(item, new ChildInfo("Item", item.GetType(), new RelationshipInfo(RelationshipKind.ChildOrParentSurrogate)), state);
-            }
-            return true;
-        }
-        
-        [XmlIgnore]
-        [SafeForDependencyAnalysis]
-        [IgnoreAutoChangeNotification]
-        public Recorder Recorder
-        {
-            get => _recorder;
-            set
-            {
-                _recorder = value;
-            }
-        }
-        private Recorder _recorder;
-
-        
-        public bool HasRecorder(bool autoAttach)
-        {
-            Trace.TraceWarning("XJK.DataDictionary is not work well with IRecordable.");
-            return Recorder != null;
+            throw new NotImplementedException();
         }
 
-        public void OnReplaying(ReplayKind kind, ReplayContext context)
+        public bool Contains(object key)
         {
-            
+            throw new NotImplementedException();
         }
 
-        public void OnReplayed(ReplayKind kind, ReplayContext context)
+        IDictionaryEnumerator IDictionary.GetEnumerator()
         {
-            
+            throw new NotImplementedException();
+        }
+
+        public void Remove(object key)
+        {
+            throw new NotImplementedException();
         }
     }
 }

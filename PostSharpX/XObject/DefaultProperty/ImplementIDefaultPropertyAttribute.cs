@@ -13,7 +13,7 @@ namespace XJK.XObject.DefaultProperty
 {
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.Before, typeof(AggregatableAttribute))]
     [IntroduceInterface(typeof(IDefaultProperty), AncestorOverrideAction = InterfaceOverrideAction.Ignore, OverrideAction = InterfaceOverrideAction.Ignore)]
-    [MulticastAttributeUsage(Inheritance = MulticastInheritance.Multicast)]
+    [MulticastAttributeUsage(Inheritance = MulticastInheritance.Strict)]
     [Serializable]
     public class ImplementIDefaultPropertyAttribute : InstanceLevelAspect, IDefaultProperty
     {
@@ -41,12 +41,6 @@ namespace XJK.XObject.DefaultProperty
         {
             Instance.ResetInstaceAllPropertiesByDefaultValue(overrideType);
         }
-
-        [OnInstanceConstructedAdvice]
-        public void InitializeProperties()
-        {
-            Instance.ResetAllPropertiesDefaultValue(ValueDefaultType.HasAttribute);
-        }
-
+        
     }
 }

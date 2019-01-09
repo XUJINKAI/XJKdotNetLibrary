@@ -2,6 +2,7 @@
 using PostSharp.Patterns.Model;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using XJK.XObject.DefaultProperty;
 using XJK.XObject.NotifyProperty;
 
@@ -14,16 +15,28 @@ namespace XJK.XObject
     [NestedNotifyPropertyChanged]
     public abstract class NotifyObject : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string PropertyName)
+        public PropertyChangedEventHandler _propertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
+            add
+            {
+                _propertyChanged += value;
+                //Debug.WriteLine($"{this.GetType()}: {_propertyChanged.GetInvocationList().Length}");
+            }
+            remove
+            {
+                _propertyChanged -= value;
+            }
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected void OnPropertyChanged(string PropertyName)
         {
-            PropertyChanged?.Invoke(this, e);
+            _propertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
+        }
+
+        protected void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            _propertyChanged?.Invoke(this, e);
         }
     }
 }

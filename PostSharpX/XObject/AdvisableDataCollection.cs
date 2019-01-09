@@ -1,4 +1,6 @@
-﻿using PostSharp.Patterns.Model;
+﻿using PostSharp.Patterns.Collections;
+using PostSharp.Patterns.Model;
+using PostSharp.Patterns.Recording;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,32 +21,36 @@ using XJK.XObject.Serializers;
 
 namespace XJK.XObject
 {
+    [Obsolete]
     /// <summary>
-    /// Auto Notify, XML Serializable
+    /// Aggregatable, Observable, Serializable
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]
     [IExXmlSerialization(ExXmlType.Collection)]
     [ImplementIExXmlSerializable]
-    public class DataCollection<T> : ObservableCollection<T>, INotifyPropertyChanged, IXmlSerializable, IExXmlSerializable, IDefaultProperty
+    public class AdvisableDataCollection<T> : AdvisableCollection<T>, INotifyPropertyChanged, IXmlSerializable, IExXmlSerializable, IDefaultProperty
         ,ICollection<T>, IList<T>, ICollection, IList
     {
         public new event PropertyChangedEventHandler PropertyChanged;
-        public virtual string ParseError => throw new NotImplementedException();
-        private readonly Dictionary<object, PropertyChangedEventHandler> HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
+        [XmlIgnore] [IgnoreAutoChangeNotification] public virtual string ParseError => throw new NotImplementedException();
 
-        public DataCollection()
+        [Reference] private readonly Dictionary<object, PropertyChangedEventHandler> HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
+
+        // Fix Clear bug
+        public new void Clear() { while (this.Count > 0) this.RemoveAt(0); }
+        void ICollection<T>.Clear() { Clear(); }
+        void IList.Clear() { Clear(); }
+        
+        public AdvisableDataCollection()
         {
             this.CollectionChanged += DataCollection_CollectionChanged;
         }
 
-        public DataCollection(params T[] items) : this()
+        public AdvisableDataCollection(params T[] items) : this()
         {
-            items.ForEach(item => this.Add(item));
+            this.AddRange(items);
         }
-
-        private PropertyChangedEventHandler MakeNestedPropertyChangedHandler(long id) => (sender, e) => OnPropertyChanged(new NestedPropertyChangedEventArgs($"[{id}]", e));
-        protected new void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
 
         protected void DataCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -91,5 +97,8 @@ namespace XJK.XObject
         public object GetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType) => throw new NotImplementedException();
         public object ResetPropertyDefaultValue(string PropertyName, out ValueDefaultType valueDefaultType) => throw new NotImplementedException();
         public void ResetAllPropertiesDefaultValue(ValueDefaultType filterType = (ValueDefaultType)(-1)) => Clear();
+
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => PropertyChanged?.Invoke(this, e);
+        private PropertyChangedEventHandler MakeNestedPropertyChangedHandler(long id) => (sender, e) => OnPropertyChanged(new NestedPropertyChangedEventArgs($"[{id}]", e));
     }
 }

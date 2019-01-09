@@ -9,15 +9,9 @@ namespace XJK
     {
         public static T CastTo<T>(this object obj) where T : class
         {
-            return (T)obj;
+            return obj as T;
         }
-
-        public static T TryCastTo<T>(this object obj) where T : class
-        {
-            if (obj is T t) return t;
-            else return null;
-        }
-
+        
         public static T RandomSelect<T>(this IEnumerable<T> list)
         {
             var count = list.Count();
