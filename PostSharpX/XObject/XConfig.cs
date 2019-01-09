@@ -31,7 +31,7 @@ namespace XJK.XObject
 
         public static IEnumerable<PropertyInfo> Select_NotifyProperties(Type type, bool canWrite)
         {
-            return from property in GetChildroperties(type, PublicPropertiesFlag)
+            return from property in GetChildroperties(type, PublicDeclaredPropertiesFlag)
                    where property.CanWrite == canWrite
                         && !Attribute.IsDefined(property, typeof(IgnoreAutoChangeNotificationAttribute))
                    select property;

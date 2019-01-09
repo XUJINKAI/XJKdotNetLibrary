@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -31,39 +32,61 @@ namespace XJK.XObject.NotifyProperty
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(AggregatableAttribute))]
     [AspectTypeDependency(AspectDependencyAction.Order, AspectDependencyPosition.After, typeof(NotifyPropertyChangedAttribute))]
     [IntroduceInterface(typeof(INotifyPropertyChanged), OverrideAction = InterfaceOverrideAction.Ignore, AncestorOverrideAction = InterfaceOverrideAction.Ignore)]
+    [MulticastAttributeUsage(MulticastTargets.Class, Inheritance = MulticastInheritance.Strict, PersistMetaData = true, AllowMultiple = false, TargetTypeAttributes = MulticastAttributes.UserGenerated)]
     [HasConstraint]
     [PSerializable]
     public class NestedNotifyPropertyChangedAttribute : InstanceLevelAspect, INotifyPropertyChanged
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
-        private Dictionary<object, PropertyChangedEventHandler> HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
+        private Type appliedTo;
+
+        public override void CompileTimeInitialize(Type type, AspectInfo aspectInfo)
+        {
+            this.appliedTo = type;
+        }
 
 #pragma warning disable CS0067
-        [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, LinesOfCodeAvoided = 1)]
         public event PropertyChangedEventHandler PropertyChanged;
 #pragma warning restore
 
-        [ImportMember(nameof(OnPropertyChanged), IsRequired = true, Order = ImportMemberOrder.BeforeIntroductions)]
+        [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
+        private Dictionary<object, PropertyChangedEventHandler> HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
+
+
+        [ImportMember(nameof(OnPropertyChanged), IsRequired = true, Order = ImportMemberOrder.Default)]
         public Action<PropertyChangedEventArgs> OnPropertyChangedMethod;
 
-        [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, Visibility = Visibility.Family)]
+        [IntroduceMember(OverrideAction = MemberOverrideAction.Ignore, Visibility = Visibility.Family, LinesOfCodeAvoided = 2)]
         public void OnPropertyChanged(PropertyChangedEventArgs arg) => OnPropertyChangedMethod(arg);
+
 
         [OnInstanceConstructedAdvice]
         public void ReadOnlyProperty_NotifyPropertyChanged()
         {
-            var properties = XConfig.Select_NotifyProperties(Instance.GetType(), false);
-            foreach (var property in properties)
+            if (this.appliedTo == this.Instance.GetType())
             {
-                if (property.GetValue(Instance) is INotifyPropertyChanged notifyPropertyChanged)
+                var properties = XConfig.Select_NotifyProperties(Instance.GetType(), false);
+                foreach (var property in properties)
                 {
-                    var handler = MakeNestedPropertyChangedHandler(property.Name);
-                    notifyPropertyChanged.PropertyChanged += handler;
+                    var value = property.GetValue(Instance);
+                    if (value is INotifyPropertyChanged notifyPropertyChanged)
+                    {
+                        if (!HandlerDict.ContainsKey(value))
+                        {
+                            var handler = MakeNestedPropertyChangedHandler(property.Name);
+                            notifyPropertyChanged.PropertyChanged += handler;
+                            HandlerDict.Add(value, handler);
+                        }
+                    }
                 }
             }
         }
 
-        private IEnumerable<PropertyInfo> SelectINotifyPropertyChanged(Type type) => XConfig.Select_NotifyProperties(type, true);
+        private IEnumerable<PropertyInfo> SelectINotifyPropertyChanged(Type type)
+        {
+            var result = XConfig.Select_NotifyProperties(type, true);
+            return result;
+        }
 
         [OnLocationSetValueAdvice, MethodPointcut(nameof(SelectINotifyPropertyChanged))]
         public void OnSetProperty_INotifyPropertyChanged(LocationInterceptionArgs args)
@@ -73,9 +96,11 @@ namespace XJK.XObject.NotifyProperty
             var oldValue = args.GetCurrentValue();
             if (oldValue is INotifyPropertyChanged oldNotifyProperty)
             {
-                var handler = HandlerDict[oldValue];
-                oldNotifyProperty.PropertyChanged -= handler;
-                HandlerDict.Remove(oldValue);
+                if(HandlerDict.TryGetValue(oldValue, out var handler))
+                {
+                    oldNotifyProperty.PropertyChanged -= handler;
+                    HandlerDict.Remove(oldValue);
+                }
             }
 
             args.ProceedSetValue();
@@ -90,6 +115,7 @@ namespace XJK.XObject.NotifyProperty
 
         private PropertyChangedEventHandler MakeNestedPropertyChangedHandler(string PropertyName)
         {
+            //TODO 继承几次就执行几次
             return (sender, e) =>
             {
                 OnPropertyChanged(new NestedPropertyChangedEventArgs(PropertyName, e));

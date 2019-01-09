@@ -2,6 +2,7 @@
 using PostSharp.Patterns.Model;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using XJK.XObject.DefaultProperty;
 using XJK.XObject.NotifyProperty;
 
@@ -16,12 +17,12 @@ namespace XJK.XObject
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged(string PropertyName)
+        protected void OnPropertyChanged(string PropertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             PropertyChanged?.Invoke(this, e);
         }

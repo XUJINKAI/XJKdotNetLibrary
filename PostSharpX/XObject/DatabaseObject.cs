@@ -21,7 +21,7 @@ using XJK.XObject.Serializers;
 namespace XJK.XObject
 {
     /// <summary>
-    /// Aggregatable, Observable, Serializable, DefaultValue Enhancement
+    /// Auto Notify, Xml Serialization Enhancement, DefaultValue Enhancement (Aggregatable, Observable as well, but not recommended)
     /// </summary>
     [Serializable]
     [IExXmlSerialization(ExXmlType.Database)]
@@ -29,6 +29,19 @@ namespace XJK.XObject
     [ImplementIDefaultProperty]
     public abstract class DatabaseObject : NotifyObject, IXmlSerializable, IExXmlSerializable, IDefaultProperty
     {
+        public DatabaseObject()
+        {
+            InitializeProperties();
+        }
+
+        /// <summary>
+        /// Set properties by Default value which has DefaultValue Attributes
+        /// </summary>
+        public void InitializeProperties()
+        {
+            DefaultPropertyMethods.ResetInstaceAllPropertiesByDefaultValue(this, ValueDefaultType.HasAttribute);
+        }
+
         //IExXmlSerializable
 
         [XmlIgnore]
