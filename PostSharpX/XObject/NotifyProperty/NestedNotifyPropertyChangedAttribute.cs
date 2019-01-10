@@ -50,8 +50,13 @@ namespace XJK.XObject.NotifyProperty
 #pragma warning restore
 
         [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
-        private Dictionary<object, PropertyChangedEventHandler> HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
+        private Dictionary<object, PropertyChangedEventHandler> HandlerDict;
 
+        public override void RuntimeInitializeInstance()
+        {
+            HandlerDict = new Dictionary<object, PropertyChangedEventHandler>();
+            base.RuntimeInitializeInstance();
+        }
 
         [ImportMember(nameof(OnPropertyChanged), IsRequired = true, Order = ImportMemberOrder.Default)]
         public Action<PropertyChangedEventArgs> OnPropertyChangedMethod;
@@ -65,18 +70,15 @@ namespace XJK.XObject.NotifyProperty
         {
             if (this.appliedTo == this.Instance.GetType())
             {
+                DEBUGWRITE($"NestedNotifyPropertyChangedAttribute.OnInstanceConstructedAdvice: {GetInfo(Instance)}, Count = {HandlerDict.Count}");
                 var properties = XConfig.Select_NotifyProperties(Instance.GetType(), false);
                 foreach (var property in properties)
                 {
                     var value = property.GetValue(Instance);
                     if (value is INotifyPropertyChanged notifyPropertyChanged)
                     {
-                        if (!HandlerDict.ContainsKey(value))
-                        {
-                            var handler = MakeNestedPropertyChangedHandler(property.Name);
-                            notifyPropertyChanged.PropertyChanged += handler;
-                            HandlerDict.Add(value, handler);
-                        }
+                        var handler = MakeNestedPropertyChangedHandler(property.Name);
+                        notifyPropertyChanged.PropertyChanged += handler;
                     }
                 }
             }
@@ -98,7 +100,9 @@ namespace XJK.XObject.NotifyProperty
             {
                 if(HandlerDict.TryGetValue(oldValue, out var handler))
                 {
+                    DEBUGWRITE($"NestedNotifyPropertyChangedAttribute Remove Handler: Instance = {GetInfo(Instance)}, OldValue = {GetInfo(oldValue)}, Count = {HandlerDict.Count}");
                     oldNotifyProperty.PropertyChanged -= handler;
+                    if (!HandlerDict.ContainsKey(oldValue)) Debugger.Break();
                     HandlerDict.Remove(oldValue);
                 }
             }
@@ -107,19 +111,32 @@ namespace XJK.XObject.NotifyProperty
 
             if (args.Value is INotifyPropertyChanged notifyProperty)
             {
+                DEBUGWRITE($"NestedNotifyPropertyChangedAttribute Add Handler: Instance = {GetInfo(Instance)}, NewValue = {GetInfo(args.Value)}, Count = {HandlerDict.Count}");
                 var handler = MakeNestedPropertyChangedHandler(args.LocationName);
                 notifyProperty.PropertyChanged += handler;
+                if (HandlerDict.ContainsKey(args.Value)) Debugger.Break();
                 HandlerDict.Add(args.Value, handler);
             }
+            if (Instance != null) DEBUGWRITE($"NestedNotifyPropertyChangedAttribute.OnLocationSetValueAdvice Success: Instance = {GetInfo(Instance)}, Count = {HandlerDict.Count}");
         }
 
         private PropertyChangedEventHandler MakeNestedPropertyChangedHandler(string PropertyName)
         {
-            //TODO 继承几次就执行几次
             return (sender, e) =>
             {
                 OnPropertyChanged(new NestedPropertyChangedEventArgs(PropertyName, e));
             };
+        }
+
+        private static void DEBUGWRITE(string s)
+        {
+            //Debug.WriteLine(s);
+        }
+        
+        private static string GetInfo(object instance)
+        {
+            if (instance == null) return "{null}";
+            return "{" + instance.GetType().FullName + ": " + instance.ToString() + "}";
         }
     }
 }

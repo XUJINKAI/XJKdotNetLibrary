@@ -20,23 +20,29 @@ namespace XJK
         }
         
 
-        public static string JoinToString<T>(this T[] array, Func<T, string> transform_func, string sep = ",")
+        public static string JoinToString<T>(this T[] array, Func<T, string> transform_func = null, string sep = ",")
         {
+            if (array == null) return "";
+            if (transform_func == null) transform_func = x => x.ToString();
             return string.Join(sep, array.Select(transform_func));
         }
 
-        public static string JoinToString<T>(this IEnumerable<T> list, Func<T, string> transform_func, string sep = ",")
+        public static string JoinToString<T>(this IEnumerable<T> list, Func<T, string> transform_func = null, string sep = ",")
         {
+            if (list == null) return "";
+            if (transform_func == null) transform_func = x => x.ToString();
             return string.Join(sep, list.Select(transform_func));
         }
 
         public static string JoinToString(this string[] strings, string sep = ", ")
         {
+            if (strings == null) return "";
             return string.Join(sep, strings);
         }
 
         public static string JoinToString(this IEnumerable<string> strings, string sep = ", ")
         {
+            if (strings == null) return "";
             return string.Join(sep, strings);
         }
         

@@ -56,7 +56,9 @@ namespace XJK.SysX.Hooks
         public bool ScrollLockToggled => IsToggled((int)VirtualKeys.ScrollLock);
 
         public void PressDown(int code) => _keyStates[code] |= 0b1000_0000;
+        public void PressDown(VirtualKeys key) => PressDown((int)key);
         public void PressUp(int code) => _keyStates[code] &= 0b0000_1111;
+        public void PressUp(VirtualKeys key) => PressUp((int)key);
         public bool IsPressed(int code) => _keyStates[code] >> 4 > 0;
         public bool IsToggled(int code) => _keyStates[code] << 4 > 0;
         public bool IsPressOneOrZero(VirtualKeys vk) => PressedCount == 0 || (PressedCount == 1 && IsPressed((int)vk));
@@ -115,6 +117,35 @@ namespace XJK.SysX.Hooks
         public static KeyboardState FromCurrentState()
         {
             return new KeyboardState().SetByCurrentState();
+        }
+
+        public static KeyboardState FromModifiers(Modifiers modifiers)
+        {
+            var state = new KeyboardState();
+            if (modifiers.HasFlag(Modifiers.ALT))
+            {
+                state.PressDown(VirtualKeys.Menu);
+                state.PressDown(VirtualKeys.LeftMenu);
+                state.PressDown(VirtualKeys.RightMenu);
+            }
+            if (modifiers.HasFlag(Modifiers.CONTROL))
+            {
+                state.PressDown(VirtualKeys.Control);
+                state.PressDown(VirtualKeys.LeftControl);
+                state.PressDown(VirtualKeys.RightControl);
+            }
+            if (modifiers.HasFlag(Modifiers.SHIFT))
+            {
+                state.PressDown(VirtualKeys.Shift);
+                state.PressDown(VirtualKeys.LeftShift);
+                state.PressDown(VirtualKeys.RightShift);
+            }
+            if (modifiers.HasFlag(Modifiers.WIN))
+            {
+                state.PressDown(VirtualKeys.LeftWindows);
+                state.PressDown(VirtualKeys.RightWindows);
+            }
+            return state;
         }
 
 
