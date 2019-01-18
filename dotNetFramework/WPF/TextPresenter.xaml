@@ -1,0 +1,38 @@
+﻿<TextBox x:Class="XJK.WPF.TextPresenter"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:XJK.WPF"
+        mc:Ignorable="d"
+        IsReadOnly="True"
+        Cursor="Arrow"
+        Padding="2,6,2,3"
+        Background="Transparent"
+        BorderThickness="0"
+        ContextMenu="{x:Null}"
+        Focusable="False"
+        d:DesignHeight="30" d:DesignWidth="800">
+    <TextBox.Template>
+        <ControlTemplate>
+            <Grid DataContext="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}">
+                <TextBox 
+                    Text="{Binding DisplayText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="{Binding TextWrapping}"
+                    FontFamily="{TemplateBinding FontFamily}"
+                    FontSize="{TemplateBinding FontSize}"
+                    FontStretch="{TemplateBinding FontStretch}"
+                    FontStyle="{TemplateBinding FontStyle}"
+                    FontWeight="{TemplateBinding FontWeight}"
+                    TextDecorations="{Binding TextDecorations}"
+                    Foreground="{Binding DisplayTextBrush}"
+                    Background="{TemplateBinding Background}"
+                    IsReadOnly="True"
+                    BorderThickness="0"
+                    Margin="0"
+                    Cursor="{TemplateBinding Cursor}">
+                </TextBox>
+            </Grid>
+        </ControlTemplate>
+    </TextBox.Template>
+</TextBox>

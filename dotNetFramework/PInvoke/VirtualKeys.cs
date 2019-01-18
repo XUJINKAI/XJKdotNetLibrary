@@ -25,6 +25,14 @@ namespace XJK.PInvoke
                 || vk == VirtualKeys.LeftWindows || vk == VirtualKeys.RightWindows;
         }
 
+        public static bool IsModifiersExactKeyPress(this VirtualKeys vk)
+        {
+            return vk == VirtualKeys.LeftControl || vk == VirtualKeys.RightControl
+                || vk == VirtualKeys.LeftShift || vk == VirtualKeys.RightShift
+                || vk == VirtualKeys.LeftMenu || vk == VirtualKeys.RightMenu
+                || vk == VirtualKeys.LeftWindows || vk == VirtualKeys.RightWindows;
+        }
+
         public static Modifiers ToModifiers(this VirtualKeys vk)
         {
             switch (vk)

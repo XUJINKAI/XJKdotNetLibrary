@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:XJK.WPF"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:converters="clr-namespace:XJK.WPF.Converters"
              mc:Ignorable="d">
     <UserControl.CommandBindings>
@@ -18,23 +19,25 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="local:DropDown">
                         <Grid>
-                            <CheckBox x:Name="ToggleButton"
-                                      IsEnabled="{Binding IsOpen, ElementName=Popup, Converter={StaticResource InverseBoolConverter}}"
-                                      IsChecked="{Binding IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
-                                <CheckBox.Template>
-                                    <ControlTemplate TargetType="CheckBox">
+                            <ToggleButton x:Name="ToggleButton"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          IsEnabled="{Binding IsOpen, ElementName=Popup, Converter={StaticResource InverseBoolConverter}}"
+                                          IsChecked="{Binding IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <ControlTemplate.Resources>
+                                            <DataTemplate DataType="{x:Type system:String}">
+                                                <local:TextLink Text="{TemplateBinding Content}" 
+                                                                TextDecorations="Underline" 
+                                                                Click="TextLink_Click">
+                                                </local:TextLink>
+                                            </DataTemplate>
+                                        </ControlTemplate.Resources>
                                         <ContentPresenter/>
                                     </ControlTemplate>
-                                </CheckBox.Template>
-                                <Grid>
-                                    <ContentPresenter Margin="{TemplateBinding Padding}"
-                                      Content="{TemplateBinding Content}"
-                                      ContentTemplate="{TemplateBinding ContentTemplate}"
-                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                      RecognizesAccessKey="true" />
-                                </Grid>
-                            </CheckBox>
+                                </ToggleButton.Template>
+                            </ToggleButton>
                             
                             <Popup x:Name="Popup"
                                     AllowsTransparency="True"

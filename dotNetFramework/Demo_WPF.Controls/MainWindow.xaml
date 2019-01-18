@@ -1,0 +1,94 @@
+﻿<Window x:Class="Demo_WPF.Controls.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Demo_WPF.Controls"
+        xmlns:wpf="clr-namespace:XJK.WPF;assembly=XJK.WPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="700" Width="900">
+    <Grid Margin="10">
+        <WrapPanel>
+            <WrapPanel.Resources>
+                <Style TargetType="Separator">
+                    <Setter Property="Height" Value="0"></Setter>
+                    <Setter Property="Margin" Value="0,10,0,0"></Setter>
+                </Style>
+                <Style TargetType="StackPanel">
+                    <Setter Property="Width" Value="250"></Setter>
+                    <Setter Property="Margin" Value="0,0,20,50"></Setter>
+                </Style>
+                <Style TargetType="wpf:TextEditor">
+                    <Setter Property="BorderThickness" Value="0"></Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsChecked, ElementName=TextEditor_AcceptsReturn}" Value="True">
+                            <Setter Property="AcceptsReturn" Value="{Binding IsChecked, ElementName=TextEditor_AcceptsReturn}"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsChecked, ElementName=TextEditor_AcceptsTab}" Value="True">
+                            <Setter Property="AcceptsTab" Value="{Binding IsChecked, ElementName=TextEditor_AcceptsTab}"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </WrapPanel.Resources>
+            <StackPanel>
+                <wpf:TextPresenter>TextEditor.Properties</wpf:TextPresenter>
+                <Separator/>
+                <CheckBox x:Name="TextEditor_AcceptsReturn" IsChecked="True">TextEditor.AcceptsReturn</CheckBox>
+                <CheckBox x:Name="TextEditor_AcceptsTab" IsChecked="False">TextEditor.AcceptsTab</CheckBox>
+            </StackPanel>
+            <StackPanel>
+                <wpf:TextPresenter>TextPresenter:</wpf:TextPresenter>
+                <Separator/>
+                <wpf:TextPresenter Text="{Binding Text, ElementName=TextPresenter_Text}" 
+                                   PlaceHolderText="{Binding Text, ElementName=TextPresenter_PlaceHolder}">
+                </wpf:TextPresenter>
+                <Separator/>
+                <wpf:TextEditor x:Name="TextPresenter_Text" PlaceHolderText="TextPresenter.Text"></wpf:TextEditor>
+                <wpf:TextEditor x:Name="TextPresenter_PlaceHolder" PlaceHolderText="TextPresenter.PlaceHolderText"></wpf:TextEditor>
+            </StackPanel>
+            <StackPanel>
+                <wpf:TextPresenter>TextLink:</wpf:TextPresenter>
+                <Separator/>
+                <wpf:TextLink Text="{Binding Text, ElementName=TextLink_Text}"
+                              RunCommand="{Binding Text, ElementName=TextLink_RunCommand}">
+                    <wpf:TextLink.Style>
+                        <Style TargetType="wpf:TextLink">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsChecked, ElementName=TextLink_Underline}" Value="True">
+                                    <Setter Property="TextDecorations" Value="Underline"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </wpf:TextLink.Style>
+                </wpf:TextLink>
+                <Separator/>
+                <wpf:TextEditor x:Name="TextLink_Text" PlaceHolderText="TextLink.Text" Text="xujinkai.net"></wpf:TextEditor>
+                <wpf:TextEditor x:Name="TextLink_RunCommand" PlaceHolderText="TextLink.RunCommand" Text="https://xujinkai.net"></wpf:TextEditor>
+                <CheckBox x:Name="TextLink_Underline" IsChecked="False">Underline</CheckBox>
+            </StackPanel>
+            <StackPanel>
+                <wpf:TextPresenter>AutoLinkTextBlock:</wpf:TextPresenter>
+                <Separator/>
+                <wpf:AutoLinkTextBlock Text="{Binding Text,ElementName=AutoLinkTextBlock_Text}"></wpf:AutoLinkTextBlock>
+                <wpf:TextEditor x:Name="AutoLinkTextBlock_Text" PlaceHolderText="AutoLinkTextBlock.Text" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap">
+                    My site [xujinkai.net](https://xujinkai.net), and my [OneQuick](https://onequick.org) app.
+                </wpf:TextEditor>
+            </StackPanel>
+            <StackPanel>
+                <wpf:TextPresenter>DropDown:</wpf:TextPresenter>
+                <Separator/>
+                <wpf:DropDown x:Name="DropDown" Content="{Binding Display}" DataContext="{Binding Data, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+                    <StackPanel>
+                        <wpf:TextEditor Text="{Binding Name}"></wpf:TextEditor>
+                        <CheckBox IsChecked="{Binding IsStudent}">IsStudent</CheckBox>
+                    </StackPanel>
+                </wpf:DropDown>
+            </StackPanel>
+            <StackPanel>
+                <wpf:TextPresenter>DropDownTextEditor:</wpf:TextPresenter>
+                <Separator/>
+                <wpf:DropDownTextEditor PlaceHolderText="input something..."></wpf:DropDownTextEditor>
+            </StackPanel>
+        </WrapPanel>
+    </Grid>
+</Window>

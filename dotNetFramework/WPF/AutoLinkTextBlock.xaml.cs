@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -19,25 +20,37 @@ namespace XJK.WPF
     /// <summary>
     /// AutoLinkTextBox.xaml 的交互逻辑
     /// </summary>
-    public partial class AutoLinkTextBox : UserControl
+    [ContentProperty("Text")]
+    public partial class AutoLinkTextBlock : UserControl
     {
-        public AutoLinkTextBox()
+        public string Text
+        {
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(AutoLinkTextBlock), new FrameworkPropertyMetadata(null, (sender, e) =>
+            {
+                ((AutoLinkTextBlock)sender).Render(e.NewValue as string);
+            }));
+
+
+        public AutoLinkTextBlock()
         {
             InitializeComponent();
         }
 
-        protected override void OnContentChanged(object oldContent, object newContent)
+        private void Render(string text)
         {
-            string text = newContent as string;
+            var stackPanel = new StackPanel();
             if (!string.IsNullOrEmpty(text))
             {
-                var stackPanel = new StackPanel();
-                var lines = text.Split('\n');
-                foreach(var line in lines)
+                var lines = text.Trim().Split('\n');
+                foreach (var line in lines)
                 {
                     if (line == "")
                     {
-                        stackPanel.Children.Add(new TextBlock());
+                        stackPanel.Children.Add(new TextPresenter() { Text = Environment.NewLine });
                         continue;
                     }
                     var wrapPanel = new WrapPanel();
@@ -48,22 +61,22 @@ namespace XJK.WPF
                         var match = Regex.Match(split, @"^\[(.+?)\]\((.+?)\)$");
                         if (match.Success)
                         {
-                            wrapPanel.Children.Add(new Link() { Content = match.Groups[1].Value, RunCommand = match.Groups[2].Value });
+                            wrapPanel.Children.Add(new TextLink() { Text = match.Groups[1].Value, RunCommand = match.Groups[2].Value });
                         }
                         else if (split.StartsWith("[") && split.EndsWith("]"))
                         {
                             var link = split.Substring(1, split.Length - 2);
-                            wrapPanel.Children.Add(new Link() { Content = link });
+                            wrapPanel.Children.Add(new TextLink() { Text = link, RunCommand = link});
                         }
                         else
                         {
-                            wrapPanel.Children.Add(new TextBox() { Text = split });
+                            wrapPanel.Children.Add(new TextPresenter() { Text = split });
                         }
                     }
                     stackPanel.Children.Add(wrapPanel);
                 }
-                this.Content = stackPanel;
             }
+            this.Content = stackPanel;
         }
     }
 }

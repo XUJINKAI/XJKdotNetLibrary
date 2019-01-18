@@ -1,6 +1,5 @@
 ﻿using PostSharp.Patterns.Collections;
 using PostSharp.Patterns.Model;
-using PostSharp.Patterns.Recording;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,11 +12,8 @@ using static XJK.RandomGenerator;
 
 namespace XJK.XObject_Test
 {
-    [Aggregatable]
-    [Recordable]
     public class Database : DatabaseObject
     {
-
         public const int DefaultValue_Int_Def = 42;
         public const string DefaultValue_String_Def = "XJK.XObject_Test.DefaultValue_String_Def";
         public string DefaultValueByMethod_String_Def() { return "XJK.XObject_Test.DefaultValueByMethod_String_Def()"; }
@@ -37,9 +33,7 @@ namespace XJK.XObject_Test
             SubDatabase = new SubDatabase();
             NoCtorInstance = new NoCtorInstance(1);
         }
-
-        public IAggregatable AsIAggregatable() { return PostSharp.Post.Cast<Database, IAggregatable>(this); }
-
+        
         public void RandomSetProperties()
         {
             DefaultValue_Int = RandomInt(100);
@@ -56,9 +50,7 @@ namespace XJK.XObject_Test
             }
         }
     }
-
-    [Aggregatable]
-    [Recordable]
+    
     public class SubDatabase : DatabaseObject
     {
         [Child] public DataCollection<SubInstance> Collection { get; }
@@ -75,23 +67,17 @@ namespace XJK.XObject_Test
             NotRecordableCollection = new AdvisableCollection<string>();
         }
     }
-
-    [Aggregatable]
-    [Recordable]
+    
     public class SubInstance : SubInstanceBase
     {
         [DefaultValue("")] public string Field { get; set; }
     }
-
-    [Aggregatable]
-    [Recordable]
+    
     public class SubInstanceBase : NotifyObject
     {
         [DefaultValue("")] public string BaseField { get; set; }
     }
     
-    [Aggregatable]
-    [Recordable]
     public class NoCtorInstance : DatabaseObject
     {
         public string Field { get; set; }

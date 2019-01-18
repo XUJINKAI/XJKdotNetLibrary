@@ -25,27 +25,36 @@ namespace XJK.WPF
     [ContentProperty(nameof(Text))]
     public partial class DropDownTextEditor : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        private static void StaticNotifyDisplayChanged(object sender, DependencyPropertyChangedEventArgs e) => ((DropDownTextEditor)sender).OnNotifyDisplayChanged();
+        protected void OnNotifyDisplayChanged()
+        {
+            OnPropertyChanged(nameof(DisplayText));
+        }
+
+
+        public string DisplayText => string.IsNullOrEmpty(Text) ? PlaceHolderText : Text;
+
+
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(DropDownTextEditor)
-            , new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (sender, e) =>
-            {
-                if(sender is DropDownTextEditor editor)
-                {
-                    editor.OnPropertyChanged(nameof(PlaceHolderVisibility));
-                }
-            }));
+            , new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, StaticNotifyDisplayChanged)
+            { DefaultUpdateSourceTrigger = UpdateSourceTrigger.LostFocus});
         
+
 
         public string PlaceHolderText
         {
             get { return (string)GetValue(PlaceHolderTextProperty); }
             set { SetValue(PlaceHolderTextProperty, value); }
         }
-        public static readonly DependencyProperty PlaceHolderTextProperty = DependencyProperty.Register("PlaceHolderText", typeof(string), typeof(DropDownTextEditor), new PropertyMetadata("Click to Edit..."));
+        public static readonly DependencyProperty PlaceHolderTextProperty = DependencyProperty.Register("PlaceHolderText", typeof(string), typeof(DropDownTextEditor), new PropertyMetadata(null));
+
 
 
         public double DropDownHeight
@@ -64,23 +73,13 @@ namespace XJK.WPF
         }
         public static readonly DependencyProperty DropDownWidthProperty = DependencyProperty.Register("DropDownWidth", typeof(double), typeof(DropDownTextEditor), new UIPropertyMetadata(280.0));
 
+        
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged([CallerMemberName] string PropertyName = null)
+        public DropDownTextEditor()
         {
-            if (PropertyName == null) throw new ArgumentNullException(nameof(PropertyName));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
+            InitializeComponent();
         }
-
-        public Visibility PlaceHolderVisibility
-        {
-            get
-            {
-                return string.IsNullOrWhiteSpace(Text) ? Visibility.Visible : Visibility.Hidden;
-            }
-        }
-
 
         private void DropDownThumb_OnDragDelta(object sender, DragDeltaEventArgs e)
         {
@@ -93,12 +92,6 @@ namespace XJK.WPF
             }
         }
 
-
-        public DropDownTextEditor()
-        {
-            InitializeComponent();
-        }
-        
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             if (sender is TextBox textBox)
@@ -106,17 +99,7 @@ namespace XJK.WPF
                 textBox.CaretIndex = textBox.Text.Length;
             }
         }
-
-        private void DropDown_Open(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void DropDown_Closed(object sender, RoutedEventArgs e)
-        {
-
-        }
-
+        
         private void ClearText(object sender, RoutedEventArgs e)
         {
             Text = "";

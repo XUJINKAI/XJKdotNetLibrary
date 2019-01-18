@@ -100,16 +100,19 @@
     <Compile Include="ListViewX.xaml.cs">
       <DependentUpon>ListViewX.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PlaceHolderTextBlock.xaml.cs">
-      <DependentUpon>PlaceHolderTextBlock.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ListViewExDp.cs" />
-    <Compile Include="AutoLinkTextBox.xaml.cs">
-      <DependentUpon>AutoLinkTextBox.xaml</DependentUpon>
+    <Compile Include="AutoLinkTextBlock.xaml.cs">
+      <DependentUpon>AutoLinkTextBlock.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Link.xaml.cs">
-      <DependentUpon>Link.xaml</DependentUpon>
+    <Compile Include="TextLink.xaml.cs">
+      <DependentUpon>TextLink.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TextEditor.xaml.cs">
+      <DependentUpon>TextEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TextPresenter.xaml.cs">
+      <DependentUpon>TextPresenter.xaml</DependentUpon>
     </Compile>
     <Compile Include="VisualTreeExtension.cs" />
   </ItemGroup>
@@ -120,10 +123,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="PlaceHolderTextBlock.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -140,13 +139,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="AutoLinkTextBox.xaml">
+    <Page Include="AutoLinkTextBlock.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Link.xaml">
+    <Page Include="TextLink.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TextEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TextPresenter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

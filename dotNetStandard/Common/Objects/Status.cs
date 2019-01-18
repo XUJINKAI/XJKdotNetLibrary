@@ -1,13 +1,15 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace XJK
 {
-    public class Status
+    public class Status : INotifyPropertyChanged
     {
         public bool DefaultState { get; private set; }
         public bool State => Counter == 0 ? DefaultState : !DefaultState;
         public bool IsChanged => State != DefaultState;
         public event Action<bool> StatusChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private int Counter = 0;
 
@@ -19,10 +21,18 @@ namespace XJK
         public void InChanging(Action action)
         {
             Counter++;
-            if (Counter == 1) StatusChanged?.Invoke(false);
+            if (Counter == 1)
+            {
+                StatusChanged?.Invoke(false);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(State)));
+            }
             action?.Invoke();
             Counter--;
-            if (Counter == 0) StatusChanged?.Invoke(true);
+            if (Counter == 0)
+            {
+                StatusChanged?.Invoke(true);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(State)));
+            }
         }
 
         public static bool operator true(Status val) => val.State;

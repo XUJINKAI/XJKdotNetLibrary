@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Serialization;
-using PostSharp.Patterns.Model;
 using System.ComponentModel;
 using System.Diagnostics;
 using XJK;
@@ -22,13 +21,9 @@ using XJK.XObject;
 using XJK.XObject.DefaultProperty;
 using XJK.XObject.NotifyProperty;
 using XJK.XObject_Test;
-using PostSharp.Patterns.Recording;
 using static XJK.RandomGenerator;
-using PostSharp.Patterns.Collections;
-using System.Collections;
-using System.Collections.ObjectModel;
 
-namespace DB
+namespace Demo_XObject_Storage
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -134,16 +129,6 @@ namespace DB
         private void Button_Click_Change_Dictionary_Clear(object sender, RoutedEventArgs e)
         {
             database.SubDatabase.Dictionary.Clear();
-        }
-        // Agg, rec
-        private void Button_Click_CountChilds(object sender, RoutedEventArgs e)
-        {
-            Title = $"Children.Count: {database.AsIAggregatable().GetChildren().Count}";
-        }
-
-        private void Record_Clear(object sender, RoutedEventArgs e)
-        {
-            RecordingServices.DefaultRecorder.Clear();
         }
 
         private void Button_Click_Break(object sender, RoutedEventArgs e)

@@ -1,10 +1,9 @@
-﻿<Window x:Class="DB.MainWindow"
+﻿<Window x:Class="Demo_XObject_Storage.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DB"
-        xmlns:ps="clr-namespace:PostSharp.Patterns.Model.Controls;assembly=PostSharp.Patterns.Xaml"
+        xmlns:local="clr-namespace:Demo_XObject_Storage"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="800">
     <Grid>
@@ -21,16 +20,6 @@
                 <TextBlock>Xml:</TextBlock>
                 <Button Click="Button_Click_Refresh">Serialization</Button>
                 <Button Click="Button_Click_Parse">Deserialization</Button>
-            </StackPanel>
-            <StackPanel>
-                <TextBlock>Aggregatable:</TextBlock>
-                <Button Click="Button_Click_CountChilds">CountChilds</Button>
-            </StackPanel>
-            <StackPanel>
-                <TextBlock>Recordable:</TextBlock>
-                <ps:UndoButton></ps:UndoButton>
-                <ps:RedoButton></ps:RedoButton>
-                <Button Click="Record_Clear">Clear</Button>
             </StackPanel>
             <StackPanel>
                 <TextBlock></TextBlock>

@@ -78,12 +78,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Test_Aggregatable.cs" />
     <Compile Include="Test_DefaultValue.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test_NotifyProperty.cs" />
-    <Compile Include="Test_Recordable.cs" />
     <Compile Include="Test_Serialization.cs" />
   </ItemGroup>
   <ItemGroup>

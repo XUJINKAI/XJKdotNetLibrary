@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Demo_XObject_Storage
+namespace Demo_WPF.Controls
 {
     /// <summary>
     /// App.xaml 的交互逻辑

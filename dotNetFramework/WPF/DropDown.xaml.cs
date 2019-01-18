@@ -10,6 +10,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -20,6 +21,7 @@ namespace XJK.WPF
     /// <summary>
     /// DropDown.xaml 的交互逻辑
     /// </summary>
+    [ContentProperty(nameof(Panel))]
     public partial class DropDown : UserControl
     {
         #region Properties
@@ -96,7 +98,9 @@ namespace XJK.WPF
         public bool IsOpen
         {
             get
-            { return (bool)GetValue(IsOpenProperty); }
+            {
+                return (bool)GetValue(IsOpenProperty);
+            }
             set
             {
                 SetValue(IsOpenProperty, value);
@@ -175,9 +179,9 @@ namespace XJK.WPF
         private void Popup_Opened(object sender, EventArgs e)
         {
             RaiseRoutedEvent(OpenedEvent);
-            if (GetTemplateChild("Panel") is ContentPresenter presenter)
+            if (GetTemplateChild("Panel") is FrameworkElement panel)
             {
-                presenter.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+                panel.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
             }
         }
 
@@ -207,6 +211,11 @@ namespace XJK.WPF
             {
                 ClosePanel();
             }
+        }
+
+        private void TextLink_Click(object sender, RoutedEventArgs e)
+        {
+            IsOpen = true;
         }
     }
 }
