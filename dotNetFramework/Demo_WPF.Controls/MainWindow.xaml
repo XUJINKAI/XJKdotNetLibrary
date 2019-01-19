@@ -19,19 +19,12 @@
                     <Setter Property="Margin" Value="0,0,20,50"></Setter>
                 </Style>
                 <Style TargetType="wpf:TextEditor">
-                    <Setter Property="BorderThickness" Value="0"></Setter>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsChecked, ElementName=TextEditor_AcceptsReturn}" Value="True">
-                            <Setter Property="AcceptsReturn" Value="{Binding IsChecked, ElementName=TextEditor_AcceptsReturn}"></Setter>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsChecked, ElementName=TextEditor_AcceptsTab}" Value="True">
-                            <Setter Property="AcceptsTab" Value="{Binding IsChecked, ElementName=TextEditor_AcceptsTab}"></Setter>
-                        </DataTrigger>
-                    </Style.Triggers>
+                    <Setter Property="AcceptsReturn" Value="{Binding IsChecked, ElementName=TextEditor_AcceptsReturn}"></Setter>
+                    <Setter Property="AcceptsTab" Value="{Binding IsChecked, ElementName=TextEditor_AcceptsTab}"></Setter>
                 </Style>
             </WrapPanel.Resources>
             <StackPanel>
-                <wpf:TextPresenter>TextEditor.Properties</wpf:TextPresenter>
+                <wpf:TextPresenter>Properties</wpf:TextPresenter>
                 <Separator/>
                 <CheckBox x:Name="TextEditor_AcceptsReturn" IsChecked="True">TextEditor.AcceptsReturn</CheckBox>
                 <CheckBox x:Name="TextEditor_AcceptsTab" IsChecked="False">TextEditor.AcceptsTab</CheckBox>
@@ -41,26 +34,35 @@
                 <Separator/>
                 <wpf:TextPresenter Text="{Binding Text, ElementName=TextPresenter_Text}" 
                                    PlaceHolderText="{Binding Text, ElementName=TextPresenter_PlaceHolder}">
+                    <wpf:TextPresenter.TextBlockStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="Red"></Setter>
+                            <Setter Property="FontWeight" Value="ExtraBold"></Setter>
+                        </Style>
+                    </wpf:TextPresenter.TextBlockStyle>
+                    <wpf:TextPresenter.PlaceHolderTextBlockStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="Red"></Setter><!--//TODO-->
+                            <Setter Property="FontStyle" Value="Oblique"></Setter>
+                            <Setter Property="FontWeight" Value="ExtraLight"></Setter>
+                        </Style>
+                    </wpf:TextPresenter.PlaceHolderTextBlockStyle>
                 </wpf:TextPresenter>
                 <Separator/>
-                <wpf:TextEditor x:Name="TextPresenter_Text" PlaceHolderText="TextPresenter.Text"></wpf:TextEditor>
-                <wpf:TextEditor x:Name="TextPresenter_PlaceHolder" PlaceHolderText="TextPresenter.PlaceHolderText"></wpf:TextEditor>
+                <wpf:TextEditor x:Name="TextPresenter_Text" PlaceHolderText="TextPresenter.Text" Text=""></wpf:TextEditor>
+                <wpf:TextEditor x:Name="TextPresenter_PlaceHolder" PlaceHolderText="TextPresenter.PlaceHolderText" Text="placeholder_text"></wpf:TextEditor>
             </StackPanel>
             <StackPanel>
                 <wpf:TextPresenter>TextLink:</wpf:TextPresenter>
                 <Separator/>
-                <wpf:TextLink Text="{Binding Text, ElementName=TextLink_Text}"
-                              RunCommand="{Binding Text, ElementName=TextLink_RunCommand}">
-                    <wpf:TextLink.Style>
-                        <Style TargetType="wpf:TextLink">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsChecked, ElementName=TextLink_Underline}" Value="True">
-                                    <Setter Property="TextDecorations" Value="Underline"/>
-                                </DataTrigger>
-                            </Style.Triggers>
+                <wpf:Link Content="{Binding Text, ElementName=TextLink_Text}"
+                          RunCommand="{Binding Text, ElementName=TextLink_RunCommand}">
+                    <wpf:Link.Style>
+                        <Style TargetType="wpf:Link">
+                            <Setter Property="Underline" Value="{Binding IsChecked, ElementName=TextLink_Underline}"/>
                         </Style>
-                    </wpf:TextLink.Style>
-                </wpf:TextLink>
+                    </wpf:Link.Style>
+                </wpf:Link>
                 <Separator/>
                 <wpf:TextEditor x:Name="TextLink_Text" PlaceHolderText="TextLink.Text" Text="xujinkai.net"></wpf:TextEditor>
                 <wpf:TextEditor x:Name="TextLink_RunCommand" PlaceHolderText="TextLink.RunCommand" Text="https://xujinkai.net"></wpf:TextEditor>

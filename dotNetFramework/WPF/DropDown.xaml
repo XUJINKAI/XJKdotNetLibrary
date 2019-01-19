@@ -5,99 +5,108 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:XJK.WPF"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
-             xmlns:converters="clr-namespace:XJK.WPF.Converters"
              mc:Ignorable="d">
     <UserControl.CommandBindings>
         <CommandBinding Command="local:DropDown.OpenPanelCommand" Executed="OpenPanelCommand_Executed"></CommandBinding>
         <CommandBinding Command="local:DropDown.ClosePanelCommand" Executed="ClosePanelCommand_Executed"></CommandBinding>
     </UserControl.CommandBindings>
     <UserControl.Resources>
-        <converters:BoolConverter x:Key="BoolConverter"></converters:BoolConverter>
-        <converters:InverseBoolConverter x:Key="InverseBoolConverter"></converters:InverseBoolConverter>
-        <Style TargetType="local:DropDown">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="local:DropDown">
-                        <Grid>
-                            <ToggleButton x:Name="ToggleButton"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          IsEnabled="{Binding IsOpen, ElementName=Popup, Converter={StaticResource InverseBoolConverter}}"
-                                          IsChecked="{Binding IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="ToggleButton">
-                                        <ControlTemplate.Resources>
-                                            <DataTemplate DataType="{x:Type system:String}">
-                                                <local:TextLink Text="{TemplateBinding Content}" 
-                                                                TextDecorations="Underline" 
-                                                                Click="TextLink_Click">
-                                                </local:TextLink>
-                                            </DataTemplate>
-                                        </ControlTemplate.Resources>
-                                        <ContentPresenter/>
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                            </ToggleButton>
-                            
-                            <Popup x:Name="Popup"
-                                    AllowsTransparency="True"
-                                    IsOpen="{Binding IsChecked, ElementName=ToggleButton, Mode=TwoWay}"
-                                    StaysOpen="{TemplateBinding StayOpen}"
-                                    Height="{TemplateBinding DropDownHeight}"
-                                    Width="{TemplateBinding DropDownWidth}"
-                                    Focusable="False"
-                                    Placement="Bottom"
-                                    PopupAnimation="None"
-                                    HorizontalOffset="1"
-                                    VerticalOffset="1"
-                                    Opened="Popup_Opened"
-                                    Closed="Popup_Closed">
-                                <Border BorderThickness="2" BorderBrush="#ABCEF2" Background="White">
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml"/>
+                <ResourceDictionary>
+                    <Style TargetType="local:DropDown">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="local:DropDown">
                                     <Grid>
-                                        <ContentPresenter x:Name="Panel" Content="{TemplateBinding Panel}" PreviewKeyDown="Panel_PreviewKeyDown"></ContentPresenter>
-                                        <Thumb Background="Wheat" 
-                                                Visibility="{TemplateBinding CloseButton, Converter={StaticResource BoolConverter}}"
-                                                HorizontalAlignment="Right" 
-                                                VerticalAlignment="Top" 
-                                                Margin="0,5,5,0" 
-                                                PreviewMouseDown="Thumb_PreviewMouseDown"
-                                                Cursor="Arrow">
-                                            <Thumb.Template>
-                                                <ControlTemplate>
-                                                    <Grid Background="White">
-                                                        <Path Data="M0,0 L10,10 M0,10 L10,0" Stroke="Gray" StrokeThickness="1"></Path>
-                                                        <Grid.Resources>
-                                                            <Style TargetType="Path">
+                                        <ToggleButton x:Name="ToggleButton"
+                                                      Content="{TemplateBinding Content}"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      IsEnabled="{Binding IsOpen, ElementName=Popup, Converter={StaticResource InverseBoolConverter}}"
+                                                      IsChecked="{Binding IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                            <ToggleButton.Template>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <local:Link Underline="True"
+                                                                Click="Link_Click">
+                                                        <local:Link.Resources>
+                                                            <Style TargetType="Hyperlink">
+                                                                <Setter Property="Foreground" Value="{StaticResource ThemeColor}"/>
                                                                 <Style.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Stroke" Value="Black"></Setter>
-                                                                        <Setter Property="StrokeThickness" Value="2"></Setter>
-                                                                    </Trigger>
+                                                                    <DataTrigger Binding="{Binding IsMouseOver, ElementName=ToggleButton}" Value="True">
+                                                                        <Setter Property="Foreground" Value="{StaticResource DeepColor}"/>
+                                                                    </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
-                                                        </Grid.Resources>
-                                                    </Grid>
+                                                        </local:Link.Resources>
+                                                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                                                    </local:Link>
                                                 </ControlTemplate>
-                                            </Thumb.Template>
-                                        </Thumb>
-                                        <Thumb HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-                                                               Visibility="{TemplateBinding CanResize, Converter={StaticResource BoolConverter}}"
-                                                               Cursor="SizeNWSE" DragDelta="DropDownThumb_OnDragDelta">
-                                            <Thumb.Template>
-                                                <ControlTemplate TargetType="Thumb">
-                                                    <Grid Background="Transparent">
-                                                        <Path Data="M0.5,6.5 L6.5,0.5 M6.5,3.5 L3.5,6.5" Stroke="Black" StrokeThickness="1" />
-                                                    </Grid>
-                                                </ControlTemplate>
-                                            </Thumb.Template>
-                                        </Thumb>
+                                            </ToggleButton.Template>
+                                        </ToggleButton>
+
+                                        <Popup x:Name="Popup"
+                                                AllowsTransparency="True"
+                                                IsOpen="{Binding IsChecked, ElementName=ToggleButton, Mode=TwoWay}"
+                                                StaysOpen="{TemplateBinding StayOpen}"
+                                                Height="{TemplateBinding DropDownHeight}"
+                                                Width="{TemplateBinding DropDownWidth}"
+                                                Focusable="False"
+                                                Placement="Bottom"
+                                                PopupAnimation="None"
+                                                HorizontalOffset="1"
+                                                VerticalOffset="1"
+                                                Opened="Popup_Opened"
+                                                Closed="Popup_Closed">
+                                            <Border BorderThickness="2" BorderBrush="#ABCEF2" Background="White">
+                                                <Grid>
+                                                    <ContentPresenter x:Name="Panel" Content="{TemplateBinding Panel}" PreviewKeyDown="Panel_PreviewKeyDown"></ContentPresenter>
+                                                    <Thumb Background="Wheat" 
+                                                            Visibility="{TemplateBinding CloseButton, Converter={StaticResource BoolConverter}}"
+                                                            HorizontalAlignment="Right" 
+                                                            VerticalAlignment="Top" 
+                                                            Margin="0,5,5,0" 
+                                                            PreviewMouseDown="Thumb_PreviewMouseDown"
+                                                            Cursor="Arrow">
+                                                        <Thumb.Template>
+                                                            <ControlTemplate>
+                                                                <Grid Background="White">
+                                                                    <Path Data="M0,0 L10,10 M0,10 L10,0" Stroke="Gray" StrokeThickness="1"></Path>
+                                                                    <Grid.Resources>
+                                                                        <Style TargetType="Path">
+                                                                            <Style.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter Property="Stroke" Value="Black"></Setter>
+                                                                                    <Setter Property="StrokeThickness" Value="2"></Setter>
+                                                                                </Trigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Grid.Resources>
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Thumb.Template>
+                                                    </Thumb>
+                                                    <Thumb HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                                                            Visibility="{TemplateBinding CanResize, Converter={StaticResource BoolConverter}}"
+                                                            Cursor="SizeNWSE" DragDelta="DropDownThumb_OnDragDelta">
+                                                        <Thumb.Template>
+                                                            <ControlTemplate TargetType="Thumb">
+                                                                <Grid Background="Transparent">
+                                                                    <Path Data="M0.5,6.5 L6.5,0.5 M6.5,3.5 L3.5,6.5" Stroke="Black" StrokeThickness="1" />
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Thumb.Template>
+                                                    </Thumb>
+                                                </Grid>
+                                            </Border>
+                                        </Popup>
                                     </Grid>
-                                </Border>
-                            </Popup>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
 </UserControl>

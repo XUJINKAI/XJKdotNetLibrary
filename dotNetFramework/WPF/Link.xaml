@@ -1,0 +1,42 @@
+﻿<ContentControl x:Class="XJK.WPF.Link"
+                x:Name="MainControl"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                xmlns:local="clr-namespace:XJK.WPF"
+                xmlns:system="clr-namespace:System;assembly=mscorlib"
+                mc:Ignorable="d"
+                Focusable="True"
+                Padding="0,0,0,2"
+                BorderThickness="0,0,0,1"
+                KeyDown="ContentControl_KeyDown"
+                d:DesignHeight="30" d:DesignWidth="500">
+    <ContentControl.Template>
+        <ControlTemplate TargetType="ContentControl">
+            <ContentControl Focusable="False">
+                <Hyperlink x:Name="Hyperlink" 
+                           Click="Hyperlink_Click" 
+                           Focusable="False"
+                           TextDecorations="{x:Null}">
+                    <Border BorderBrush="{Binding Foreground, ElementName=Hyperlink}" 
+                            Background="Transparent">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Underline, ElementName=MainControl}" Value="True">
+                                        <Setter Property="Padding" Value="{Binding Padding, ElementName=MainControl}"/>
+                                        <Setter Property="BorderThickness" Value="{Binding BorderThickness, ElementName=MainControl}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <ContentPresenter/>
+                    </Border>
+                </Hyperlink>
+            </ContentControl>
+        </ControlTemplate>
+    </ContentControl.Template>
+</ContentControl>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,8 +22,10 @@ namespace XJK.WPF
     /// AutoLinkTextBox.xaml 的交互逻辑
     /// </summary>
     [ContentProperty("Text")]
-    public partial class AutoLinkTextBlock : UserControl
+    public partial class AutoLinkTextBlock : INotifyPropertyChanged
     {
+        public object Content { get; set; }
+
         public string Text
         {
             get { return (string)GetValue(TextProperty); }
@@ -34,6 +37,7 @@ namespace XJK.WPF
                 ((AutoLinkTextBlock)sender).Render(e.NewValue as string);
             }));
 
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public AutoLinkTextBlock()
         {
@@ -61,12 +65,12 @@ namespace XJK.WPF
                         var match = Regex.Match(split, @"^\[(.+?)\]\((.+?)\)$");
                         if (match.Success)
                         {
-                            wrapPanel.Children.Add(new TextLink() { Text = match.Groups[1].Value, RunCommand = match.Groups[2].Value });
+                            wrapPanel.Children.Add(new Link() { Content = match.Groups[1].Value, RunCommand = match.Groups[2].Value });
                         }
                         else if (split.StartsWith("[") && split.EndsWith("]"))
                         {
                             var link = split.Substring(1, split.Length - 2);
-                            wrapPanel.Children.Add(new TextLink() { Text = link, RunCommand = link});
+                            wrapPanel.Children.Add(new Link() { Content = link, RunCommand = link });
                         }
                         else
                         {
@@ -77,6 +81,7 @@ namespace XJK.WPF
                 }
             }
             this.Content = stackPanel;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Content)));
         }
     }
 }

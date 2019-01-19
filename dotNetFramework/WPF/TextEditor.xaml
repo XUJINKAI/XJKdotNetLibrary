@@ -8,10 +8,9 @@
         mc:Ignorable="d" 
         Cursor="IBeam"
         Background="Transparent"
-        Padding="1,4,0,3"
+        Padding="0,0,0,2"
         BorderBrush="#FF55A3F3"
         BorderThickness="0,0,0,1"
-        ToolTip="{Binding PlaceHolderText, ElementName=MainControl}"
         d:DesignHeight="30" d:DesignWidth="800">
     <TextBox.Template>
         <ControlTemplate TargetType="TextBox">

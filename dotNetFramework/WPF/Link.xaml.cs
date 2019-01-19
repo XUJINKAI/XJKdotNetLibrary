@@ -21,15 +21,17 @@ namespace XJK.WPF
     /// <summary>
     /// Link.xaml 的交互逻辑
     /// </summary>
-    public partial class TextLink
+    public partial class Link
     {
+        //propdp
+        
         public string RunCommand
         {
             get { return (string)GetValue(RunCommandProperty); }
             set { SetValue(RunCommandProperty, value); }
         }
         public static readonly DependencyProperty RunCommandProperty =
-            DependencyProperty.Register("RunCommand", typeof(string), typeof(TextLink), new PropertyMetadata(null));
+            DependencyProperty.Register("RunCommand", typeof(string), typeof(Link), new PropertyMetadata(null));
 
 
 
@@ -39,19 +41,32 @@ namespace XJK.WPF
             set { SetValue(RunArgsProperty, value); }
         }
         public static readonly DependencyProperty RunArgsProperty =
-            DependencyProperty.Register("RunArgs", typeof(string), typeof(TextLink), new PropertyMetadata(null));
-        
+            DependencyProperty.Register("RunArgs", typeof(string), typeof(Link), new PropertyMetadata(null));
 
-        
+
+
+        public bool Underline
+        {
+            get { return (bool)GetValue(UnderlineProperty); }
+            set { SetValue(UnderlineProperty, value); }
+        }
+        public static readonly DependencyProperty UnderlineProperty =
+            DependencyProperty.Register("Underline", typeof(bool), typeof(Link), new PropertyMetadata(false));
+
+
+        // event
+
         public event RoutedEventHandler Click
         {
             add { AddHandler(ClickEvent, value); }
             remove { RemoveHandler(ClickEvent, value); }
         }
-        public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(TextLink));
+        public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Link));
 
+        
+        // func
 
-        public TextLink()
+        public Link()
         {
             InitializeComponent();
         }
@@ -71,7 +86,7 @@ namespace XJK.WPF
             OnClicked();
         }
 
-        private void MainControl_KeyDown(object sender, KeyEventArgs e)
+        private void ContentControl_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
             {

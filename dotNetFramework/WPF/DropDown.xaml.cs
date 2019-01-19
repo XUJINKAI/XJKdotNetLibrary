@@ -213,7 +213,7 @@ namespace XJK.WPF
             }
         }
 
-        private void TextLink_Click(object sender, RoutedEventArgs e)
+        private void Link_Click(object sender, RoutedEventArgs e)
         {
             IsOpen = true;
         }

@@ -21,6 +21,7 @@ namespace XJK.WPF
     /// <summary>
     /// Text.xaml 的交互逻辑
     /// </summary>
+    [ContentProperty(nameof(Text))]
     public partial class TextPresenter : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -28,22 +29,18 @@ namespace XJK.WPF
         private static void StaticNotifyDisplayChanged(object sender, DependencyPropertyChangedEventArgs e) => ((TextPresenter)sender).OnNotifyDisplayChanged();
         protected void OnNotifyDisplayChanged()
         {
-            OnPropertyChanged(nameof(DisplayText));
-            OnPropertyChanged(nameof(DisplayTextBrush));
-            OnPropertyChanged(nameof(IsTextEmpty));
+            OnPropertyChanged(nameof(PlaceHolderVisibility));
         }
 
-        public string DisplayText => IsTextEmpty ? PlaceHolderText : Text;
-        public Brush DisplayTextBrush => IsTextEmpty ? PlaceHolderBrush : Foreground;
-        public bool IsTextEmpty => string.IsNullOrEmpty(Text);
+        public Visibility PlaceHolderVisibility => string.IsNullOrEmpty(Text) ? Visibility.Visible : Visibility.Hidden;
 
 
-        public new string Text
+        public string Text
         {
             get { return (string)GetValue(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
-        public new static readonly DependencyProperty TextProperty =
+        public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(TextPresenter), new FrameworkPropertyMetadata(null, StaticNotifyDisplayChanged));
 
 
@@ -58,17 +55,35 @@ namespace XJK.WPF
         public static readonly DependencyProperty PlaceHolderTextProperty = 
             DependencyProperty.Register("PlaceHolderText", typeof(string), typeof(TextPresenter), new FrameworkPropertyMetadata(null, StaticNotifyDisplayChanged));
         
+        
 
-
-        public Brush PlaceHolderBrush
+        public Style TextBlockStyle
         {
-            get { return (Brush)GetValue(PlaceHolderBrushProperty); }
-            set { SetValue(PlaceHolderBrushProperty, value); }
+            get { return (Style)GetValue(TextBlockStyleProperty); }
+            set { SetValue(TextBlockStyleProperty, value); }
         }
-        public static Brush GetPlaceHolderBrush(DependencyObject obj) => (Brush)obj.GetValue(PlaceHolderBrushProperty);
-        public static void SetPlaceHolderBrush(DependencyObject obj, Brush value) => obj.SetValue(PlaceHolderBrushProperty, value);
-        public static readonly DependencyProperty PlaceHolderBrushProperty =
-            DependencyProperty.Register("PlaceHolderBrush", typeof(Brush), typeof(TextPresenter), new FrameworkPropertyMetadata(SystemColors.GrayTextBrush, StaticNotifyDisplayChanged));
+        public static Style GetTextBlockStyle(DependencyObject obj) => (Style)obj.GetValue(TextBlockStyleProperty);
+        public static void SetTextBlockStyle(DependencyObject obj, Style value) => obj.SetValue(TextBlockStyleProperty, value);
+        public static readonly DependencyProperty TextBlockStyleProperty =
+            DependencyProperty.RegisterAttached("TextBlockStyle", typeof(Style), typeof(TextPresenter), new FrameworkPropertyMetadata(null, StaticNotifyDisplayChanged), value =>
+            {
+                return value == null || value is Style style && style.TargetType.Equals(typeof(TextBlock));
+            });
+
+
+        public Style PlaceHolderTextBlockStyle
+        {
+            get { return (Style)GetValue(PlaceHolderTextBlockStyleProperty); }
+            set { SetValue(PlaceHolderTextBlockStyleProperty, value); }
+        }
+        public static Style GetPlaceHolderTextBlockStyle(DependencyObject obj) => (Style)obj.GetValue(PlaceHolderTextBlockStyleProperty);
+        public static void SetPlaceHolderTextBlockStyle(DependencyObject obj, Style value) => obj.SetValue(PlaceHolderTextBlockStyleProperty, value);
+        public static readonly DependencyProperty PlaceHolderTextBlockStyleProperty =
+            DependencyProperty.RegisterAttached("PlaceHolderTextBlockStyle", typeof(Style), typeof(TextPresenter), new FrameworkPropertyMetadata(null, StaticNotifyDisplayChanged), value =>
+            {
+                return value == null || value is Style style && style.TargetType.Equals(typeof(TextBlock));
+            });
+
 
 
         public TextPresenter()
