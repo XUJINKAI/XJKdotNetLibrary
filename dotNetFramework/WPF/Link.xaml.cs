@@ -54,6 +54,25 @@ namespace XJK.WPF
             DependencyProperty.Register("Underline", typeof(bool), typeof(Link), new PropertyMetadata(false));
 
 
+
+
+
+        public Style HyperLinkStyle
+        {
+            get { return (Style)GetValue(HyperLinkStyleProperty); }
+            set { SetValue(HyperLinkStyleProperty, value); }
+        }
+        public static Style GetHyperLinkStyle(DependencyObject obj) => (Style)obj.GetValue(HyperLinkStyleProperty);
+        public static void SetHyperLinkStyle(DependencyObject obj, Style value) => obj.SetValue(HyperLinkStyleProperty, value);
+        public static readonly DependencyProperty HyperLinkStyleProperty =
+            DependencyProperty.Register("HyperLinkStyle", typeof(Style), typeof(Link), new PropertyMetadata(null), value =>
+            {
+                return value == null || value is Style style && style.TargetType.Equals(typeof(Hyperlink));
+            });
+
+
+
+
         // event
 
         public event RoutedEventHandler Click

@@ -18,7 +18,8 @@
                 <Hyperlink x:Name="Hyperlink" 
                            Click="Hyperlink_Click" 
                            Focusable="False"
-                           TextDecorations="{x:Null}">
+                           TextDecorations="{x:Null}"
+                           Style="{Binding HyperLinkStyle, ElementName=MainControl}">
                     <Border BorderBrush="{Binding Foreground, ElementName=Hyperlink}" 
                             Background="Transparent">
                         <Border.Style>
