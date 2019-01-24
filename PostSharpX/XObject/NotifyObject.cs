@@ -15,28 +15,16 @@ namespace XJK.XObject
     [NestedNotifyPropertyChanged]
     public abstract class NotifyObject : INotifyPropertyChanged
     {
-        public PropertyChangedEventHandler _propertyChanged;
-        public event PropertyChangedEventHandler PropertyChanged
-        {
-            add
-            {
-                _propertyChanged += value;
-                //Debug.WriteLine($"{this.GetType()}: {_propertyChanged.GetInvocationList().Length}");
-            }
-            remove
-            {
-                _propertyChanged -= value;
-            }
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string PropertyName)
         {
-            _propertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
         }
 
         protected void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            _propertyChanged?.Invoke(this, e);
+            PropertyChanged?.Invoke(this, e);
         }
     }
 }

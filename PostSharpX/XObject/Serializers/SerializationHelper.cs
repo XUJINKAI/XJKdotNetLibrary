@@ -252,7 +252,7 @@ namespace XJK.XObject.Serializers
                 if (value == null) continue;
                 if (property.GetCustomAttribute(typeof(DefaultValueAttribute)) is DefaultValueAttribute defValueAttr)
                 {
-                    if (defValueAttr.Value.Equals(value)) continue;
+                    if (defValueAttr.Value?.Equals(value) ?? false) continue;
                 }
                 string key = property.Name;
                 writer.WriteStartElement(_ENTRY_);

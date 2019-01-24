@@ -66,10 +66,10 @@ namespace XJK.Network.Socket
         public async Task<byte[]> SendBytes(byte[] Bytes)
         {
             if (!Client.Connected) throw new Exception($"[{Name}] Can't send cause client not connected.");
-            Log.Debug($"[{Name}] SendBytes byte[{Bytes.Length}]");
+            Log.DEBUG($"[{Name}] SendBytes byte[{Bytes.Length}]");
             int id = await SendRequestAsync(Client, Bytes);
             var response = await GetResponseAsync(id);
-            Log.Debug($"[{Name}] ResponseBytes byte[{response.Length}]");
+            Log.DEBUG($"[{Name}] ResponseBytes byte[{response.Length}]");
             return response;
         }
 

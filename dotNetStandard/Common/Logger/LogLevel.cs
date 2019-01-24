@@ -10,6 +10,6 @@ namespace XJK.Logger
         Warn = 1,
         Info = 2,
         Verbose = 3,
-        Debug = 4,
+        DEBUG = 4,
     }
 }

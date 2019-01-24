@@ -117,7 +117,7 @@ namespace XJK.Network.GA
                     }
                 }
                 DetailListener?.Invoke($"{'='.Dup(60)}{Environment.NewLine}TryBadCache remain {BadCacheCountFormat()}");
-                Log.Debug($"TryBadCache remain {BadCacheCountFormat()}");
+                Log.DEBUG($"TryBadCache remain {BadCacheCountFormat()}");
             }
         }
 
@@ -153,7 +153,7 @@ namespace XJK.Network.GA
                 {
                     BadCache.Add(x);
                     DetailListener?.Invoke($"{'='.Dup(60)}{Environment.NewLine}Not send, Add {x.Count}, bad cache {BadCacheCountFormat()}");
-                    Log.Debug($"Analytics Send {x.Count}, remain {BadCacheCountFormat()}");
+                    Log.DEBUG($"Analytics Send {x.Count}, remain {BadCacheCountFormat()}");
                 }
             }
         }

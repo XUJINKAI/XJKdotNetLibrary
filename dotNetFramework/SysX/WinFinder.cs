@@ -14,15 +14,7 @@ namespace XJK.SysX
         public string CaptionName { get; set; }
 
         public bool IsFindForeground => string.IsNullOrEmpty(ClassName) && string.IsNullOrEmpty(CaptionName);
-
-        public Win GetWin() => GetHandle();
-
-        public IntPtr GetHandle()
-        {
-            if (IsFindForeground) return Win.Foreground.Get();
-            return User32.FindWindow(ClassName, CaptionName);
-        }
-
+        
         public override string ToString()
         {
             if (IsFindForeground) return "<Foreground WinFinder>";
@@ -31,5 +23,20 @@ namespace XJK.SysX
 
         public static Process[] ListProcessed() => Process.GetProcesses();
         public static string[] ListClassNames() => throw new NotImplementedException();
+    }
+
+    public static class WinFinderExtension
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="winFinder"></param>
+        /// <returns></returns>
+        public static IntPtr GetHandle(this WinFinder winFinder)
+        {
+            if (winFinder == null) return Win.Foreground.Get();
+            if (winFinder.IsFindForeground) return Win.Foreground.Get();
+            return User32.FindWindow(winFinder.ClassName, winFinder.CaptionName);
+        }
     }
 }

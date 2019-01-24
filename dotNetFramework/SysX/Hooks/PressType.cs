@@ -8,9 +8,18 @@ namespace XJK.SysX.Hooks
 {
     public enum PressType
     {
+        /// <summary>
+        /// Mouse Move, unknown...
+        /// </summary>
         None = 0,
+
+        // VirtualKeys
+
         KeyDown = 0x0100,
         KeyUp = 0x0101,
+
+        // Custom
+
         WheelDown = 0x1000,
         WheelUp = 0x1001,
         WheelLeft = 0x1002,

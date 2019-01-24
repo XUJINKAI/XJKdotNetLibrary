@@ -64,7 +64,7 @@ namespace XJK.FileSystem
 
         public static string ReadAllText(string path)
         {
-            Log.Debug($"ReadAllText {path}");
+            Log.DEBUG($"ReadAllText {path}");
             using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 using (var textReader = new StreamReader(fileStream))
@@ -76,7 +76,7 @@ namespace XJK.FileSystem
 
         public static void WriteAllText(string path, string content)
         {
-            Log.Debug($"WriteAllText {path}");
+            Log.DEBUG($"WriteAllText {path}");
             File.WriteAllText(path, content);
             // 写入容易错乱
             //using (var fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
@@ -90,7 +90,7 @@ namespace XJK.FileSystem
 
         public static void AppendText(string path, string content)
         {
-            Log.Debug($"AppendText {path}");
+            Log.DEBUG($"AppendText {path}");
             using (var fileStream = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.Read))
             {
                 using (var textWriter = new StreamWriter(fileStream))

@@ -271,7 +271,7 @@ namespace XJK.SysX.CommandHelper
                 InfoChain = this,
             };
 
-            Log.Debug(this);
+            Log.DEBUG(this);
             CheckConflict();
             var ActualCmdArg = ExcuteCommandArgs;
             ProcessStartInfo.FileName = ActualCmdArg.Item1;

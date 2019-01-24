@@ -7,10 +7,19 @@ namespace XJK.Logger
 {
     public static class LogHelper
     {
+        public static string ImplementMessage(LogLevel? LogLevel, string msg)
+        {
+            if (LogLevel.HasValue)
+            {
+                string level = $"[{LogLevel.Value}]";
+                return $"{level} {msg}";
+            }
+            return msg;
+        }
+
         public static string ImplementMessage(object obj, LogLevel? LogLevel, string DateTimeFormat)
         {
-            string level = LogLevel.HasValue ? $"[{LogLevel.Value}]" : "";
-            return $"[{DateTime.Now.ToString(DateTimeFormat)}]{level} {GetMessage(obj)}";
+            return $"[{DateTime.Now.ToString(DateTimeFormat)}] {ImplementMessage(LogLevel, GetMessage(obj))}";
         }
 
         public static string ImplementIndent(string line)

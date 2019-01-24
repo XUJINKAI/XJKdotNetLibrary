@@ -16,10 +16,7 @@ namespace XJK
 
         public static IntPtr ModuleHandle { get; }
         public static string ModuleHandleHex { get; }
-
-        private static Mutex mutex;
-        private static bool isNewInstance;
-
+        
         static ENV()
         {
             try
@@ -33,20 +30,7 @@ namespace XJK
                 ModuleHandleHex = "0x0";
             }
         }
-
-        public static bool IsNewInstance(string AppId)
-        {
-            if (mutex == null)
-            {
-                mutex = new Mutex(true, AppId, out isNewInstance);
-                return isNewInstance;
-            }
-            else
-            {
-                return isNewInstance;
-            }
-        }
-
+        
         public static bool IsAdministrator()
         {
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
