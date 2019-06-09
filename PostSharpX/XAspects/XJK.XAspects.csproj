@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="6.0.32" />
+    <PackageReference Include="PostSharp" Version="6.2.7" />
   </ItemGroup>
 
 </Project>
