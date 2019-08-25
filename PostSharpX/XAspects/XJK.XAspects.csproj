@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>AnyCPU;x64;x86</Platforms>
     <LangVersion>7.2</LangVersion>
     <AssemblyName>XJK.XAspects</AssemblyName>
     <RootNamespace>XJK.XAspects</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PostSharp" Version="6.2.7" />
+    <PackageReference Include="PostSharp" Version="6.2.11" />
   </ItemGroup>
 
 </Project>
