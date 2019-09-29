@@ -1,7 +1,6 @@
 on:
   push:
     branches:
-    - master
     - develop
 
 jobs:
@@ -9,7 +8,7 @@ jobs:
     runs-on: ubuntu-16.04
     strategy:
       matrix:
-        dotnet: [ '2.1.13', '3.0.0' ]
+        dotnet: [ '2.2.103' ]
     name: Dotnet ${{ matrix.dotnet }} sample
     steps:
       - uses: actions/checkout@master
