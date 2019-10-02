@@ -11,6 +11,8 @@ These apps based on this library:
 
 - OneQuick (https://onequick.org/)
 
+- ShellCommand (https://github.com/XUJINKAI/ShellCommand)
+
 - Window Toolkits (https://github.com/XUJINKAI/Windows-Toolkits)
 
 

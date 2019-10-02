@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Platforms>x64;x86</Platforms>
+    <Platforms>x64;x86;AnyCPU</Platforms>
     <LangVersion>7.2</LangVersion>
     <RootNamespace>XJK.PInvoke</RootNamespace>
     <AssemblyName>XJK.PInvoke</AssemblyName>
