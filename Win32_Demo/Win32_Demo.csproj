@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Win32_Demo</RootNamespace>
+    <AssemblyName>Win32_Demo</AssemblyName>
+    <nullable>enable</nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Win32\Win32.csproj" />
+    <ProjectReference Include="..\WPF\WPF.csproj" />
+  </ItemGroup>
+
+</Project>

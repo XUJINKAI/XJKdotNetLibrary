@@ -1,8 +1,5 @@
 # XJKdotNetLibrary
 
-<a href="https://996.icu"><img src="https://img.shields.io/badge/link-996.icu-red.svg"></a>
-[![HitCount](http://hits.dwyl.io/XUJINKAI/XJKdotNetLibrary.svg)](http://hits.dwyl.io/XUJINKAI/XJKdotNetLibrary)
-
 .Net library to make Desktop app easier
 
 https://github.com/XUJINKAI/XJKdotNetLibrary/wiki

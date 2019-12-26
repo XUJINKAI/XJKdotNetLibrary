@@ -1,0 +1,22 @@
+# 若要了解有关 .editorconfig 的详细信息，请参阅 https://aka.ms/editorconfigdocs
+
+# c# 文件
+[*.cs]
+
+# CA1707: 标识符不应包含下划线
+dotnet_diagnostic.CA1707.severity = silent
+
+# CA1714: Flags 枚举应采用复数形式的名称
+dotnet_diagnostic.CA1714.severity = silent
+
+# CA1401: P/Invokes 应该是不可见的
+dotnet_diagnostic.CA1401.severity = silent
+
+# CA1028: 枚举存储应为 Int32
+dotnet_diagnostic.CA1028.severity = silent
+
+# CA1060: 将 pinvoke 移到本机方法类
+dotnet_diagnostic.CA1060.severity = silent
+
+# CA1051: 不要声明可见实例字段
+dotnet_diagnostic.CA1051.severity = silent

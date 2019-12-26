@@ -1,0 +1,97 @@
+﻿<Window x:Class="Win32_Demo.SysXCmdRunWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Win32_Demo"
+        xmlns:wpf="clr-namespace:XJK.WPF;assembly=WPF"
+        xmlns:wpfc="clr-namespace:XJK.WPF.Converters;assembly=WPF"
+        mc:Ignorable="d"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="SysXCmdRunWindow" Height="450" Width="1200">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.Resources>
+            <wpfc:EnumToBoolConverter x:Key="EnumBoolean"></wpfc:EnumToBoolConverter>
+            <Style TargetType="TextBox">
+                <Setter Property="FontFamily" Value="Consolas"></Setter>
+            </Style>
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="Consolas"></Setter>
+            </Style>
+            <Style TargetType="Button">
+                    <Style.Setters>
+                    <Setter Property="Width" Value="100"/>
+                    <Setter Property="Margin" Value="0,0,5,0"/>
+                </Style.Setters>
+            </Style>
+        </Grid.Resources>
+
+        <StackPanel Margin="0,5,0,5" Orientation="Vertical">
+            <StackPanel.Resources>
+                <Style TargetType="StackPanel">
+                    <Style.Setters>
+                        <Setter Property="Orientation" Value="Horizontal"></Setter>
+                    </Style.Setters>
+                </Style>
+            </StackPanel.Resources>
+            <StackPanel>
+                <TextBlock Text="Cmd: "></TextBlock>
+                <Button Content="AsInvoker" Click="RunAsInvoker"></Button>
+                <Button Content="AsAdmin" Click="RunAsAdmin"></Button>
+                <Button Content="WithCmdStart" Click="RunWithCmdStart"></Button>
+                <TextBlock Text="||"></TextBlock>
+                <Button Content="Stream Sync" Click="StreamResultSync"></Button>
+                <Button Content="StreamAsync" Click="StreamResultAsync"></Button>
+                <TextBlock Text="||"></TextBlock>
+                <Button Content="Run Option" Click="RunRadioOption"></Button>
+                <TextBlock Text="||"></TextBlock>
+                <Button Content="Verbs" Click="GetVerbs"></Button>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Privilege: "></TextBlock>
+                <RadioButton Content="NotSet" IsChecked="{Binding Privilege, Converter={StaticResource EnumBoolean}, ConverterParameter=NotSet}"></RadioButton>
+                <RadioButton Content="Invoker" IsChecked="{Binding Privilege, Converter={StaticResource EnumBoolean}, ConverterParameter=Invoker}"></RadioButton>
+                <RadioButton Content="Limited" IsChecked="{Binding Privilege, Converter={StaticResource EnumBoolean}, ConverterParameter=Limited}"></RadioButton>
+                <RadioButton Content="Admin" IsChecked="{Binding Privilege, Converter={StaticResource EnumBoolean}, ConverterParameter=Admin}"></RadioButton>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="LaunchType: "></TextBlock>
+                <RadioButton Content="NotSet" IsChecked="{Binding LaunchType, Converter={StaticResource EnumBoolean}, ConverterParameter=NotSet}"></RadioButton>
+                <RadioButton Content="Normal" IsChecked="{Binding LaunchType, Converter={StaticResource EnumBoolean}, ConverterParameter=Normal}"></RadioButton>
+                <RadioButton Content="CmdStart" IsChecked="{Binding LaunchType, Converter={StaticResource EnumBoolean}, ConverterParameter=CmdStart}"></RadioButton>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="WindowType: "></TextBlock>
+                <RadioButton Content="NotSet" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=NotSet}"></RadioButton>
+                <RadioButton Content="Normal" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Normal}"></RadioButton>
+                <RadioButton Content="Hidden" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Hidden}"></RadioButton>
+                <RadioButton Content="Minimized" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Minimized}"></RadioButton>
+                <RadioButton Content="Maximized" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=Maximized}"></RadioButton>
+                <RadioButton Content="ConsoleInParent" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=ConsoleInParent}"></RadioButton>
+                <RadioButton Content="ConsoleNoWindow" IsChecked="{Binding WindowType, Converter={StaticResource EnumBoolean}, ConverterParameter=ConsoleNoWindow}"></RadioButton>
+            </StackPanel>
+            <DockPanel>
+                <TextBlock Text="Command: "></TextBlock>
+                <TextBox x:Name="CommandBox"></TextBox>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Args:    "></TextBlock>
+                <TextBox x:Name="ArgsBox"></TextBox>
+            </DockPanel>
+            <StackPanel>
+                <Button Content="Clear" Click="ClearLog"></Button>
+                <Button Content="Parse" Click="ParseArgs"></Button>
+                <Button Content="CurrentExePath" Click="SetCurrentExePath"></Button>
+                <Button Content="CmdPath" Click="SetCmdPath"></Button>
+            </StackPanel>
+        </StackPanel>
+        
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+            <TextBox x:Name="LogBox"></TextBox>
+        </ScrollViewer>
+    </Grid>
+</Window>
