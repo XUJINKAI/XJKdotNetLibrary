@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using XJK;
-using XJK.Win32.SysX.WinMsg;
+using XJK.Win32.WinMsg;
 
 namespace Win32_Demo
 {

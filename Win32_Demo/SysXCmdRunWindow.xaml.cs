@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using XJK;
 using XJK.Win32;
-using XJK.Win32.SysX;
-using XJK.Win32.SysX.CommandHelper;
+using XJK.Win32.CommandHelper;
 
 namespace Win32_Demo
 {
@@ -26,7 +26,7 @@ namespace Win32_Demo
                 LogText(s);
             })
             { Registered = true };
-            this.Title = ENV.IsAdministrator() ? "Administrator" : "Normal User";
+            this.Title = AppEnv.IsAdministrator() ? "Administrator" : "Normal User";
             this.CommandBox.Text = ENV.EntryLocation; //"D:\\space space.exe";
             foreach (var x in Environment.GetCommandLineArgs())
             {
@@ -100,17 +100,17 @@ namespace Win32_Demo
 
         private void RunAsInvoker(object sender, RoutedEventArgs e)
         {
-            Cmd.RunAsInvoker(Command, Args);
+            CmdRunner.RunAsInvoker(Command, Args);
         }
 
         private void RunAsAdmin(object sender, RoutedEventArgs e)
         {
-            Cmd.RunAsAdmin(Command, Args);
+            CmdRunner.RunAsAdmin(Command, Args);
         }
 
         private void RunWithCmdStart(object sender, RoutedEventArgs e)
         {
-            Cmd.RunWithCmdStart(Command, Args);
+            CmdRunner.RunWithCmdStart(Command, Args);
         }
 
         private void RunRadioOption(object sender, RoutedEventArgs e)
@@ -126,7 +126,7 @@ namespace Win32_Demo
         private void ParseArgs(object sender, RoutedEventArgs e)
         {
             string x = CommandBox.Text;
-            var tuple = Cmd.SplitCommandArg(x);
+            var tuple = Cmder.SplitCommandArg(x);
             LogText($"Command :{tuple.Item1}{Environment.NewLine}Arg     :{tuple.Item2}{Environment.NewLine}");
         }
 
@@ -148,7 +148,7 @@ namespace Win32_Demo
 
         private void GetVerbs(object sender, RoutedEventArgs e)
         {
-            LogText(Cmd.GetRunVerbs(Command));
+            LogText(Cmder.GetRunVerbs(Command));
         }
     }
 }

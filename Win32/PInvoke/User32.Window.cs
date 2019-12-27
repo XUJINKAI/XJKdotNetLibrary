@@ -57,7 +57,7 @@ namespace XJK.Win32.PInvoke
         ///     for <see cref="M:GetWindowText" />.
         /// </remarks>
         // For Windows Mobile, replace user32.dll with coredll.dll
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         // Find window by Caption only. Note you must pass IntPtr.Zero as the first parameter.
