@@ -147,10 +147,5 @@ namespace XJK.FileSystem
         {
             SetObject(Converter.ConvertBack<T>(FilePath));
         }
-
-        public static FileSyncer<T> XmlSyncer(string path)
-        {
-            return new FileSyncer<T>(path, new ObjectXmlConverter());
-        }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Interop;
-using XJK.Win32.PInvoke;
 using XJK.Win32.Hooks;
+using XJK.Win32.PInvoke;
 
 namespace XJK.Win32.WinMsg
 {

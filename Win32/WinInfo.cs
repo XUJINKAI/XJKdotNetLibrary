@@ -69,7 +69,7 @@ namespace XJK.Win32
                     hWnd = pList.MainWindowHandle;
                 }
             }
-            return (WinInfo)hWnd;
+            return hWnd;
         }
 
 
